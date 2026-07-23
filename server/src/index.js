@@ -40,18 +40,29 @@ app.use(
   }),
 )
 
+// app.get('/api/health', (_req, res) => {
+//   res.json({
+//     success: true,
+//     data: {
+//       status: 'ok',
+//       service: 'aura-of-nature-api',
+//       database: getDatabaseMode(),
+//       mongoReady: isDbReady(),
+//       timestamp: new Date().toISOString(),
+//     },
+//   })
+// })
 app.get('/api/health', (_req, res) => {
+  console.log("🔥 HEALTH ROUTE HIT");
+
   res.json({
     success: true,
     data: {
       status: 'ok',
       service: 'aura-of-nature-api',
-      database: getDatabaseMode(),
-      mongoReady: isDbReady(),
-      timestamp: new Date().toISOString(),
     },
-  })
-})
+  });
+});
 
 app.use('/api', routes)
 app.use(notFound)
