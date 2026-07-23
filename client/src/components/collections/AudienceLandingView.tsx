@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Seo } from '@components/seo/Seo'
-import { Body, Display, Eyebrow } from '@components/ui'
+import { Display, Eyebrow } from '@components/ui'
 import { ProductCard } from '@components/shop/ProductCard'
 import { useCatalog } from '@contexts/CatalogContext'
 import { blogArticles } from '@/data/blog'
