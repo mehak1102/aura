@@ -137,7 +137,6 @@ export function HomeHero() {
           data-hero-media
           // src="/hero/hero-fullscreen.png"
           src="/hero/image.png"
-
           alt=""
           className="h-full w-full object-cover object-[72%_center] max-[480px]:object-[78%_center] xl:object-[68%_center]"
           fetchPriority="high"

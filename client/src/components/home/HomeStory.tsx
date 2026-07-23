@@ -20,21 +20,25 @@ const TITLE_MS = 38
 const BODY_MS = 16
 const TITLE_PAUSE = 350
 
-function StoryTypewriter({ active }: { active: boolean }) {
+function StoryTypewriter({ playKey }: { playKey: number }) {
   const [titleChars, setTitleChars] = useState(0)
   const [bodyChars, setBodyChars] = useState(0)
   const [phase, setPhase] = useState<'idle' | 'title' | 'body' | 'done'>('idle')
 
   useEffect(() => {
-    if (!active) return
+    if (playKey < 1) return
+
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setTitleChars(TITLE.length)
       setBodyChars(BODY.length)
       setPhase('done')
       return
     }
+
+    setTitleChars(0)
+    setBodyChars(0)
     setPhase('title')
-  }, [active])
+  }, [playKey])
 
   useEffect(() => {
     if (phase === 'idle' || phase === 'done') return
@@ -107,8 +111,9 @@ function StoryTypewriter({ active }: { active: boolean }) {
 
 export function HomeStory() {
   const navigate = useNavigate()
-  const [inView, setInView] = useState(false)
+  const [playKey, setPlayKey] = useState(0)
   const textRef = useRef<HTMLDivElement>(null)
+  const wasInView = useRef(false)
 
   const scope = useGsap(() => {
     if (!scope.current) return
@@ -119,15 +124,18 @@ export function HomeStory() {
   useEffect(() => {
     const el = textRef.current
     if (!el) return
+
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true)
-          io.disconnect()
+        const visible = entry.isIntersecting
+        if (visible && !wasInView.current) {
+          setPlayKey((k) => k + 1)
         }
+        wasInView.current = visible
       },
       { threshold: 0.35 },
     )
+
     io.observe(el)
     return () => io.disconnect()
   }, [])
@@ -155,7 +163,7 @@ export function HomeStory() {
               <span className="h-px w-12 bg-[#1b261e]/25" />
             </div>
 
-            <StoryTypewriter active={inView} />
+            <StoryTypewriter playKey={playKey} />
 
             <div data-reveal="" className="mt-8">
               <button
