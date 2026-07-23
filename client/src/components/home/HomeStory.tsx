@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { ArrowRight, Leaf, Rabbit, Sprout, Flower2 } from 'lucide-react'
 import { storyContent } from '@/data/home'
 import { useGsap, revealOnScroll, maskRevealImages } from '@animations/gsap'
+import { useInView } from '@hooks/useInView'
 import { cn } from '@utils/index'
 
 const storyTrust = [
@@ -20,7 +21,7 @@ const TITLE_MS = 38
 const BODY_MS = 16
 const TITLE_PAUSE = 350
 
-function StoryTypewriter({ playKey }: { playKey: number }) {
+function StoryTypewriter({ playKey, active }: { playKey: number; active: boolean }) {
   const [titleChars, setTitleChars] = useState(0)
   const [bodyChars, setBodyChars] = useState(0)
   const [phase, setPhase] = useState<'idle' | 'title' | 'body' | 'done'>('idle')
@@ -41,7 +42,7 @@ function StoryTypewriter({ playKey }: { playKey: number }) {
   }, [playKey])
 
   useEffect(() => {
-    if (phase === 'idle' || phase === 'done') return
+    if (!active || phase === 'idle' || phase === 'done') return
 
     let timer: number
 
@@ -60,7 +61,7 @@ function StoryTypewriter({ playKey }: { playKey: number }) {
     }
 
     return () => window.clearTimeout(timer)
-  }, [phase, titleChars, bodyChars])
+  }, [phase, titleChars, bodyChars, active])
 
   const titleVisible = TITLE.slice(0, titleChars)
   const showTitleCaret = phase === 'title'
@@ -83,7 +84,7 @@ function StoryTypewriter({ playKey }: { playKey: number }) {
             <span key={i}>{ch}</span>
           )
         })}
-        {showTitleCaret && (
+        {showTitleCaret && active && (
           <span
             aria-hidden
             className="hero-caret ml-0.5 inline-block w-[0.08em] translate-y-[0.05em] bg-[#b8975c] align-baseline"
@@ -97,7 +98,7 @@ function StoryTypewriter({ playKey }: { playKey: number }) {
         aria-label={BODY}
       >
         {BODY.slice(0, bodyChars)}
-        {showBodyCaret && (
+        {showBodyCaret && active && (
           <span
             aria-hidden
             className="hero-caret ml-0.5 inline-block w-[0.06em] translate-y-[0.04em] bg-[#b8975c]/80 align-baseline"
@@ -114,6 +115,7 @@ export function HomeStory() {
   const [playKey, setPlayKey] = useState(0)
   const textRef = useRef<HTMLDivElement>(null)
   const wasInView = useRef(false)
+  const inView = useInView(textRef, { threshold: 0.35 })
 
   const scope = useGsap(() => {
     if (!scope.current) return
@@ -122,23 +124,11 @@ export function HomeStory() {
   }, [])
 
   useEffect(() => {
-    const el = textRef.current
-    if (!el) return
-
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        const visible = entry.isIntersecting
-        if (visible && !wasInView.current) {
-          setPlayKey((k) => k + 1)
-        }
-        wasInView.current = visible
-      },
-      { threshold: 0.35 },
-    )
-
-    io.observe(el)
-    return () => io.disconnect()
-  }, [])
+    if (inView && !wasInView.current) {
+      setPlayKey((k) => k + 1)
+    }
+    wasInView.current = inView
+  }, [inView])
 
   return (
     <section
@@ -163,7 +153,7 @@ export function HomeStory() {
               <span className="h-px w-12 bg-[#1b261e]/25" />
             </div>
 
-            <StoryTypewriter playKey={playKey} />
+            <StoryTypewriter playKey={playKey} active={inView} />
 
             <div data-reveal="" className="mt-8">
               <button

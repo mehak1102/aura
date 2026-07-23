@@ -1,17 +1,30 @@
+import { useEffect, useRef } from 'react'
 import { Star } from 'lucide-react'
 import { Body, Display, Eyebrow } from '@components/ui'
 import { reviews } from '@/data/home'
 import { useGsap, revealOnScroll, prefersReducedMotion } from '@animations/gsap'
+import { useInView } from '@hooks/useInView'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, Pagination } from 'swiper/modules'
+import type { Swiper as SwiperInstance } from 'swiper'
 import 'swiper/css'
 import 'swiper/css/pagination'
 
 export function HomeReviews() {
+  const swiperRef = useRef<SwiperInstance | null>(null)
   const scope = useGsap(() => {
     if (!scope.current) return
     revealOnScroll(scope.current.querySelectorAll('[data-reveal]'))
   }, [])
+  const inView = useInView(scope, { threshold: 0.25 })
+  const reduced = prefersReducedMotion()
+
+  useEffect(() => {
+    const swiper = swiperRef.current
+    if (!swiper?.autoplay || reduced) return
+    if (inView) swiper.autoplay.start()
+    else swiper.autoplay.stop()
+  }, [inView, reduced])
 
   return (
     <section ref={scope} className="section-aura bg-beige/30">
@@ -29,8 +42,12 @@ export function HomeReviews() {
             spaceBetween={24}
             slidesPerView={1}
             pagination={{ clickable: true }}
+            onSwiper={(swiper) => {
+              swiperRef.current = swiper
+              if (!inView || reduced) swiper.autoplay?.stop()
+            }}
             autoplay={
-              prefersReducedMotion()
+              reduced
                 ? false
                 : { delay: 4500, disableOnInteraction: false }
             }

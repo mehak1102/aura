@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { ROUTES } from '@/routes/paths'
 import { useGsap, animateHero } from '@animations/gsap'
+import { useInView } from '@hooks/useInView'
 import { scrollToSection } from '@/lib/lenisControl'
 import { cn } from '@utils/index'
 
@@ -47,11 +48,12 @@ function TrustIcon({ icon: Icon }: { icon: typeof Leaf }) {
   )
 }
 
-function HeroTypewriter() {
+function HeroTypewriter({ active }: { active: boolean }) {
   const [chars, setChars] = useState(0)
   const [phase, setPhase] = useState<'typing' | 'hold' | 'clearing'>('typing')
 
   useEffect(() => {
+    if (!active) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setChars(HERO_FULL.length)
       setPhase('hold')
@@ -75,7 +77,7 @@ function HeroTypewriter() {
     }
 
     return () => window.clearTimeout(timer)
-  }, [chars, phase])
+  }, [chars, phase, active])
 
   const visible = HERO_FULL.slice(0, chars)
   const filled = visible.split('\n')
@@ -104,7 +106,7 @@ function HeroTypewriter() {
               <span key={j}>{ch}</span>
             ),
           )}
-          {phase !== 'hold' && i === activeLine && (
+          {active && phase !== 'hold' && i === activeLine && (
             <span
               aria-hidden
               className="hero-caret ml-0.5 inline-block w-[0.08em] translate-y-[0.06em] bg-[#b8975c] align-baseline"
@@ -125,6 +127,7 @@ export function HomeHero() {
   const scope = useGsap(() => {
     if (scope.current) return animateHero(scope.current)
   }, [])
+  const inView = useInView(scope, { threshold: 0.2, initial: true })
 
   return (
     <section
@@ -179,7 +182,7 @@ export function HomeHero() {
               />
             </p>
 
-            <HeroTypewriter />
+            <HeroTypewriter active={inView} />
 
             <p
               data-hero-fade

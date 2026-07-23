@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { prefersReducedMotion } from '@animations/gsap'
+import { useInView } from '@hooks/useInView'
 import { SlideContent } from './SlideContent'
 import { animateSlideChange, animateSlideIntro, clearSlideStyles } from './transitions'
 import type { LuxurySlide } from './types'
 
-const AUTOPLAY_MS = 6500
+const AUTOPLAY_MS = 2000
 
 type LuxurySliderProps = {
   slides: LuxurySlide[]
@@ -36,15 +37,18 @@ export function LuxurySlider({
   eyebrow = 'Botanical collection',
 }: LuxurySliderProps) {
   const [active, setActive] = useState(0)
-  const [paused, setPaused] = useState(false)
   const [busy, setBusy] = useState(false)
 
+  const sectionRef = useRef<HTMLElement>(null)
   const copyRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLDivElement>(null)
   const previewRef = useRef<HTMLButtonElement>(null)
   const dotsRef = useRef<HTMLDivElement>(null)
   const timelineRef = useRef<gsap.core.Timeline | null>(null)
   const activeRef = useRef(0)
+  const busyRef = useRef(false)
+  const goNextRef = useRef<() => void>(() => {})
+  const inView = useInView(sectionRef, { threshold: 0.2 })
 
   const total = slides.length
   const slide = slides[active] ?? slides[0]
@@ -57,6 +61,23 @@ export function LuxurySlider({
       img.src = s.image
     })
   }, [slides])
+
+  // Stop mid-flight transitions when the section leaves view
+  useEffect(() => {
+    if (inView) return
+    timelineRef.current?.kill()
+    timelineRef.current = null
+    busyRef.current = false
+    setBusy(false)
+    if (copyRef.current && imageRef.current && dotsRef.current) {
+      clearSlideStyles({
+        copy: copyRef.current,
+        image: imageRef.current,
+        preview: previewRef.current ?? undefined,
+        dots: dotsRef.current,
+      })
+    }
+  }, [inView])
 
   useEffect(() => {
     if (!copyRef.current || !imageRef.current || !dotsRef.current) return
@@ -83,7 +104,7 @@ export function LuxurySlider({
 
   const goTo = useCallback(
     (index: number) => {
-      if (!total || busy) return
+      if (!total || busyRef.current) return
       const next = ((index % total) + total) % total
       if (next === activeRef.current) return
 
@@ -99,10 +120,20 @@ export function LuxurySlider({
         return
       }
 
+      busyRef.current = true
       setBusy(true)
       timelineRef.current?.kill()
 
       const direction = slideDirection(activeRef.current, next, total)
+      let settled = false
+
+      const settle = () => {
+        if (settled) return
+        settled = true
+        busyRef.current = false
+        setBusy(false)
+        timelineRef.current = null
+      }
 
       timelineRef.current = animateSlideChange(
         {
@@ -118,12 +149,11 @@ export function LuxurySlider({
         direction,
       )
 
-      timelineRef.current.eventCallback('onComplete', () => {
-        setBusy(false)
-        timelineRef.current = null
-      })
+      timelineRef.current.eventCallback('onComplete', settle)
+      timelineRef.current.eventCallback('onInterrupt', settle)
+      window.setTimeout(settle, 1800)
     },
-    [busy, total],
+    [total],
   )
 
   const goNext = useCallback(() => goTo(activeRef.current + 1), [goTo])
@@ -134,19 +164,28 @@ export function LuxurySlider({
   }, [active])
 
   useEffect(() => {
-    if (paused || prefersReducedMotion() || total < 2 || busy) return
-    const timer = window.setInterval(goNext, AUTOPLAY_MS)
+    goNextRef.current = goNext
+  }, [goNext])
+
+  // Steady autoplay while in view — keeps moving even on hover
+  useEffect(() => {
+    if (!inView || prefersReducedMotion() || total < 2) return
+    const timer = window.setInterval(() => {
+      if (busyRef.current) return
+      goNextRef.current()
+    }, AUTOPLAY_MS)
     return () => window.clearInterval(timer)
-  }, [paused, goNext, total, busy])
+  }, [inView, total])
 
   useEffect(() => {
+    if (!inView) return
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'ArrowRight') goNext()
       if (event.key === 'ArrowLeft') goPrev()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [goNext, goPrev])
+  }, [goNext, goPrev, inView])
 
   useEffect(() => () => { timelineRef.current?.kill() }, [])
 
@@ -154,11 +193,10 @@ export function LuxurySlider({
 
   return (
     <section
+      ref={sectionRef}
       aria-roledescription="carousel"
       aria-label="Featured rituals"
       className={`relative overflow-hidden bg-warm-white ${className}`}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
     >
       {/* Linen atmosphere — light, not forest wash */}
       <div
