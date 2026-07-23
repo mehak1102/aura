@@ -1,0 +1,6 @@
+export { ProductGallery } from './ProductGallery'
+export { ProductInfo } from './ProductInfo'
+export { ProductTabs } from './ProductTabs'
+export { ProductReviews } from './ProductReviews'
+export { ProductRail } from './ProductRail'
+export { ProductBreadcrumb } from './ProductBreadcrumb'

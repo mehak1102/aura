@@ -1,0 +1,43 @@
+{
+  "name": "@aura/client",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && node scripts/generate-seo-files.mjs && vite build",
+    "optimize:images": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/optimize-product-images.ps1",
+    "remove:bg": "node scripts/remove-product-backgrounds.mjs",
+    "lint": "oxlint",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.0.1",
+    "@tanstack/react-query": "^5.74.4",
+    "axios": "^1.8.4",
+    "framer-motion": "^12.6.5",
+    "gsap": "^3.12.7",
+    "lenis": "^1.2.3",
+    "lucide-react": "^0.487.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-hook-form": "^7.55.0",
+    "react-icons": "^5.7.0",
+    "react-router-dom": "^7.5.0",
+    "swiper": "^11.2.6",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.4",
+    "@types/node": "^24.13.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.0.0",
+    "oxlint": "^1.71.0",
+    "playwright": "^1.61.1",
+    "sharp": "^0.35.3",
+    "tailwindcss": "^4.1.4",
+    "typescript": "~5.8.3",
+    "vite": "^6.2.6"
+  }
+}

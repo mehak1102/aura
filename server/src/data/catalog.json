@@ -1,0 +1,1173 @@
+[
+  {
+    "id": "1",
+    "title": "Activated Charcoal Handmade Soap",
+    "slug": "activated-charcoal-soap",
+    "description": "Handmade activated charcoal soap that removes skin impurities and toxins.",
+    "benefits": [
+      "Removes skin impurities and toxins",
+      "SLS free",
+      "Paraben free",
+      "Natural and Hand-Crafted"
+    ],
+    "ingredients": [
+      "Activated Charcoal"
+    ],
+    "howToUse": [
+      "Lather on damp skin",
+      "Massage gently",
+      "Rinse well"
+    ],
+    "skinTypes": [
+      "oily",
+      "combination",
+      "normal",
+      "all"
+    ],
+    "hairTypes": [
+      "all"
+    ],
+    "tags": [
+      "soap",
+      "charcoal",
+      "handmade"
+    ],
+    "concerns": [
+      "acne",
+      "dullness"
+    ],
+    "reviews": [],
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "faqs": [],
+    "images": [
+      {
+        "url": "/products/Activated-Charcoal/activated-Charcoal-01.png",
+        "alt": "Activated Charcoal Handmade Soap",
+        "type": "image",
+        "isPrimary": true
+      }
+    ],
+    "gallery": [
+      {
+        "url": "/products/Activated-Charcoal/activated-Charcoal-003.png",
+        "alt": "Activated Charcoal Soap packaging and MRP",
+        "type": "image"
+      }
+    ],
+    "videos": [],
+    "stock": 80,
+    "variants": [
+      {
+        "id": "charcoal-soap",
+        "name": "100g",
+        "sku": "CHARCOAL-SOAP",
+        "mrp": 299,
+        "price": 299,
+        "discountPercent": 0,
+        "stock": 80,
+        "size": "100g"
+      }
+    ],
+    "mrp": 299,
+    "discountPercent": 0,
+    "category": "body-care",
+    "subcategory": "handmade-soap",
+    "relatedProductIds": [
+      "2",
+      "3"
+    ],
+    "isBestSeller": true,
+    "createdAt": "2025-11-01",
+    "updatedAt": "2026-07-20"
+  },
+  {
+    "id": "2",
+    "title": "Goat Milk Handmade Soap",
+    "slug": "goat-milk-soap",
+    "description": "Handmade goat milk soap that rejuvenates and moisturizes skin.",
+    "benefits": [
+      "Rejuvenates skin",
+      "Moisturizes skin",
+      "SLS free",
+      "Paraben free",
+      "Natural and Hand-Crafted"
+    ],
+    "ingredients": [
+      "Goat Milk"
+    ],
+    "howToUse": [
+      "Lather on damp skin",
+      "Massage gently",
+      "Rinse well"
+    ],
+    "skinTypes": [
+      "dry",
+      "normal",
+      "sensitive",
+      "all"
+    ],
+    "hairTypes": [
+      "all"
+    ],
+    "tags": [
+      "soap",
+      "goat-milk",
+      "handmade"
+    ],
+    "concerns": [
+      "dryness",
+      "sensitivity"
+    ],
+    "reviews": [],
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "faqs": [],
+    "images": [
+      {
+        "url": "/products/Goad-Milk-Soap/Goat-Milk-01.png",
+        "alt": "Goat Milk Handmade Soap",
+        "type": "image",
+        "isPrimary": true
+      }
+    ],
+    "gallery": [
+      {
+        "url": "/products/Goad-Milk-Soap/Goat-Milk-02.png",
+        "alt": "Goat Milk Soap packaging",
+        "type": "image"
+      },
+      {
+        "url": "/products/Goad-Milk-Soap/Goat-Milk-03.png",
+        "alt": "Goat Milk Soap label details",
+        "type": "image"
+      }
+    ],
+    "videos": [],
+    "stock": 65,
+    "variants": [
+      {
+        "id": "goat-milk-soap",
+        "name": "100g",
+        "sku": "GOAT-MILK-SOAP",
+        "mrp": 399,
+        "price": 399,
+        "discountPercent": 0,
+        "stock": 65,
+        "size": "100g"
+      }
+    ],
+    "mrp": 399,
+    "discountPercent": 0,
+    "category": "body-care",
+    "subcategory": "handmade-soap",
+    "relatedProductIds": [
+      "1",
+      "3"
+    ],
+    "isNewArrival": true,
+    "createdAt": "2025-11-15",
+    "updatedAt": "2026-07-20"
+  },
+  {
+    "id": "3",
+    "title": "Fresh Coffee Face Wash",
+    "slug": "fresh-coffee-face-wash",
+    "description": "Rich in antioxidants — gives a natural glow and acts as an anti-aging face wash. Suitable for all skin types. Patch test is advisable before adding a new product to your routine.",
+    "benefits": [
+      "Rich in antioxidants",
+      "Tightens pores",
+      "Skin toner",
+      "Natural glow",
+      "Anti-aging"
+    ],
+    "ingredients": [
+      "Coffee Extract",
+      "Neem Extract",
+      "Turmeric Extract",
+      "Tea Tree Oil",
+      "Tulsi Extract",
+      "Aloe Vera Extract",
+      "Papaya Extract",
+      "Rose Water",
+      "Other Excipients: QS"
+    ],
+    "howToUse": [
+      "Apply a small amount on wet face",
+      "Gently massage with fingertips in a circular motion",
+      "Rinse with water and pat dry",
+      "Avoid contact with eyes. Shake well before use."
+    ],
+    "skinTypes": [
+      "normal",
+      "oily",
+      "combination",
+      "dry",
+      "sensitive",
+      "all"
+    ],
+    "hairTypes": [
+      "all"
+    ],
+    "tags": [
+      "cleanser",
+      "coffee",
+      "facewash"
+    ],
+    "concerns": [
+      "dullness",
+      "acne",
+      "pigmentation"
+    ],
+    "reviews": [],
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "faqs": [],
+    "images": [
+      {
+        "url": "/products/fresh-coffee-face-wash/04-hero.png",
+        "alt": "Fresh Coffee Face Wash",
+        "type": "image",
+        "isPrimary": true
+      }
+    ],
+    "gallery": [
+      {
+        "url": "/products/fresh-coffee-face-wash/02-bottle-front.png",
+        "alt": "Fresh Coffee Face Wash bottle",
+        "type": "image"
+      },
+      {
+        "url": "/products/fresh-coffee-face-wash/01-box-front.png",
+        "alt": "Fresh Coffee Face Wash packaging",
+        "type": "image"
+      },
+      {
+        "url": "/products/fresh-coffee-face-wash/03-bottle-back.png",
+        "alt": "Fresh Coffee Face Wash ingredients and directions",
+        "type": "image"
+      }
+    ],
+    "videos": [],
+    "stock": 55,
+    "variants": [
+      {
+        "id": "coffee-fw",
+        "name": "100ml",
+        "sku": "COFFEE-FW",
+        "mrp": 499,
+        "price": 499,
+        "discountPercent": 0,
+        "stock": 55,
+        "size": "100ml"
+      }
+    ],
+    "mrp": 499,
+    "discountPercent": 0,
+    "category": "skin-care",
+    "subcategory": "face-wash",
+    "relatedProductIds": [
+      "4",
+      "1"
+    ],
+    "isBestSeller": true,
+    "createdAt": "2025-12-10",
+    "updatedAt": "2026-07-20"
+  },
+  {
+    "id": "4",
+    "title": "Nourishing Peach Lotion with Kumkumadi Oil",
+    "slug": "nourishing-peach-lotion-kumkumadi-oil",
+    "description": "Peach body lotion with Kumkumadi oil — rich in moisturizing, ultra hydrating, repairs and smoothes skin. Suitable for all skin types. Patch test is advisable before adding a new product to your routine.",
+    "benefits": [
+      "Rich in moisturizing",
+      "Ultra hydrating",
+      "Repairs and smoothes skin"
+    ],
+    "ingredients": [
+      "Kumkumadi Tailam",
+      "Potato Extract",
+      "Rice Water Extract",
+      "Bakuchi Oil",
+      "Peach Extract",
+      "Mushroom Extract",
+      "Other Excipients: QS"
+    ],
+    "howToUse": [
+      "Apply 3-4 dollops of lotion onto the palm",
+      "Gently massage all over body, especially on dry areas"
+    ],
+    "skinTypes": [
+      "dry",
+      "normal",
+      "combination",
+      "all"
+    ],
+    "hairTypes": [
+      "all"
+    ],
+    "tags": [
+      "lotion",
+      "peach",
+      "kumkumadi",
+      "body-care"
+    ],
+    "concerns": [
+      "dryness",
+      "dullness"
+    ],
+    "reviews": [],
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "faqs": [],
+    "images": [
+      {
+        "url": "/products/Peach-Lotion/Peach-Lotion-02.png",
+        "alt": "Nourishing Peach Lotion with Kumkumadi Oil",
+        "type": "image",
+        "isPrimary": true
+      }
+    ],
+    "gallery": [
+      {
+        "url": "/products/Peach-Lotion/Peach-Lotion-01.png",
+        "alt": "Peach Lotion packaging box",
+        "type": "image"
+      },
+      {
+        "url": "/products/Peach-Lotion/Peach-Lotion-03.png",
+        "alt": "Peach Lotion bottle front",
+        "type": "image"
+      },
+      {
+        "url": "/products/Peach-Lotion/Peach-Lotion-04.png",
+        "alt": "Peach Lotion ingredients and MRP",
+        "type": "image"
+      }
+    ],
+    "videos": [],
+    "stock": 40,
+    "variants": [
+      {
+        "id": "peach-lotion",
+        "name": "100ml",
+        "sku": "PEACH-LOTION",
+        "mrp": 590,
+        "price": 590,
+        "discountPercent": 0,
+        "stock": 40,
+        "size": "100ml"
+      }
+    ],
+    "mrp": 590,
+    "discountPercent": 0,
+    "category": "skin-care",
+    "subcategory": "body-lotion",
+    "relatedProductIds": [
+      "3",
+      "9"
+    ],
+    "isNewArrival": true,
+    "createdAt": "2026-07-20",
+    "updatedAt": "2026-07-20"
+  },
+  {
+    "id": "5",
+    "title": "Tea Tree Essential Oil",
+    "slug": "tea-tree-essential-oil",
+    "description": "Melaleuca alternifolia (Tea Tree) 100% essential oil. Removes blemishes and promotes hair growth and shine.",
+    "benefits": [
+      "Removes blemishes",
+      "Promotes hair growth and shine"
+    ],
+    "ingredients": [
+      "Melaleuca Alternifolia (Tea Tree) 100% Essential Oil"
+    ],
+    "howToUse": [
+      "Add 3-4 drops to any cold pressed oil or daily cream and moisturiser",
+      "Add a few drops to a diffuser for aromatic use",
+      "Do not apply directly without diluting"
+    ],
+    "skinTypes": [
+      "oily",
+      "combination",
+      "sensitive"
+    ],
+    "hairTypes": [
+      "all"
+    ],
+    "tags": [
+      "essential-oil",
+      "tea-tree"
+    ],
+    "concerns": [
+      "acne",
+      "hairfall",
+      "dullness"
+    ],
+    "reviews": [],
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "faqs": [],
+    "images": [
+      {
+        "url": "/products/Tea-Tree-Oil/Tea-Tree-Oil-01.png",
+        "alt": "Tea Tree Essential Oil",
+        "type": "image",
+        "isPrimary": true
+      }
+    ],
+    "gallery": [
+      {
+        "url": "/products/Tea-Tree-Oil/Tea-Tree-Oil-02.png",
+        "alt": "Tea Tree Essential Oil packaging",
+        "type": "image"
+      },
+      {
+        "url": "/products/Tea-Tree-Oil/Tea-Tree-Oil-04.png",
+        "alt": "Tea Tree Essential Oil bottle",
+        "type": "image"
+      }
+    ],
+    "videos": [],
+    "stock": 60,
+    "variants": [
+      {
+        "id": "tea-tree-10",
+        "name": "10ml",
+        "sku": "TEA-TREE-10",
+        "mrp": 525,
+        "price": 525,
+        "discountPercent": 0,
+        "stock": 60,
+        "size": "10ml"
+      }
+    ],
+    "mrp": 525,
+    "discountPercent": 0,
+    "category": "essential-oils",
+    "relatedProductIds": [
+      "6",
+      "7",
+      "8"
+    ],
+    "isBestSeller": true,
+    "createdAt": "2025-10-12",
+    "updatedAt": "2026-07-20"
+  },
+  {
+    "id": "6",
+    "title": "Lavender Essential Oil",
+    "slug": "lavender-essential-oil",
+    "description": "Lavandula angustifolia (Lavender) 100% essential oil. Stimulates hair growth, exceptional for dry skin and acne, and works as a soothing and calming aromatic oil.",
+    "benefits": [
+      "Stimulates hair growth",
+      "Exceptional for dry skin and acne",
+      "Soothing and calming aromatic oil"
+    ],
+    "ingredients": [
+      "Lavandula Angustifolia (Lavender) 100% Essential Oil"
+    ],
+    "howToUse": [
+      "Dilute before applying to skin or scalp",
+      "Add a few drops to a diffuser for aromatic use",
+      "Never apply undiluted"
+    ],
+    "skinTypes": [
+      "sensitive",
+      "dry",
+      "normal"
+    ],
+    "hairTypes": [
+      "all"
+    ],
+    "tags": [
+      "essential-oil",
+      "lavender"
+    ],
+    "concerns": [
+      "sensitivity",
+      "dryness",
+      "acne"
+    ],
+    "reviews": [],
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "faqs": [],
+    "images": [
+      {
+        "url": "/products/Lavender-Oil/Lavender-oil-01.png",
+        "alt": "Lavender Essential Oil",
+        "type": "image",
+        "isPrimary": true
+      }
+    ],
+    "gallery": [
+      {
+        "url": "/products/Lavender-Oil/Lavender-oil-02.png",
+        "alt": "Lavender Essential Oil packaging",
+        "type": "image"
+      },
+      {
+        "url": "/products/Lavender-Oil/Lavender-oil-03.png",
+        "alt": "Lavender Essential Oil bottle",
+        "type": "image"
+      }
+    ],
+    "videos": [],
+    "stock": 70,
+    "variants": [
+      {
+        "id": "lavender-10",
+        "name": "10ml",
+        "sku": "LAVENDER-10",
+        "mrp": 525,
+        "price": 525,
+        "discountPercent": 0,
+        "stock": 70,
+        "size": "10ml"
+      }
+    ],
+    "mrp": 525,
+    "discountPercent": 0,
+    "category": "essential-oils",
+    "relatedProductIds": [
+      "5",
+      "7",
+      "8"
+    ],
+    "isBestSeller": true,
+    "createdAt": "2025-09-01",
+    "updatedAt": "2026-07-20"
+  },
+  {
+    "id": "7",
+    "title": "Eucalyptus Essential Oil",
+    "slug": "eucalyptus-essential-oil",
+    "description": "Eucalyptus 100% essential oil. Natural air disinfectant, natural mosquito repellent, and eases joint pain.",
+    "benefits": [
+      "Natural air disinfectant",
+      "Natural mosquito repellent",
+      "Eases joint pain"
+    ],
+    "ingredients": [
+      "Eucalyptus 100% Essential Oil"
+    ],
+    "howToUse": [
+      "Diffuse for aromatic use",
+      "Dilute before body massage",
+      "Never apply undiluted to skin"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "hairTypes": [
+      "all"
+    ],
+    "tags": [
+      "essential-oil",
+      "eucalyptus"
+    ],
+    "concerns": [
+      "sensitivity"
+    ],
+    "reviews": [],
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "faqs": [],
+    "images": [
+      {
+        "url": "/products/Eucalyptus-Oil/Eucalyptus-Oil-01.png",
+        "alt": "Eucalyptus Essential Oil",
+        "type": "image",
+        "isPrimary": true
+      }
+    ],
+    "gallery": [
+      {
+        "url": "/products/Eucalyptus-Oil/Eucalyptus-Oil-02.png",
+        "alt": "Eucalyptus Essential Oil packaging",
+        "type": "image"
+      },
+      {
+        "url": "/products/Eucalyptus-Oil/Eucalyptus-Oil-03.png",
+        "alt": "Eucalyptus Essential Oil bottle",
+        "type": "image"
+      }
+    ],
+    "videos": [],
+    "stock": 44,
+    "variants": [
+      {
+        "id": "eucalyptus-10",
+        "name": "10ml",
+        "sku": "EUCALYPTUS-10",
+        "mrp": 525,
+        "price": 525,
+        "discountPercent": 0,
+        "stock": 44,
+        "size": "10ml"
+      }
+    ],
+    "mrp": 525,
+    "discountPercent": 0,
+    "category": "essential-oils",
+    "relatedProductIds": [
+      "5",
+      "6",
+      "8"
+    ],
+    "createdAt": "2025-10-01",
+    "updatedAt": "2026-07-20"
+  },
+  {
+    "id": "8",
+    "title": "Carrot Seed Essential Oil",
+    "slug": "carrot-seed-essential-oil",
+    "description": "Extracted from the seed of the Daucus carota plant. A great oil to reduce pigmentation and enhance and repair skin naturally.",
+    "benefits": [
+      "Reduces pigmentation",
+      "Adds glow and shine to face",
+      "Enhances and repairs skin naturally"
+    ],
+    "ingredients": [
+      "Daucus Carota (Carrot Seed) 100% Essential Oil"
+    ],
+    "howToUse": [
+      "Skin: Add 3-4 drops to any cold pressed oil such as coconut or jojoba",
+      "Aromatic: Add a few drops to a diffuser",
+      "Dab a few drops on cotton around pillows for a soothing scent"
+    ],
+    "skinTypes": [
+      "dry",
+      "normal",
+      "combination"
+    ],
+    "hairTypes": [
+      "all"
+    ],
+    "tags": [
+      "essential-oil",
+      "carrot-seed"
+    ],
+    "concerns": [
+      "pigmentation",
+      "dullness"
+    ],
+    "reviews": [],
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "faqs": [],
+    "images": [
+      {
+        "url": "/products/Carrot-seed-oil/Corrot-Seed-Oil-01.png",
+        "alt": "Carrot Seed Essential Oil",
+        "type": "image",
+        "isPrimary": true
+      }
+    ],
+    "gallery": [
+      {
+        "url": "/products/Carrot-seed-oil/Corrot-Seed-Oil-03.png",
+        "alt": "Carrot Seed Essential Oil bottle",
+        "type": "image"
+      },
+      {
+        "url": "/products/Carrot-seed-oil/Corrot-Seed-Oil-04.png",
+        "alt": "Carrot Seed Essential Oil directions",
+        "type": "image"
+      },
+      {
+        "url": "/products/Carrot-seed-oil/Corrot-Seed-Oil-05.png",
+        "alt": "Carrot Seed Essential Oil packaging",
+        "type": "image"
+      }
+    ],
+    "videos": [],
+    "stock": 36,
+    "variants": [
+      {
+        "id": "carrot-seed-10",
+        "name": "10ml",
+        "sku": "CARROT-SEED-10",
+        "mrp": 525,
+        "price": 525,
+        "discountPercent": 0,
+        "stock": 36,
+        "size": "10ml"
+      }
+    ],
+    "mrp": 525,
+    "discountPercent": 0,
+    "category": "essential-oils",
+    "relatedProductIds": [
+      "5",
+      "6",
+      "7"
+    ],
+    "isNewArrival": true,
+    "createdAt": "2026-07-20",
+    "updatedAt": "2026-07-20"
+  },
+  {
+    "id": "9",
+    "title": "Watermelon Seed Cold Pressed Oil",
+    "slug": "watermelon-seed-cold-pressed-oil",
+    "description": "Citrullus lanatus (Watermelon) seed 100% pure and natural cold pressed oil. Fights uneven skin tone and works as a pure and natural face moisturiser.",
+    "benefits": [
+      "Fights uneven skin tone",
+      "Pure and natural face moisturiser",
+      "From farm to home",
+      "Lab tested"
+    ],
+    "ingredients": [
+      "Citrullus Lanatus (Watermelon) Seed 100% Pure & Natural Cold Pressed Oil"
+    ],
+    "howToUse": [
+      "Apply a few drops on face and neck",
+      "Massage gently until absorbed",
+      "Use morning or night"
+    ],
+    "skinTypes": [
+      "normal",
+      "combination",
+      "oily",
+      "dry"
+    ],
+    "hairTypes": [
+      "all"
+    ],
+    "tags": [
+      "cold-pressed",
+      "watermelon"
+    ],
+    "concerns": [
+      "pigmentation",
+      "dullness",
+      "dryness"
+    ],
+    "reviews": [],
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "faqs": [],
+    "images": [
+      {
+        "url": "/products/Watermelon/Watermelon-cold-Oil-02.png",
+        "alt": "Watermelon Seed Cold Pressed Oil",
+        "type": "image",
+        "isPrimary": true
+      }
+    ],
+    "gallery": [
+      {
+        "url": "/products/Watermelon/Watermelon-cold-Oil-01.png",
+        "alt": "Watermelon Seed Oil packaging",
+        "type": "image"
+      },
+      {
+        "url": "/products/Watermelon/Watermelon-cold-Oil-03.png",
+        "alt": "Watermelon Seed Oil bottle",
+        "type": "image"
+      },
+      {
+        "url": "/products/Watermelon/Watermelon-cold-Oil-05.png",
+        "alt": "Watermelon Seed Oil MRP panel",
+        "type": "image"
+      }
+    ],
+    "videos": [],
+    "stock": 45,
+    "variants": [
+      {
+        "id": "watermelon-100",
+        "name": "100ml",
+        "sku": "WATERMELON-100",
+        "mrp": 750,
+        "price": 750,
+        "discountPercent": 0,
+        "stock": 45,
+        "size": "100ml"
+      }
+    ],
+    "mrp": 750,
+    "discountPercent": 0,
+    "category": "cold-pressed-oils",
+    "relatedProductIds": [
+      "10",
+      "11",
+      "12",
+      "13"
+    ],
+    "isBestSeller": true,
+    "isNewArrival": true,
+    "createdAt": "2026-03-01",
+    "updatedAt": "2026-07-20"
+  },
+  {
+    "id": "10",
+    "title": "Jojoba Cold Pressed Oil",
+    "slug": "jojoba-cold-pressed-oil",
+    "description": "Simmondsia chinensis (Jojoba) 100% pure and natural cold pressed oil. Soothes dry skin and chapped lips with deeply hydrating nourishment.",
+    "benefits": [
+      "Soothes dry skin and chapped lips",
+      "Deeply hydrating oil",
+      "From farm to home",
+      "Lab tested"
+    ],
+    "ingredients": [
+      "Simmondsia Chinensis (Jojoba) 100% Pure & Natural Cold Pressed Oil"
+    ],
+    "howToUse": [
+      "Apply a few drops on face, lips, or body",
+      "Massage gently until absorbed",
+      "Use alone or mix into moisturiser"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "hairTypes": [
+      "damaged",
+      "straight",
+      "wavy",
+      "curly"
+    ],
+    "tags": [
+      "cold-pressed",
+      "jojoba"
+    ],
+    "concerns": [
+      "dryness",
+      "dullness"
+    ],
+    "reviews": [],
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "faqs": [],
+    "images": [
+      {
+        "url": "/products/Jojoba-oil/Jojoba-Oil-02.png",
+        "alt": "Jojoba Cold Pressed Oil",
+        "type": "image",
+        "isPrimary": true
+      }
+    ],
+    "gallery": [
+      {
+        "url": "/products/Jojoba-oil/Jojoba-Oil-03.png",
+        "alt": "Jojoba Cold Pressed Oil bottle",
+        "type": "image"
+      },
+      {
+        "url": "/products/Jojoba-oil/Jojoba-Oil-04.png",
+        "alt": "Jojoba Cold Pressed Oil MRP panel",
+        "type": "image"
+      }
+    ],
+    "videos": [],
+    "stock": 40,
+    "variants": [
+      {
+        "id": "jojoba-100",
+        "name": "100ml",
+        "sku": "JOJOBA-100",
+        "mrp": 750,
+        "price": 750,
+        "discountPercent": 0,
+        "stock": 40,
+        "size": "100ml"
+      }
+    ],
+    "mrp": 750,
+    "discountPercent": 0,
+    "category": "cold-pressed-oils",
+    "relatedProductIds": [
+      "9",
+      "11",
+      "12",
+      "13"
+    ],
+    "isNewArrival": true,
+    "createdAt": "2026-07-20",
+    "updatedAt": "2026-07-20"
+  },
+  {
+    "id": "11",
+    "title": "Wild Apricot Cold Pressed Oil",
+    "slug": "wild-apricot-cold-pressed-oil",
+    "description": "Prunus armeniaca (Wild Apricot kernel) 100% pure and natural cold pressed oil. A light oil that softens skin and prevents and reduces wrinkles.",
+    "benefits": [
+      "Light oil that softens skin",
+      "Prevents and reduces wrinkles",
+      "From farm to home",
+      "Lab tested"
+    ],
+    "ingredients": [
+      "Prunus Armeniaca (Wild Apricot Kernel) 100% Pure & Natural Cold Pressed Oil"
+    ],
+    "howToUse": [
+      "Warm 2-3 drops between palms",
+      "Massage over face and body",
+      "Use daily or as needed"
+    ],
+    "skinTypes": [
+      "dry",
+      "normal",
+      "sensitive"
+    ],
+    "hairTypes": [
+      "all"
+    ],
+    "tags": [
+      "cold-pressed",
+      "wild-apricot"
+    ],
+    "concerns": [
+      "dryness",
+      "dullness",
+      "pigmentation"
+    ],
+    "reviews": [],
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "faqs": [],
+    "images": [
+      {
+        "url": "/products/Wild-Apricot/Wild-Apricot-02.png",
+        "alt": "Wild Apricot Cold Pressed Oil",
+        "type": "image",
+        "isPrimary": true
+      }
+    ],
+    "gallery": [
+      {
+        "url": "/products/Wild-Apricot/Wild-Apricot-01.png",
+        "alt": "Wild Apricot Cold Pressed Oil packaging",
+        "type": "image"
+      },
+      {
+        "url": "/products/Wild-Apricot/Wild-Apricot-03.png",
+        "alt": "Wild Apricot Cold Pressed Oil bottle",
+        "type": "image"
+      },
+      {
+        "url": "/products/Wild-Apricot/Wild-Apricot-04.png",
+        "alt": "Wild Apricot Cold Pressed Oil MRP panel",
+        "type": "image"
+      }
+    ],
+    "videos": [],
+    "stock": 34,
+    "variants": [
+      {
+        "id": "wild-apricot-100",
+        "name": "100ml",
+        "sku": "WILD-APRICOT-100",
+        "mrp": 795,
+        "price": 795,
+        "discountPercent": 0,
+        "stock": 34,
+        "size": "100ml"
+      }
+    ],
+    "mrp": 795,
+    "discountPercent": 0,
+    "category": "cold-pressed-oils",
+    "relatedProductIds": [
+      "9",
+      "10",
+      "12",
+      "13"
+    ],
+    "isNewArrival": true,
+    "createdAt": "2026-07-20",
+    "updatedAt": "2026-07-20"
+  },
+  {
+    "id": "12",
+    "title": "Black Cumin Cold Pressed Oil",
+    "slug": "black-cumin-cold-pressed-oil",
+    "description": "Black cumin seed oil is an ultra smooth immunity-building massage oil. It controls hair fall and is extremely unique — it not only does wonders for skin and hair but also has medicinal value.",
+    "benefits": [
+      "Ultra smooth massage oil",
+      "Controls hair fall",
+      "Immunity building",
+      "Medicinal value for skin and hair"
+    ],
+    "ingredients": [
+      "Nigella Sativa (Black Cumin) Seed Oil"
+    ],
+    "howToUse": [
+      "Body: Smooth onto face, neck and all over the body. Massage gently and let it soak in.",
+      "Hair: Apply directly to hair, then wash within a few hours — do not keep overnight.",
+      "Patch test recommended before use."
+    ],
+    "skinTypes": [
+      "dry",
+      "normal",
+      "combination"
+    ],
+    "hairTypes": [
+      "damaged",
+      "straight",
+      "wavy",
+      "curly",
+      "coily"
+    ],
+    "tags": [
+      "cold-pressed",
+      "black-cumin"
+    ],
+    "concerns": [
+      "hairfall",
+      "dryness",
+      "dullness"
+    ],
+    "reviews": [],
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "faqs": [],
+    "images": [
+      {
+        "url": "/products/Black-Cumin/Black-Cumin-02.png",
+        "alt": "Black Cumin Cold Pressed Oil",
+        "type": "image",
+        "isPrimary": true
+      }
+    ],
+    "gallery": [
+      {
+        "url": "/products/Black-Cumin/Black-Cumin-03.png",
+        "alt": "Black Cumin Cold Pressed Oil bottle",
+        "type": "image"
+      },
+      {
+        "url": "/products/Black-Cumin/Black-Cumin-05.png",
+        "alt": "Black Cumin Cold Pressed Oil directions",
+        "type": "image"
+      }
+    ],
+    "videos": [],
+    "stock": 30,
+    "variants": [
+      {
+        "id": "black-cumin-100",
+        "name": "100ml",
+        "sku": "BLACK-CUMIN-100",
+        "mrp": 750,
+        "price": 750,
+        "discountPercent": 0,
+        "stock": 30,
+        "size": "100ml"
+      }
+    ],
+    "mrp": 750,
+    "discountPercent": 0,
+    "category": "cold-pressed-oils",
+    "relatedProductIds": [
+      "9",
+      "10",
+      "11",
+      "13"
+    ],
+    "isNewArrival": true,
+    "createdAt": "2026-07-20",
+    "updatedAt": "2026-07-20"
+  },
+  {
+    "id": "13",
+    "title": "Cucumber Seed Cold Pressed Oil",
+    "slug": "cucumber-seed-cold-pressed-oil",
+    "description": "Cucumis sativus (Cucumber) seed oil is extracted from the seed of the cucumber plant. It is extremely rich in antioxidants, works as an anti-aging natural sunscreen, reduces wrinkles, and is very good for dry hair and dandruff.",
+    "benefits": [
+      "Natural sunscreen",
+      "Anti-aging face oil",
+      "Rich in antioxidants",
+      "Reduces wrinkles",
+      "Good for dry hair and dandruff"
+    ],
+    "ingredients": [
+      "Cucumis Sativus (Cucumber) Seed 100% Pure & Natural Cold Pressed Oil"
+    ],
+    "howToUse": [
+      "Smooth onto face, neck and all over the body",
+      "Massage gently and let it soak into skin",
+      "Can apply anytime during the day or night",
+      "Patch test recommended before use"
+    ],
+    "skinTypes": [
+      "oily",
+      "combination",
+      "normal",
+      "sensitive"
+    ],
+    "hairTypes": [
+      "damaged",
+      "curly",
+      "wavy"
+    ],
+    "tags": [
+      "cold-pressed",
+      "cucumber-seed"
+    ],
+    "concerns": [
+      "dryness",
+      "sensitivity",
+      "dullness"
+    ],
+    "reviews": [],
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "faqs": [],
+    "images": [
+      {
+        "url": "/products/Cucumber%20Seed/Cucumber-Seed-01.png",
+        "alt": "Cucumber Seed Cold Pressed Oil",
+        "type": "image",
+        "isPrimary": true
+      }
+    ],
+    "gallery": [
+      {
+        "url": "/products/Cucumber%20Seed/Cucumber-Seed-02.png",
+        "alt": "Cucumber Seed Cold Pressed Oil packaging",
+        "type": "image"
+      },
+      {
+        "url": "/products/Cucumber%20Seed/Cucumber-Seed-03.png",
+        "alt": "Cucumber Seed Cold Pressed Oil bottle",
+        "type": "image"
+      },
+      {
+        "url": "/products/Cucumber%20Seed/Cucumber-Seed-05.png",
+        "alt": "Cucumber Seed Cold Pressed Oil directions",
+        "type": "image"
+      }
+    ],
+    "videos": [],
+    "stock": 28,
+    "variants": [
+      {
+        "id": "cucumber-seed-100",
+        "name": "100ml",
+        "sku": "CUCUMBER-SEED-100",
+        "mrp": 750,
+        "price": 750,
+        "discountPercent": 0,
+        "stock": 28,
+        "size": "100ml"
+      }
+    ],
+    "mrp": 750,
+    "discountPercent": 0,
+    "category": "cold-pressed-oils",
+    "relatedProductIds": [
+      "9",
+      "10",
+      "11",
+      "12"
+    ],
+    "isNewArrival": true,
+    "createdAt": "2026-07-20",
+    "updatedAt": "2026-07-20"
+  }
+]

@@ -1,0 +1,307 @@
+@import 'tailwindcss';
+
+/* ─────────────────────────────────────────────
+   Aura of Nature — Design System Tokens
+   Luxury · Organic · Editorial
+───────────────────────────────────────────── */
+
+@theme {
+  /* Color */
+  --color-cream: #f4efe6;
+  --color-warm-white: #faf8f4;
+  --color-beige: #e6dccb;
+  --color-beige-deep: #d4c6b0;
+  --color-forest: #243528;
+  --color-forest-deep: #1a261c;
+  --color-olive: #5a6b48;
+  --color-olive-soft: #7a8b68;
+  --color-soft-gold: #b8975c;
+  --color-soft-gold-light: #d4b87a;
+  --color-charcoal: #1a1a18;
+  --color-charcoal-muted: #4a4844;
+  --color-mist: rgba(250, 248, 244, 0.72);
+  --color-glass: rgba(250, 248, 244, 0.12);
+  --color-glass-dark: rgba(26, 26, 24, 0.42);
+  --color-line: rgba(26, 26, 24, 0.12);
+  --color-line-light: rgba(250, 248, 244, 0.22);
+
+  /* Typography */
+  --font-display: 'Cormorant Garamond', 'Times New Roman', serif;
+  --font-editorial: 'Bodoni Moda', 'Cormorant Garamond', 'Times New Roman', serif;
+  --font-sans: 'Inter', 'Outfit', ui-sans-serif, sans-serif;
+  --font-nav: 'Oxygen', 'Inter', ui-sans-serif, sans-serif;
+
+  --text-display-2xl: clamp(3.5rem, 9vw, 7.5rem);
+  --text-display-xl: clamp(2.75rem, 6.5vw, 5.5rem);
+  --text-display-lg: clamp(2.25rem, 4.5vw, 3.75rem);
+  --text-display-md: clamp(1.75rem, 3vw, 2.75rem);
+  --text-display-sm: clamp(1.35rem, 2vw, 1.85rem);
+  --text-body-lg: 1.125rem;
+  --text-body: 1rem;
+  --text-body-sm: 0.875rem;
+  --text-micro: 0.6875rem;
+
+  --tracking-micro: 0.28em;
+  --tracking-label: 0.18em;
+  --leading-display: 0.95;
+  --leading-body: 1.65;
+
+  /* Spacing — luxurious editorial rhythm */
+  --spacing-section: clamp(5rem, 12vw, 10rem);
+  --spacing-section-sm: clamp(3.5rem, 8vw, 6rem);
+  --spacing-gutter: clamp(1.25rem, 4vw, 3.5rem);
+  --spacing-content: 72rem;
+
+  /* Radii */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-pill: 999px;
+  --radius-circle: 50%;
+
+  /* Shadows */
+  --shadow-soft: 0 18px 50px rgba(26, 26, 24, 0.08);
+  --shadow-lift: 0 24px 60px rgba(36, 53, 40, 0.14);
+  --shadow-glass: 0 8px 32px rgba(26, 26, 24, 0.1);
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-soft: cubic-bezier(0.45, 0, 0.55, 1);
+  --duration-fast: 200ms;
+  --duration-base: 400ms;
+  --duration-slow: 800ms;
+  --duration-reveal: 1200ms;
+
+  /* Z-index */
+  --z-header: 50;
+  --z-menu: 60;
+  --z-overlay: 70;
+  --z-cursor: 90;
+  --z-loader: 100;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: auto;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  background:
+    radial-gradient(ellipse 80% 50% at 10% -10%, rgba(184, 151, 92, 0.08), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(90, 107, 72, 0.07), transparent 50%),
+    var(--color-cream);
+  color: var(--color-charcoal);
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* In @layer base so Tailwind utilities (bg-*, border-*) can override */
+@layer base {
+  button {
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    border: none;
+    background: none;
+  }
+}
+
+::selection {
+  background: var(--color-forest);
+  color: var(--color-warm-white);
+}
+
+:focus-visible {
+  outline: 1.5px solid var(--color-soft-gold);
+  outline-offset: 3px;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: var(--leading-display);
+}
+
+.text-micro {
+  font-size: var(--text-micro);
+  letter-spacing: var(--tracking-micro);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.text-label {
+  font-size: var(--text-micro);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.container-aura {
+  width: 100%;
+  max-width: var(--spacing-content);
+  margin-inline: auto;
+  padding-inline: var(--spacing-gutter);
+}
+
+.section-aura {
+  padding-block: var(--spacing-section);
+}
+
+.section-aura-sm {
+  padding-block: var(--spacing-section-sm);
+}
+
+/* Glass surfaces */
+.glass {
+  background: var(--color-mist);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  border: 1px solid var(--color-line);
+  box-shadow: var(--shadow-glass);
+}
+
+.glass-dark {
+  background: var(--color-glass-dark);
+  backdrop-filter: blur(20px) saturate(1.15);
+  -webkit-backdrop-filter: blur(20px) saturate(1.15);
+  border: 1px solid var(--color-line-light);
+  box-shadow: var(--shadow-glass);
+}
+
+/* Soft grain overlay for organic luxury */
+.grain::before {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+  z-index: 1;
+}
+
+/* Horizontal rule — editorial */
+.rule {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-line),
+    transparent
+  );
+  border: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(1.02);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.hero-float {
+  animation: hero-float 5.5s ease-in-out infinite;
+}
+
+@keyframes hero-caret {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.hero-caret {
+  animation: hero-caret 0.9s steps(1) infinite;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Dark mode */
+html[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+html[data-theme='dark'] body {
+  background: #121816;
+  color: #e8e4dc;
+}
+
+html[data-theme='dark'] .bg-cream,
+html[data-theme='dark'] .bg-warm-white,
+html[data-theme='dark'] .bg-\[\#F8F5EE\],
+html[data-theme='dark'] .bg-\[\#f3efe6\] {
+  background-color: #1a221c !important;
+}
+
+html[data-theme='dark'] .text-forest,
+html[data-theme='dark'] .text-charcoal {
+  color: #e8e4dc !important;
+}
+
+html[data-theme='dark'] .text-olive,
+html[data-theme='dark'] .text-charcoal-muted,
+html[data-theme='dark'] .text-charcoal\/70,
+html[data-theme='dark'] .text-charcoal\/75 {
+  color: #a8b09e !important;
+}
+
+html.aura-custom-cursor,
+html.aura-custom-cursor * {
+  cursor: none !important;
+}
+

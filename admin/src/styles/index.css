@@ -1,0 +1,46 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-cream: #f7f3ec;
+  --color-warm-white: #faf8f4;
+  --color-beige: #ebe4d8;
+  --color-forest: #2f3d2e;
+  --color-olive: #5c6b4a;
+  --color-soft-gold: #c4a574;
+  --color-charcoal: #1c1c1c;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Outfit', system-ui, sans-serif;
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/cormorantgaramond/v16/co3bmX5slGCuKmstTARrX9v8.woff2')
+    format('woff2');
+}
+
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/outfit/v11/QGYyz_MVcBeNP4NjuGObqx1XmO1.woff2')
+    format('woff2');
+}
+
+html {
+  font-family: var(--font-sans);
+}
+
+body {
+  margin: 0;
+  background: var(--color-cream);
+  color: var(--color-charcoal);
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}

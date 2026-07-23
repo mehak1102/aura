@@ -1,0 +1,56 @@
+[
+  {
+    "id": "blog-1",
+    "slug": "morning-skincare-ritual",
+    "title": "The 5-step morning ritual for glowing skin",
+    "category": "Rituals",
+    "author": "Aura Editorial",
+    "status": "published",
+    "publishedAt": "2026-03-12"
+  },
+  {
+    "id": "blog-2",
+    "slug": "understanding-ayurvedic-skin-types",
+    "title": "Understanding your Ayurvedic skin type",
+    "category": "Ayurveda",
+    "author": "Dr. Priya Sharma",
+    "status": "published",
+    "publishedAt": "2026-02-28"
+  },
+  {
+    "id": "blog-3",
+    "slug": "benefits-of-cold-pressed-oils",
+    "title": "Why cold-pressed oils change everything",
+    "category": "Ingredients",
+    "author": "Aura Editorial",
+    "status": "published",
+    "publishedAt": "2026-02-15"
+  },
+  {
+    "id": "blog-4",
+    "slug": "seasonal-skincare-winter",
+    "title": "Winter skincare: protecting your barrier",
+    "category": "Seasonal",
+    "author": "Aura Editorial",
+    "status": "published",
+    "publishedAt": "2026-01-20"
+  },
+  {
+    "id": "blog-5",
+    "slug": "essential-oils-for-sleep",
+    "title": "Essential oils for a restful night",
+    "category": "Wellness",
+    "author": "Aura Editorial",
+    "status": "published",
+    "publishedAt": "2026-01-08"
+  },
+  {
+    "id": "blog-6",
+    "slug": "hair-oil-massage-guide",
+    "title": "The art of Ayurvedic hair oiling",
+    "category": "Hair Care",
+    "author": "Aura Editorial",
+    "status": "draft",
+    "publishedAt": null
+  }
+]
