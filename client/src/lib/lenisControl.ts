@@ -53,3 +53,12 @@ export function scrollToSection(target: string | HTMLElement, offset = 0) {
 
   el.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
+
+/** Scroll to an absolute window Y position (used by pinned horizontal sections). */
+export function scrollToY(y: number, duration = 1.15) {
+  if (lenisRef) {
+    lenisRef.scrollTo(y, { duration })
+    return
+  }
+  window.scrollTo({ top: y, behavior: 'smooth' })
+}

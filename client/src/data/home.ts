@@ -1,4 +1,5 @@
 import { ROUTES } from '@/routes/paths'
+import { productPath } from '@/lib/seo'
 import type { LuxurySlide } from '@components/slider'
 
 /** Homepage content — Aura of Nature as content reference, original copy */
@@ -74,10 +75,13 @@ export const editorialScroll = {
     images: {
       primary: '/products/fresh-coffee-face-wash/04-hero-card.png',
       primaryAlt: 'Fresh Coffee Face Wash',
+      primaryTo: productPath('fresh-coffee-face-wash'),
       secondary: '/products/Goad-Milk-Soap/Goat-Milk-01-card.png',
       secondaryAlt: 'Goat Milk Handmade Soap',
+      secondaryTo: productPath('goat-milk-soap'),
       tall: '/products/Watermelon/Watermelon-cold-Oil-02-card.png',
       tallAlt: 'Watermelon Seed Cold Pressed Oil',
+      tallTo: productPath('watermelon-seed-cold-pressed-oil'),
     },
   },
   spaces: {
@@ -90,26 +94,42 @@ export const editorialScroll = {
     images: {
       hero: '/products/Jojoba-oil/Jojoba-Oil-02-card.png',
       heroAlt: 'Jojoba Cold Pressed Oil',
+      heroTo: productPath('jojoba-cold-pressed-oil'),
       main: '/products/Peach-Lotion/Peach-Lotion-02-card.png',
       mainAlt: 'Nourishing Peach Lotion',
+      mainTo: productPath('nourishing-peach-lotion-kumkumadi-oil'),
       overlap: '/products/Tea-Tree-Oil/Tea-Tree-Oil-01-card.png',
       overlapAlt: 'Tea Tree Essential Oil',
+      overlapTo: productPath('tea-tree-essential-oil'),
       detail: '/products/Lavender-Oil/Lavender-oil-02-card.png',
       detailAlt: 'Lavender Essential Oil',
+      detailTo: productPath('lavender-essential-oil'),
     },
   },
   book: {
     title: 'Shop now',
     body: [
       'In every Aura ritual, guests share care, scent, and quiet moments that feel personal.',
+      'Oils, soaps, and lotions are chosen for how they feel on skin — not how loudly they claim to transform it.',
       'Our atelier accompanies each formula from harvest to bottle — so you never have to wonder what is inside.',
     ],
     cta: { label: 'Experiences', to: ROUTES.bestSellers },
     images: {
       main: '/products/Wild-Apricot/Wild-Apricot-02-card.png',
       mainAlt: 'Wild Apricot Cold Pressed Oil',
+      mainTo: productPath('wild-apricot-cold-pressed-oil'),
       overlap: '/products/Activated-Charcoal/activated-Charcoal-01-card.png',
       overlapAlt: 'Activated Charcoal Handmade Soap',
+      overlapTo: productPath('activated-charcoal-soap'),
+      accent: '/products/Black-Cumin/Black-Cumin-02-card.png',
+      accentAlt: 'Black Cumin Cold Pressed Oil',
+      accentTo: productPath('black-cumin-cold-pressed-oil'),
+      detail: '/products/Carrot-seed-oil/Corrot-Seed-Oil-05-card.png',
+      detailAlt: 'Carrot Seed Oil',
+      detailTo: productPath('carrot-seed-essential-oil'),
+      tertiary: '/products/Goad-Milk-Soap/Goat-Milk-02-card.png',
+      tertiaryAlt: 'Goat Milk Handmade Soap',
+      tertiaryTo: productPath('goat-milk-soap'),
     },
   },
 }
