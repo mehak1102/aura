@@ -32,8 +32,10 @@ export default function HomePage() {
       <HomeStory />
       <HomeEditorialScroll />
       <HomeFeaturedSplit />
-      <HomeConcerns />
+      {/* <HomeConcerns /> */}
       <HomeExpectations />
+      <HomeConcerns />
+
       <HomeIngredients />
       <HomeCategories />
       <HomeBestSellers />

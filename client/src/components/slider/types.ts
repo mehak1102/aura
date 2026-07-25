@@ -9,4 +9,6 @@ export type LuxurySlide = {
   image: string
   imageAlt?: string
   cta?: { label: string; to: string }
+  /** Three short feature labels under the featured product card */
+  features?: [string, string, string]
 }

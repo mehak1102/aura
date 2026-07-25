@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowDownLeft } from 'lucide-react'
+import { ArrowDownLeft, ArrowUpRight, Leaf } from 'lucide-react'
 import { editorialScroll, featuredSplit } from '@/data/home'
 import {
   gsap,
@@ -21,7 +21,7 @@ function GhostPill({
   return (
     <Link
       to={to}
-      className="group relative inline-flex h-12 items-center overflow-hidden rounded-full border border-warm-white/80 px-9 text-micro tracking-[0.26em] uppercase text-warm-white transition-shadow duration-500 hover:shadow-[0_0_0_1px_rgba(250,248,244,0.35)]"
+      className="group relative inline-flex h-11 items-center overflow-hidden rounded-full border border-warm-white/80 px-6 text-[0.65rem] tracking-[0.22em] uppercase text-warm-white transition-shadow duration-500 hover:shadow-[0_0_0_1px_rgba(250,248,244,0.35)] sm:h-12 sm:px-9 sm:text-micro sm:tracking-[0.26em]"
     >
       <span
         aria-hidden
@@ -44,7 +44,7 @@ function RitualsCta({ to, children }: { to: string; children: string }) {
   return (
     <Link
       to={to}
-      className="group relative inline-flex h-12 items-center overflow-hidden rounded-full border border-warm-white/80 px-9 text-micro tracking-[0.26em] uppercase text-warm-white"
+      className="group relative inline-flex h-11 items-center overflow-hidden rounded-full border border-warm-white/80 px-6 text-[0.65rem] tracking-[0.22em] uppercase text-warm-white sm:h-12 sm:px-9 sm:text-micro sm:tracking-[0.26em]"
     >
       <span
         aria-hidden
@@ -417,7 +417,7 @@ export function HomeEditorialScroll() {
   return (
     <section
       ref={scope}
-      className="relative bg-[#6f3a44] text-warm-white lg:h-[160vh]"
+      className="relative z-10 bg-[#6f3a44] text-warm-white lg:h-[160vh]"
     >
       {/* Desktop: sticky viewport — section height = scroll length (no pin-spacer) */}
       <div className="hidden h-screen overflow-hidden lg:sticky lg:top-0 lg:block">
@@ -447,7 +447,7 @@ export function HomeEditorialScroll() {
               src={groups.images.secondary}
               alt={groups.images.secondaryAlt}
               to={groups.images.secondaryTo}
-              className="aspect-[3/4] w-full rotate-[-1.5deg]"
+              className="aspect-[3/4] w-full"
             />
             <ScrollDiscover label={groups.scrollHint} onDiscover={onDiscover} />
           </div>
@@ -600,7 +600,7 @@ export function HomeEditorialScroll() {
           </div>
 
           <RitualTitle
-            lines={['Radient']}
+            lines={['Radiant']}
             className="absolute bottom-[11%] left-[min(60%,calc(4%+700px))] z-20 font-display text-[clamp(3.25rem,6.5vw,5.5rem)] leading-[0.88] tracking-tight uppercase"
           />
 
@@ -618,14 +618,14 @@ export function HomeEditorialScroll() {
               src={book.images.detail}
               alt={book.images.detailAlt}
               to={book.images.detailTo}
-              className="absolute bottom-[-12%] left-[-38%] z-20 h-[46%] w-[62%] rotate-[-3deg]"
+              className="absolute bottom-[-12%] left-[-38%] z-20 h-[46%] w-[62%]"
             />
             <Frame
               float={0.48}
               src={book.images.tertiary}
               alt={book.images.tertiaryAlt}
               to={book.images.tertiaryTo}
-              className="absolute bottom-[-8%] right-[-10%] z-30 h-[38%] w-[52%] rotate-[2.5deg]"
+              className="absolute bottom-[-8%] right-[-10%] z-30 h-[38%] w-[52%]"
             />
           </div>
         </div>
@@ -633,31 +633,31 @@ export function HomeEditorialScroll() {
       </div>
 
       {/* Mobile / tablet — larger stacked collage */}
-      <div className="space-y-20 px-[var(--spacing-gutter)] py-[var(--spacing-section)] lg:hidden">
+      <div className="space-y-16 overflow-hidden px-[var(--spacing-gutter)] py-[var(--spacing-section)] sm:space-y-20 lg:hidden">
         <div>
-          <h2 className="font-display text-5xl leading-[0.9] uppercase sm:text-6xl">
+          <h2 className="font-display text-4xl leading-[0.9] uppercase sm:text-5xl md:text-6xl">
             <span className="block">{groups.title[0]}</span>
             <span className="block">{groups.title[1]}</span>
           </h2>
-          <div className="relative mt-10">
+          <div className="relative mt-10 max-w-md overflow-hidden">
             <Frame
               src={groups.images.primary}
               alt={groups.images.primaryAlt}
               to={groups.images.primaryTo}
-              className="aspect-[5/4] w-[92%]"
+              className="aspect-[5/4] w-full"
             />
             <Frame
               src={groups.images.secondary}
               alt={groups.images.secondaryAlt}
               to={groups.images.secondaryTo}
-              className="absolute -bottom-8 right-0 z-10 aspect-[3/4] w-[42%] rotate-[-2deg]"
+              className="absolute -bottom-6 right-0 z-10 aspect-[3/4] w-[38%] max-w-[9rem] sm:-bottom-8 sm:w-[42%]"
             />
           </div>
           <Frame
             src={groups.images.tall}
             alt={groups.images.tallAlt}
             to={groups.images.tallTo}
-            className="mt-14 aspect-[3/4] w-[70%] max-w-sm"
+            className="mt-12 aspect-[3/4] w-[68%] max-w-sm sm:mt-14 sm:w-[70%]"
           />
           <div className="mt-8 max-w-md">
             {groups.body.map((p) => (
@@ -670,19 +670,19 @@ export function HomeEditorialScroll() {
         </div>
 
         <div>
-          <h2 className="font-display text-5xl uppercase sm:text-6xl">{spaces.title}</h2>
-          <div className="relative mt-10">
+          <h2 className="font-display text-4xl uppercase sm:text-5xl md:text-6xl">{spaces.title}</h2>
+          <div className="relative mt-10 max-w-md overflow-hidden">
             <Frame
               src={spaces.images.hero}
               alt={spaces.images.heroAlt}
               to={spaces.images.heroTo}
-              className="aspect-[3/4] w-[85%] max-w-md"
+              className="aspect-[3/4] w-full max-w-md"
             />
             <Frame
               src={spaces.images.overlap}
               alt={spaces.images.overlapAlt}
               to={spaces.images.overlapTo}
-              className="absolute -bottom-8 right-0 z-10 aspect-[3/4] w-[48%] rotate-[-3deg]"
+              className="absolute -bottom-6 right-0 z-10 aspect-[3/4] w-[42%] max-w-[10rem] sm:-bottom-8 sm:w-[48%]"
             />
           </div>
           <div className="mt-12 max-w-md">
@@ -696,19 +696,19 @@ export function HomeEditorialScroll() {
         </div>
 
         <div>
-          <h2 className="font-display text-5xl uppercase sm:text-6xl">{book.title}</h2>
-          <div className="relative mt-10 mb-8 pb-16">
+          <h2 className="font-display text-4xl uppercase sm:text-5xl md:text-6xl">{book.title}</h2>
+          <div className="relative mt-10 mb-8 max-w-md overflow-hidden pb-14 sm:pb-16">
             <Frame
               src={book.images.main}
               alt={book.images.mainAlt}
               to={book.images.mainTo}
-              className="aspect-[4/3] w-[90%]"
+              className="aspect-[4/3] w-full"
             />
             <Frame
               src={book.images.overlap}
               alt={book.images.overlapAlt}
               to={book.images.overlapTo}
-              className="absolute -bottom-4 left-2 z-10 aspect-[3/4] w-[46%] rotate-[-4deg]"
+              className="absolute -bottom-4 left-2 z-10 aspect-[3/4] w-[42%] max-w-[10rem] sm:w-[46%]"
             />
           </div>
           <div className="mt-6 max-w-md">
@@ -725,71 +725,322 @@ export function HomeEditorialScroll() {
   )
 }
 
-/** Skin & Oils split — aligned products, black veil → glow on hover */
-export function HomeFeaturedSplit() {
-  const { title, badge, bridgeImage, bridgeAlt, panels } = featuredSplit
+const collectionAccents = [
+  {
+    label: 'text-[#b8975c]',
+    rule: 'bg-[#b8975c]/70',
+    button: 'bg-[#3d5245] text-white hover:bg-[#2f3f35]',
+    productSide: 'right' as const,
+  },
+  {
+    label: 'text-[#7b7294]',
+    rule: 'bg-[#7b7294]/70',
+    button: 'bg-[#7b7294] text-white hover:bg-[#685f80]',
+    productSide: 'left' as const,
+  },
+] as const
+
+function CollectionBanner({
+  panel,
+  index,
+}: {
+  panel: (typeof featuredSplit.panels)[number]
+  index: number
+}) {
+  const ref = useRef<HTMLElement>(null)
+  const inView = useInView(ref, { threshold: 0.2, rootMargin: '8% 0%' })
+  const accent = collectionAccents[index % collectionAccents.length]
+  const productLeft = accent.productSide === 'left'
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const items = el.querySelectorAll<HTMLElement>('[data-banner-reveal]')
+    if (!items.length) return
+
+    if (!inView || prefersReducedMotion()) {
+      gsap.set(items, { opacity: 1, y: 0 })
+      return
+    }
+
+    gsap.set(items, { opacity: 0, y: 18 })
+    const tween = gsap.to(items, {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      stagger: 0.08,
+      ease: 'power3.out',
+    })
+    return () => {
+      tween.kill()
+    }
+  }, [inView])
 
   return (
-    <section className="relative bg-[#0c0a09] text-warm-white">
-      <div className="pointer-events-none absolute left-1/2 top-0 z-30 hidden w-[min(26vw,260px)] -translate-x-1/2 -translate-y-[42%] md:block">
-        <div className="overflow-hidden border border-warm-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.45)]">
+    <article
+      ref={ref}
+      className={`relative overflow-visible ${productLeft ? '' : 'pt-0 md:pt-1'}`}
+    >
+      {/* Mobile stacked */}
+      <div className="overflow-hidden rounded-[1.35rem] bg-[#faf7f2] shadow-[0_14px_36px_rgba(70,55,25,0.1)] md:hidden">
+        <Link
+          to={panel.productTo}
+          aria-label={panel.imageAlt}
+          className="relative block aspect-[5/3] overflow-hidden"
+        >
           <img
-            src={bridgeImage}
-            alt={bridgeAlt}
-            className="aspect-[5/4] w-full object-contain bg-[#1a1210] p-3"
+            src={panel.scene}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
             loading="lazy"
           />
+          <img
+            src={panel.image}
+            alt={panel.imageAlt}
+            className={`absolute bottom-[4%] w-auto object-contain drop-shadow-[0_12px_22px_rgba(40,30,10,0.25)] ${
+              productLeft
+                ? 'left-[9%] h-[112%]'
+                : 'right-[-2%] h-[115%]'
+            }`}
+            loading="lazy"
+          />
+        </Link>
+        <div className="px-6 py-7">
+          <p className={`text-[0.58rem] font-medium tracking-[0.28em] uppercase ${accent.label}`}>
+            {panel.label}
+          </p>
+          <h3 className="mt-2 font-display text-[1.7rem] leading-none tracking-[0.02em] text-[#1f1c18] uppercase">
+            {panel.title}
+          </h3>
+          <span aria-hidden className={`mt-2.5 block h-px w-8 ${accent.rule}`} />
+          <p className="mt-3 text-[0.86rem] font-light leading-[1.65] text-[#5c574f]">
+            {panel.description}
+          </p>
+          <Link
+            to={panel.to}
+            className={`mt-5 inline-flex h-10 items-center gap-2.5 rounded-full py-1 pl-5 pr-1.5 text-[0.56rem] font-medium tracking-[0.16em] uppercase !text-white ${accent.button}`}
+          >
+            {panel.cta}
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/20 text-white">
+              <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={1.6} />
+            </span>
+          </Link>
         </div>
       </div>
 
-      <div className="relative grid min-h-[100svh] md:grid-cols-2">
-        <h2 className="pointer-events-none absolute inset-x-0 top-[clamp(5.5rem,12vh,8rem)] z-20 text-center font-display text-[clamp(2.5rem,6vw,5rem)] leading-[0.95] tracking-tight uppercase">
-          {title}
-        </h2>
+      {/* Desktop — card size stays fixed; only peach breaks out above */}
+      <div className="relative hidden h-[clamp(15rem,20vw,19.5rem)] md:block">
+        <div className="absolute inset-0 overflow-hidden rounded-[1.75rem] shadow-[0_14px_36px_rgba(70,55,25,0.1)] lg:rounded-[2rem]">
+          <img
+            src={panel.scene}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+            loading="lazy"
+          />
+        </div>
 
-        {panels.map((panel, index) => (
-          <Link
-            key={panel.title}
-            to={panel.to}
-            className="group relative min-h-[85vh] overflow-hidden md:min-h-[100svh]"
+        <Link
+          to={panel.productTo}
+          aria-label={`Explore ${panel.title} collection`}
+          className={`absolute top-[8%] z-20 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-charcoal shadow-[0_4px_12px_rgba(0,0,0,0.1)] transition-transform duration-400 hover:scale-110 ${
+            productLeft ? 'left-[5%]' : 'right-[5%]'
+          }`}
+        >
+          <ArrowUpRight className="h-4 w-4" strokeWidth={1.5} />
+        </Link>
+
+        <Link
+          to={panel.productTo}
+          aria-label={panel.imageAlt}
+          className={`absolute z-30 flex items-end ${
+            productLeft
+              ? 'bottom-[2%] left-[8%] h-[118%] w-[54%]'
+              : 'bottom-[-27%] right-[-5%] h-[195%] w-[56%]'
+          }`}
+        >
+          <img
+            src={panel.image}
+            alt={panel.imageAlt}
+            className={`relative mx-auto h-full w-auto max-w-full object-contain transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.03] ${
+              productLeft
+                ? 'drop-shadow-[0_16px_28px_rgba(40,30,10,0.25)]'
+                : 'drop-shadow-[0_22px_40px_rgba(40,30,10,0.28)]'
+            }`}
+            loading="lazy"
+          />
+        </Link>
+
+        {/* Typed content in the empty cream area */}
+        <div
+          className={`absolute inset-y-0 z-20 flex flex-col justify-center ${
+            productLeft
+              ? 'left-[67%] w-[30%] items-start pr-3 lg:pr-5'
+              : 'left-[10%] w-[42%] items-start pl-8 lg:pl-12'
+          }`}
+        >
+          <p
+            data-banner-reveal
+            className={`text-[0.58rem] font-medium tracking-[0.3em] uppercase lg:text-[0.62rem] ${accent.label}`}
           >
-            <div className="absolute inset-0 bg-[#0c0a09]">
-              <div className="absolute left-1/2 top-[16%] aspect-square w-[min(78%,540px)] -translate-x-1/2 md:top-[14%] md:w-[min(82%,560px)]">
-                <img
-                  src={panel.image}
-                  alt={panel.imageAlt}
-                  className="h-full w-full object-contain object-center brightness-[0.55] contrast-110 opacity-80 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04] group-hover:brightness-110 group-hover:opacity-100 group-hover:drop-shadow-[0_0_48px_rgba(212,184,122,0.55)]"
-                  loading="lazy"
-                />
-              </div>
-
-              <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-black via-black/70 to-black/50 transition-opacity duration-700 group-hover:opacity-0" />
-              <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-black/90 via-transparent to-black/25" />
-            </div>
-
-            {index === 0 && (
-              <div className="absolute left-6 top-[clamp(10rem,22vh,14rem)] z-20 md:left-10">
-                <span className="inline-flex items-center gap-2 rounded-full border border-warm-white/55 px-3.5 py-1.5 text-micro tracking-[0.18em] uppercase text-warm-white/80">
-                  <span className="h-4 w-4 rounded-full border border-warm-white/60" />
-                  {badge}
-                </span>
-              </div>
-            )}
-
-            <div className="absolute inset-x-0 bottom-0 z-10 px-6 pb-12 md:px-10 md:pb-16 lg:px-14">
-              <h3 className="font-display text-[clamp(2.25rem,4.5vw,3.75rem)] leading-[0.95] tracking-tight uppercase transition-transform duration-500 group-hover:-translate-y-1">
-                {panel.title}
-              </h3>
-              <p className="mt-4 max-w-[18rem] text-micro tracking-[0.18em] uppercase leading-relaxed text-warm-white/80">
-                {panel.description}
-              </p>
-              <span className="mt-8 inline-flex items-center gap-2 border-b border-warm-white pb-1 text-micro tracking-[0.22em] uppercase transition-all duration-300 group-hover:gap-3 group-hover:border-soft-gold group-hover:text-soft-gold">
-                More info
-                <span aria-hidden>↗</span>
+            {panel.label}
+          </p>
+          <h3
+            data-banner-reveal
+            className="mt-2.5 font-display text-[clamp(1.55rem,2.6vw,2.4rem)] leading-[1] tracking-[0.03em] text-[#1f1c18] uppercase"
+          >
+            {panel.title}
+          </h3>
+          <span
+            data-banner-reveal
+            aria-hidden
+            className={`mt-2.5 h-px w-8 ${accent.rule}`}
+          />
+          <p
+            data-banner-reveal
+            className="mt-3 max-w-[17rem] text-[0.82rem] font-light leading-[1.6] text-[#5c574f] lg:text-[0.88rem]"
+          >
+            {panel.description}
+          </p>
+          <div data-banner-reveal className="mt-5">
+            <Link
+              to={panel.to}
+              className={`group/cta inline-flex h-10 items-center gap-2.5 rounded-full py-1 pl-5 pr-1.5 text-[0.56rem] font-medium tracking-[0.16em] uppercase !text-white transition-colors duration-400 lg:text-[0.58rem] ${accent.button}`}
+            >
+              {panel.cta}
+              <span
+                aria-hidden
+                className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/20 text-white transition-transform duration-400 group-hover/cta:translate-x-0.5"
+              >
+                <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={1.6} />
               </span>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          </div>
+        </div>
+      </div>
+    </article>
+  )
+}
+
+/** Collections — empty studio scenes + product overlays + typed copy */
+export function HomeFeaturedSplit() {
+  const {
+    eyebrow,
+    index,
+    title,
+    subtitle,
+    panels,
+    bridgeImage,
+    bridgeImageSecondary,
+    bridgeAlt,
+    bridgeTo,
+  } = featuredSplit
+  const headerRef = useRef<HTMLElement>(null)
+  const headerInView = useInView(headerRef, { threshold: 0.35 })
+
+  useEffect(() => {
+    const el = headerRef.current
+    if (!el) return
+    const lines = el.querySelectorAll<HTMLElement>('[data-split-header]')
+    if (!lines.length) return
+
+    if (!headerInView) {
+      gsap.set(lines, { opacity: 1, y: 0 })
+      return
+    }
+    if (prefersReducedMotion()) {
+      gsap.set(lines, { opacity: 1, y: 0 })
+      return
+    }
+
+    gsap.set(lines, { opacity: 0, y: 22 })
+    const tween = gsap.to(lines, {
+      opacity: 1,
+      y: 0,
+      duration: 0.75,
+      stagger: 0.14,
+      ease: 'power3.out',
+    })
+    return () => {
+      tween.kill()
+    }
+  }, [headerInView])
+
+  return (
+    <section className="relative z-20 bg-[#f3eee6] pt-[clamp(5rem,12vh,8.5rem)] pb-[clamp(3.5rem,8vh,6.5rem)] text-forest">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -left-20 top-8 h-72 w-72 rounded-full bg-[#d9cbb6]/28 blur-3xl"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-16 top-28 h-80 w-80 rounded-full bg-[#cfc0a8]/20 blur-3xl"
+      />
+
+      {/* Bridge — overlaps burgundy editorial; must not be clipped by section overflow */}
+      <Link
+        to={bridgeTo}
+        aria-label={bridgeAlt}
+        className="absolute left-1/2 top-0 z-40 w-[min(48vw,240px)] -translate-x-1/2 -translate-y-[52%] sm:w-[min(38vw,260px)] md:w-[min(28vw,280px)]"
+      >
+        <div className="flex aspect-[5/4] items-end justify-center gap-1 rounded-sm bg-[#f7f1e8] px-3 pb-3 pt-4 shadow-[0_22px_50px_rgba(0,0,0,0.28)] transition-transform duration-500 hover:scale-[1.03] sm:gap-1.5 sm:px-4 sm:pb-4">
+          <img
+            src={bridgeImageSecondary}
+            alt=""
+            className="h-[92%] w-auto max-w-[46%] object-contain drop-shadow-[0_8px_16px_rgba(40,20,10,0.2)]"
+            loading="lazy"
+          />
+          <img
+            src={bridgeImage}
+            alt={bridgeAlt}
+            className="h-full w-auto max-w-[48%] object-contain drop-shadow-[0_8px_16px_rgba(40,20,10,0.22)]"
+            loading="lazy"
+          />
+        </div>
+      </Link>
+
+      <p
+        aria-hidden
+        className="pointer-events-none absolute left-[clamp(0.5rem,4vw,3rem)] top-[clamp(2rem,6vh,4rem)] font-display text-[clamp(7rem,22vw,16rem)] leading-none tracking-tight text-forest/[0.055]"
+      >
+        {index}
+      </p>
+
+      <div className="relative mx-auto w-full max-w-[90rem] px-[var(--spacing-gutter)]">
+        <header ref={headerRef} className="mx-auto max-w-2xl text-center">
+          <p
+            data-split-header
+            className="text-[0.62rem] font-medium tracking-[0.34em] uppercase text-[#b8975c]"
+          >
+            {eyebrow}
+          </p>
+          <h2
+            data-split-header
+            className="mt-4 font-display text-[clamp(2rem,4.4vw,3.25rem)] leading-[1.08] tracking-tight text-[#2b352c]"
+          >
+            {title}
+          </h2>
+          <span
+            data-split-header
+            aria-hidden
+            className="mt-5 inline-flex items-center gap-3 text-[#b8975c]"
+          >
+            <span className="h-px w-12 bg-[#b8975c]/45 sm:w-16" />
+            <Leaf className="h-3.5 w-3.5 opacity-80" strokeWidth={1.4} />
+            <span className="h-px w-12 bg-[#b8975c]/45 sm:w-16" />
+          </span>
+          <p
+            data-split-header
+            className="mx-auto mt-4 max-w-lg text-[0.9rem] font-light leading-[1.7] text-[#6a645c]"
+          >
+            {subtitle}
+          </p>
+        </header>
+
+        <div className="mt-1 space-y-4 md:mt-2 md:space-y-5">
+          {panels.map((panel, i) => (
+            <CollectionBanner key={panel.title} panel={panel} index={i} />
+          ))}
+        </div>
       </div>
     </section>
   )

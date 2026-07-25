@@ -1,7 +1,7 @@
 import { LuxurySlider } from '@components/slider'
 import { luxurySlides } from '@/data/home'
 
-/** Homepage ritual spotlight — linen atelier stage with luminous product panel. */
+/** Homepage ritual spotlight — three-column edit with featured + up-next cards. */
 export function HomeExpectations() {
   return (
     <LuxurySlider

@@ -36,14 +36,14 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
       </div>
 
       {images.length > 1 && (
-        <div className="grid grid-cols-4 gap-3">
+        <div className="flex gap-2 overflow-x-auto pb-1 sm:grid sm:grid-cols-4 sm:gap-3 sm:overflow-visible sm:pb-0">
           {images.map((img, i) => (
             <button
               key={img.url + i}
               type="button"
               onClick={() => setActive(i)}
               className={cn(
-                'aspect-square overflow-hidden border transition-colors duration-300',
+                'aspect-square h-16 w-16 shrink-0 overflow-hidden border transition-colors duration-300 sm:h-auto sm:w-auto sm:shrink',
                 i === active
                   ? 'border-forest'
                   : 'border-transparent opacity-70 hover:opacity-100',

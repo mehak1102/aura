@@ -128,7 +128,7 @@ export function Header({ transparent = false }: HeaderProps) {
 
             <nav
               className={cn(
-                'relative z-50 hidden items-center gap-5 md:flex xl:gap-7',
+                'relative z-50 hidden items-center gap-5 lg:flex xl:gap-7',
                 chrome,
                 chromeLift,
               )}

@@ -136,26 +136,41 @@ export const editorialScroll = {
 
 /** Grand Hotel–style Restaurant & Bar split */
 export const featuredSplit = {
-  title: 'Skin & Oils',
-  badge: 'Craft',
-  bridgeImage: '/products/fresh-coffee-face-wash/04-hero-card.png',
+  eyebrow: 'Our Collections',
+  index: '01',
+  title: 'Crafted Rituals for Skin & Mind.',
+  subtitle:
+    'Two quiet paths into care — soft botanicals for the skin, and pure scent for the mind.',
+  bridgeImage: '/products/fresh-coffee-face-wash/02-bottle-front.png',
+  bridgeImageSecondary: '/products/fresh-coffee-face-wash/01-box-front.png',
   bridgeAlt: 'Fresh Coffee Face Wash',
+  bridgeTo: productPath('fresh-coffee-face-wash'),
   panels: [
     {
-      title: 'Skin Care',
+      label: 'Daily Rituals',
+      title: 'Skincare',
       description:
-        'Clarify, nourish, and restore — botanicals that become a ritual of taste for the skin.',
+        'Hydrate and nourish — formulas that soften the skin and restore its natural glow.',
       to: ROUTES.skinCare,
-      image: '/products/_split/skin-care.png',
+      productTo: productPath('nourishing-peach-lotion-kumkumadi-oil'),
+      scene: '/products/_split/scene-skincare.png?v=2',
+      image: '/products/Peach-Lotion/Peach-Lotion-section-trim.png',
       imageAlt: 'Nourishing Peach Lotion',
+      glow: 'rgba(184, 151, 92, 0.35)',
+      cta: 'Explore Skincare',
     },
     {
+      label: 'Aromatherapy',
       title: 'Essential Oils',
       description:
-        'The perfect place for calm meetings with scent — pure, potent, and honest.',
+        'Calming and soothing blends — pure botanicals for calm, breath, and inner balance.',
       to: ROUTES.essentialOils,
-      image: '/products/_split/essential-oils.png',
+      productTo: productPath('lavender-essential-oil'),
+      scene: '/products/_split/scene-oils.png?v=4',
+      image: '/products/Lavender-Oil/Lavender-set.png?v=4',
       imageAlt: 'Lavender Essential Oil',
+      glow: 'rgba(150, 120, 180, 0.3)',
+      cta: 'Explore Essential Oils',
     },
   ],
 }
@@ -177,9 +192,10 @@ export const luxurySlides: LuxurySlide[] = [
     subtitle: 'Skin care ritual',
     description:
       'Fresh Coffee Face Wash — antioxidant-rich botanicals that awaken skin with a natural glow, every morning.',
-    image: '/products/fresh-coffee-face-wash/02-bottle-front.png',
+    image: '/products/_ritual/coffee.png',
     imageAlt: 'Fresh Coffee Face Wash',
-    cta: { label: 'Discover', to: ROUTES.skinCare },
+    cta: { label: 'Discover Ritual', to: productPath('fresh-coffee-face-wash') },
+    features: ['Natural Ingredients', 'Daily Clarity', 'Dermatologically Tested'],
   },
   {
     id: 'peach',
@@ -187,9 +203,10 @@ export const luxurySlides: LuxurySlide[] = [
     subtitle: 'Body nourishment',
     description:
       'Nourishing Peach Lotion — lightweight moisture with the warmth of ripe peach and hand-finished botanical oils.',
-    image: '/products/Peach-Lotion/Peach-Lotion-02.png',
+    image: '/products/_ritual/peach.png',
     imageAlt: 'Nourishing Peach Lotion',
-    cta: { label: 'Discover', to: ROUTES.bodyCare },
+    cta: { label: 'Discover Ritual', to: productPath('nourishing-peach-lotion-kumkumadi-oil') },
+    features: ['Natural Ingredients', 'Deep Nourishment', 'Dermatologically Tested'],
   },
   {
     id: 'lavender',
@@ -197,9 +214,10 @@ export const luxurySlides: LuxurySlide[] = [
     subtitle: 'Essential oils',
     description:
       'Lavender Essential Oil — distilled at peak bloom for serene aroma, restful evenings, and mindful rituals.',
-    image: '/products/Lavender-Oil/Lavender-oil-02.png',
+    image: '/products/_ritual/lavender.png',
     imageAlt: 'Lavender Essential Oil',
-    cta: { label: 'Discover', to: ROUTES.essentialOils },
+    cta: { label: 'Discover Ritual', to: productPath('lavender-essential-oil') },
+    features: ['100% Pure Oil', 'Calming Aroma', 'Skin & Mind'],
   },
   {
     id: 'goat',
@@ -207,9 +225,10 @@ export const luxurySlides: LuxurySlide[] = [
     subtitle: 'Handmade soap',
     description:
       'Goat Milk Soap — creamy lather and honest ingredients for skin that feels soft, never stripped.',
-    image: '/products/Goad-Milk-Soap/Goat-Milk-01.png',
+    image: '/products/_ritual/goat-milk.png',
     imageAlt: 'Goat Milk Soap',
-    cta: { label: 'Discover', to: ROUTES.bodyCare },
+    cta: { label: 'Discover Ritual', to: productPath('goat-milk-soap') },
+    features: ['Handmade', 'Creamy Lather', 'Gentle Cleanse'],
   },
   {
     id: 'tea-tree',
@@ -217,9 +236,10 @@ export const luxurySlides: LuxurySlide[] = [
     subtitle: 'Targeted care',
     description:
       'Tea Tree Essential Oil — clarifying botanical power for blemish-prone skin and a refreshed scalp ritual.',
-    image: '/products/Tea-Tree-Oil/Tea-Tree-Oil-01.png',
+    image: '/products/_ritual/tea-tree.png',
     imageAlt: 'Tea Tree Essential Oil',
-    cta: { label: 'Discover', to: ROUTES.essentialOils },
+    cta: { label: 'Discover Ritual', to: productPath('tea-tree-essential-oil') },
+    features: ['Clarifying', 'Targeted Care', 'Botanical Power'],
   },
   {
     id: 'jojoba',
@@ -227,9 +247,10 @@ export const luxurySlides: LuxurySlide[] = [
     subtitle: 'Cold pressed',
     description:
       'Jojoba Cold Pressed Oil — lightweight, vitamin-rich moisture that mirrors your skin\'s natural balance.',
-    image: '/products/Jojoba-oil/Jojoba-Oil-02.png',
+    image: '/products/_ritual/jojoba.png',
     imageAlt: 'Jojoba Cold Pressed Oil',
-    cta: { label: 'Discover', to: ROUTES.coldPressedOils },
+    cta: { label: 'Discover Ritual', to: productPath('jojoba-cold-pressed-oil') },
+    features: ['Cold Pressed', 'Vitamin Rich', 'Skin Balance'],
   },
   {
     id: 'cumin',
@@ -237,9 +258,10 @@ export const luxurySlides: LuxurySlide[] = [
     subtitle: 'Hair ritual',
     description:
       'Black Cumin Hair Oil — Ayurvedic botanicals to nourish roots, add shine, and restore confidence.',
-    image: '/products/Black-Cumin/Black-Cumin-02.png',
+    image: '/products/_ritual/black-cumin.png',
     imageAlt: 'Black Cumin Hair Oil',
-    cta: { label: 'Discover', to: ROUTES.hairCare },
+    cta: { label: 'Discover Ritual', to: productPath('black-cumin-cold-pressed-oil') },
+    features: ['Ayurvedic', 'Root Nourish', 'Natural Shine'],
   },
 ]
 

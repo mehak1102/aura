@@ -190,9 +190,9 @@ export function HomeStory() {
       </div>
 
       {/* Bottom trust strip */}
-      <div className="border-t border-[#1b261e]/10">
+      <div className="relative z-10 border-t border-[#1b261e]/10">
         <div className="mx-auto w-full max-w-[86rem] px-[var(--spacing-gutter)]">
-          <div className="grid grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {storyTrust.map((item, i) => {
               const Icon = item.icon
               return (
@@ -206,7 +206,7 @@ export function HomeStory() {
                   )}
                 >
                   <span
-                    className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#1b261e]/20"
+                    className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#1b261e]/20 sm:h-12 sm:w-12"
                     aria-hidden
                   >
                     <Icon className="h-[1.1rem] w-[1.1rem] text-[#1b261e]/70" strokeWidth={1.35} />

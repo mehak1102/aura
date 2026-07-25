@@ -19,10 +19,10 @@ export function HomeWhyUs() {
           </Display>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-6 sm:gap-8 lg:grid-cols-4">
           {whyUs.map((stat) => (
             <div key={stat.label} data-reveal="" className="text-center">
-              <p className="font-display text-5xl text-forest md:text-6xl">
+              <p className="font-display text-4xl text-forest sm:text-5xl md:text-6xl">
                 <span
                   data-counter={stat.value}
                   data-suffix={stat.suffix}

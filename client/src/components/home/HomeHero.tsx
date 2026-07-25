@@ -88,7 +88,7 @@ function HeroTypewriter({ active }: { active: boolean }) {
   return (
     <h1
       data-hero-title
-      className="mt-5 min-h-[calc(4*0.98em)] text-[clamp(2.9rem,6.2vw,5.35rem)] font-medium leading-[0.98] tracking-[-0.03em] text-[#1b261e]"
+        className="mt-5 min-h-[calc(4*0.98em)] text-[clamp(2.15rem,8.5vw,5.35rem)] font-medium leading-[0.98] tracking-[-0.03em] text-[#f5f2ed] lg:text-[#1b261e]"
       style={{
         fontFamily: "'Bodoni Moda', 'Cormorant Garamond', serif",
         fontOpticalSizing: 'auto',
@@ -132,7 +132,7 @@ export function HomeHero() {
   return (
     <section
       ref={scope}
-      className="relative flex h-[100svh] min-h-[680px] flex-col overflow-hidden bg-[#e8e2d6]"
+      className="relative flex h-[100svh] min-h-0 flex-col overflow-hidden bg-[#e8e2d6] md:min-h-[680px]"
     >
       {/* Full-bleed product environment */}
       <div className="absolute inset-0">
@@ -151,7 +151,11 @@ export function HomeHero() {
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 left-0 w-[52%] bg-gradient-to-r from-[#e8e2d6]/50 via-[#e8e2d6]/15 to-transparent max-lg:w-[70%]"
+          className="pointer-events-none absolute inset-y-0 left-0 z-[1] w-[85%] bg-gradient-to-r from-black/75 via-black/45 to-transparent lg:w-[52%] lg:from-[#e8e2d6]/50 lg:via-[#e8e2d6]/15"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[40%] bg-gradient-to-t from-black/50 to-transparent lg:hidden"
         />
         <div
           data-hero-fore
@@ -173,12 +177,12 @@ export function HomeHero() {
           >
             <p
               data-hero-fade
-              className="relative inline-block text-[0.7rem] font-medium tracking-[0.42em] uppercase text-[#3d4a38]"
+              className="relative inline-block text-[0.7rem] font-medium tracking-[0.42em] uppercase text-[#f5f2ed]/85 lg:text-[#3d4a38]"
             >
               Nature. Purity. You.
               <span
                 aria-hidden
-                className="absolute -bottom-1 left-0 h-px w-[68%] bg-[#3d4a38]/40"
+                className="absolute -bottom-1 left-0 h-px w-[68%] bg-[#f5f2ed]/45 lg:bg-[#3d4a38]/40"
               />
             </p>
 
@@ -186,7 +190,7 @@ export function HomeHero() {
 
             <p
               data-hero-fade
-              className="mt-5 max-w-[26rem] text-[1rem] font-normal leading-[1.7] text-[#2a3228]/90"
+              className="mt-5 max-w-[26rem] text-[0.95rem] font-normal leading-[1.7] text-[#f5f2ed]/90 drop-shadow-[0_1px_12px_rgba(0,0,0,0.45)] sm:text-[1rem] lg:text-[#2a3228]/90 lg:drop-shadow-none"
             >
               Herbal skincare inspired by ancient wisdom and perfected through modern science.
             </p>
@@ -207,7 +211,7 @@ export function HomeHero() {
               <button
                 type="button"
                 onClick={() => navigate(ROUTES.ourStory)}
-                className="group inline-flex h-[3.05rem] items-center justify-center gap-2.5 border border-soft-gold/90 bg-beige/40 px-6 text-[0.6rem] font-semibold tracking-[0.22em] uppercase text-forest transition-colors duration-300 hover:bg-beige/70"
+                className="group inline-flex h-[3.05rem] items-center justify-center gap-2.5 border border-soft-gold/90 bg-[#e8e2d6]/95 px-6 text-[0.6rem] font-semibold tracking-[0.22em] uppercase text-forest transition-colors duration-300 hover:bg-beige/90 lg:bg-beige/40 lg:hover:bg-beige/70"
               >
                 Discover Our Story
                 <ArrowRight
@@ -291,13 +295,13 @@ export function HomeHero() {
 
         {/* Trust bar */}
         <div className="relative z-30 bg-[#1b261e] text-[#b8975c]">
-          <div className="mx-auto grid max-w-[86rem] grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
+          <div className="mx-auto flex max-w-[86rem] snap-x snap-mandatory gap-0 overflow-x-auto sm:grid sm:grid-cols-3 sm:overflow-visible lg:grid-cols-6">
             {trustItems.map((item, i) => (
               <div
                 key={item.title}
                 data-hero-fade
                 className={cn(
-                  'relative flex flex-col items-center gap-1 px-2.5 py-5 text-center sm:py-[1.25rem]',
+                  'relative flex min-w-[42%] snap-start flex-col items-center gap-1 px-2.5 py-3.5 text-center sm:min-w-0 sm:py-[1.25rem]',
                   i < trustItems.length - 1 &&
                     'lg:after:absolute lg:after:right-0 lg:after:top-[22%] lg:after:h-[56%] lg:after:w-px lg:after:bg-[#b8975c]/25',
                 )}

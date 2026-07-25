@@ -33,7 +33,7 @@ export function HomeConcerns() {
               <span className="font-display text-2xl text-charcoal group-hover:text-forest">
                 {item.label}
               </span>
-              <span className="text-micro text-olive opacity-0 transition-opacity group-hover:opacity-100">
+              <span className="text-micro text-olive opacity-70 transition-opacity md:opacity-0 md:group-hover:opacity-100">
                 Shop
               </span>
             </Link>

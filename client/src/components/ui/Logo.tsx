@@ -51,7 +51,7 @@ export function Logo({ className, tone = 'dark', compact, editorial }: LogoProps
       {!compact && editorial && (
         <span className="text-center leading-none">
           <span
-            className="block text-[1.4rem] font-medium tracking-[0.2em] md:text-[1.65rem]"
+            className="block text-[1.15rem] font-medium tracking-[0.16em] sm:text-[1.4rem] sm:tracking-[0.2em] md:text-[1.65rem]"
             style={{
               fontFamily: "'Bodoni Moda', 'Cormorant Garamond', serif",
               color: wordColor,
@@ -60,7 +60,7 @@ export function Logo({ className, tone = 'dark', compact, editorial }: LogoProps
             AURA
           </span>
           <span
-            className="mt-1.5 block text-[0.58rem] font-medium tracking-[0.48em] uppercase md:text-[0.65rem]"
+            className="mt-1.5 block text-[0.5rem] font-medium tracking-[0.4em] uppercase sm:text-[0.58rem] sm:tracking-[0.48em] md:text-[0.65rem]"
             style={{ color: wordColor }}
           >
             Of Nature

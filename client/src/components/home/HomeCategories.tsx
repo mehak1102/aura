@@ -28,9 +28,9 @@ export function HomeCategories() {
                   <span className="text-micro text-soft-gold">
                     {String(i + 1).padStart(2, '0')}
                   </span>
-                  <span className="font-display text-3xl md:text-5xl">{cat.name}</span>
+                  <span className="font-display text-2xl sm:text-3xl md:text-5xl">{cat.name}</span>
                 </div>
-                <span className="text-micro text-charcoal-muted">{cat.count}</span>
+                <span className="hidden shrink-0 text-micro text-charcoal-muted sm:inline">{cat.count}</span>
               </Link>
             </li>
           ))}
