@@ -133,7 +133,7 @@ export function HomeConcerns() {
   return (
     <section
       ref={scope}
-      className="relative overflow-hidden bg-[#f6f1e8] py-[clamp(4.5rem,9vw,7.5rem)]"
+      className="relative overflow-hidden bg-[#f6f1e8] pt-[clamp(2.75rem,6vw,4.5rem)] pb-[clamp(5rem,10vw,8.5rem)]"
     >
       {/* Soft leaf shadows — realistic SVG leaves */}
       <svg
@@ -215,7 +215,7 @@ export function HomeConcerns() {
           </p>
         </header>
 
-        <div className="mt-12 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:mt-14 lg:grid-cols-3">
+        <div className="mt-14 grid gap-5 sm:grid-cols-2 sm:gap-6 lg:mt-16 lg:grid-cols-3">
           {concerns.map((item) => {
             const Icon = concernIcons[item.icon]
             return (
@@ -223,45 +223,50 @@ export function HomeConcerns() {
                 key={item.id}
                 data-reveal-card=""
                 to={item.to}
-                className="group relative flex min-h-[11rem] overflow-hidden rounded-[1.15rem] bg-[#faf7f1] px-5 py-5 shadow-[0_1px_0_rgba(36,53,40,0.04)] ring-1 ring-[#243528]/10 transition-[box-shadow,transform] duration-400 hover:-translate-y-0.5 hover:shadow-[0_14px_32px_rgba(36,53,40,0.1)] sm:min-h-[12.25rem] sm:px-6 sm:py-6"
+                className="group relative flex min-h-[12.5rem] overflow-hidden rounded-[1.25rem] bg-[#faf7f1] px-5 py-5 shadow-[0_1px_0_rgba(36,53,40,0.04)] ring-1 ring-[#243528]/10 transition-[box-shadow,transform] duration-500 hover:-translate-y-0.5 hover:shadow-[0_14px_32px_rgba(36,53,40,0.1)] sm:min-h-[14rem] sm:px-7 sm:py-7"
               >
-                {/* Active corner tag */}
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute -right-px -top-px h-0 w-0 border-l-[2.4rem] border-t-[2.4rem] border-l-transparent border-t-forest opacity-0 transition-opacity duration-400 group-hover:opacity-100"
-                />
-                <ArrowUpRight
-                  aria-hidden
-                  className="pointer-events-none absolute right-1.5 top-1.5 z-10 h-3 w-3 text-warm-white opacity-0 transition-opacity duration-400 group-hover:opacity-100"
-                  strokeWidth={2}
-                />
-
-                <div className="relative z-10 flex w-[48%] flex-col justify-between py-0.5">
-                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#b8975c]/12 text-[#b8975c] sm:h-12 sm:w-12">
-                    <Icon className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={1.5} />
-                  </span>
-                  <div>
-                    <h3 className="font-display text-[1.2rem] leading-tight tracking-tight text-[#243528] sm:text-[1.35rem]">
-                      {item.label}
-                    </h3>
-                    <span className="mt-2.5 inline-flex items-center gap-1.5 text-[0.58rem] font-medium tracking-[0.22em] uppercase text-[#8a8478] transition-colors duration-400 group-hover:text-forest">
-                      Shop
-                      <span aria-hidden>→</span>
-                    </span>
-                  </div>
-                </div>
-
-                <div className="absolute inset-y-1.5 right-2 w-[54%] overflow-hidden rounded-[0.95rem] sm:inset-y-2 sm:right-3">
+                {/* Image — same default crop; expands full-cover only on hover */}
+                <div className="absolute top-1.5 right-2 bottom-1.5 left-[46%] z-0 overflow-hidden rounded-[0.95rem] transition-[top,right,bottom,left,border-radius] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:inset-0 group-hover:rounded-[1.25rem] sm:top-2 sm:right-3 sm:bottom-2 sm:left-[46%] sm:group-hover:inset-0">
                   <img
                     src={item.image}
                     alt={item.imageAlt}
-                    className="h-full w-full object-cover object-[55%_center] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+                    className="h-full w-full object-cover object-[55%_center] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
                     loading="lazy"
                   />
                   <div
                     aria-hidden
-                    className="absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-[#faf7f1] to-transparent"
+                    className="absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-[#faf7f1] to-transparent transition-opacity duration-500 group-hover:opacity-0"
                   />
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#1a1a18]/72 via-[#1a1a18]/35 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                  />
+                </div>
+
+                {/* Active corner tag */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute -right-px -top-px z-20 h-0 w-0 border-l-[2.4rem] border-t-[2.4rem] border-l-transparent border-t-forest opacity-0 transition-opacity duration-400 group-hover:opacity-100"
+                />
+                <ArrowUpRight
+                  aria-hidden
+                  className="pointer-events-none absolute right-1.5 top-1.5 z-20 h-3 w-3 text-warm-white opacity-0 transition-opacity duration-400 group-hover:opacity-100"
+                  strokeWidth={2}
+                />
+
+                <div className="relative z-10 flex w-[48%] flex-col justify-between py-0.5">
+                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#b8975c]/12 text-[#b8975c] transition-colors duration-500 group-hover:bg-white/20 group-hover:text-warm-white sm:h-12 sm:w-12">
+                    <Icon className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={1.5} />
+                  </span>
+                  <div>
+                    <h3 className="font-display text-[1.3rem] leading-tight tracking-tight text-[#243528] transition-colors duration-500 group-hover:text-warm-white sm:text-[1.45rem]">
+                      {item.label}
+                    </h3>
+                    <span className="mt-2.5 inline-flex items-center gap-1.5 text-[0.58rem] font-medium tracking-[0.22em] uppercase text-[#8a8478] transition-colors duration-500 group-hover:text-warm-white/85">
+                      Shop
+                      <span aria-hidden>→</span>
+                    </span>
+                  </div>
                 </div>
               </Link>
             )
