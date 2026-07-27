@@ -176,13 +176,61 @@ export const featuredSplit = {
 }
 
 export const concerns = [
-  { label: 'Acne & Blemishes', to: `${ROUTES.shop}?concern=acne` },
-  { label: 'Dryness', to: `${ROUTES.shop}?concern=dryness` },
-  { label: 'Dullness', to: `${ROUTES.shop}?concern=dullness` },
-  { label: 'Hair Fall', to: `${ROUTES.shop}?concern=hairfall` },
-  { label: 'Pigmentation', to: `${ROUTES.shop}?concern=pigmentation` },
-  { label: 'Sensitivity', to: `${ROUTES.shop}?concern=sensitivity` },
+  {
+    id: 'acne',
+    label: 'Acne & Blemishes',
+    to: `${ROUTES.shop}?concern=acne`,
+    icon: 'scan' as const,
+    image: '/products/_ritual/peach.png',
+    imageAlt: 'Peach lotion for acne-prone skin',
+  },
+  {
+    id: 'dryness',
+    label: 'Dryness',
+    to: `${ROUTES.shop}?concern=dryness`,
+    icon: 'droplet' as const,
+    image: '/products/_ritual/goat-milk.png',
+    imageAlt: 'Goat milk soap for dry skin',
+  },
+  {
+    id: 'dullness',
+    label: 'Dullness',
+    to: `${ROUTES.shop}?concern=dullness`,
+    icon: 'sparkles' as const,
+    image: '/products/_ritual/tea-tree.png',
+    imageAlt: 'Tea tree oil for dull skin',
+  },
+  {
+    id: 'hairfall',
+    label: 'Hair Fall',
+    to: `${ROUTES.shop}?concern=hairfall`,
+    icon: 'wind' as const,
+    image: '/products/_ritual/black-cumin.png',
+    imageAlt: 'Black cumin oil for hair fall',
+  },
+  {
+    id: 'pigmentation',
+    label: 'Pigmentation',
+    to: `${ROUTES.shop}?concern=pigmentation`,
+    icon: 'sun' as const,
+    image: '/products/_ritual/coffee.png',
+    imageAlt: 'Coffee face wash for pigmentation',
+  },
+  {
+    id: 'sensitivity',
+    label: 'Sensitivity',
+    to: `${ROUTES.shop}?concern=sensitivity`,
+    icon: 'leaf' as const,
+    image: '/products/_ritual/lavender.png',
+    imageAlt: 'Lavender oil for sensitive skin',
+  },
 ]
+
+export const concernsQuiz = {
+  prompt: 'Not sure? Take our skin quiz and let nature guide you.',
+  cta: 'Take the quiz',
+  to: ROUTES.skinQuiz,
+}
 
 /** Luxury slider slides — Grand Hotel editorial layout */
 export const luxurySlides: LuxurySlide[] = [

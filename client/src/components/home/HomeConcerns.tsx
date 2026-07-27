@@ -1,44 +1,311 @@
 import { Link } from 'react-router-dom'
-import { Display, Eyebrow, Body } from '@components/ui'
-import { concerns } from '@/data/home'
-import { useGsap, revealOnScroll } from '@animations/gsap'
+import {
+  ArrowUpRight,
+  Droplet,
+  Leaf,
+  ScanFace,
+  Sparkles,
+  Sun,
+  Wind,
+  type LucideIcon,
+} from 'lucide-react'
+import { concerns, concernsQuiz } from '@/data/home'
+import { gsap, ScrollTrigger, splitText, useGsap } from '@animations/gsap'
+
+const concernIcons: Record<(typeof concerns)[number]['icon'], LucideIcon> = {
+  scan: ScanFace,
+  droplet: Droplet,
+  sparkles: Sparkles,
+  wind: Wind,
+  sun: Sun,
+  leaf: Leaf,
+}
+
+const titleWords = [
+  { text: 'What' },
+  { text: 'is' },
+  { text: 'your' },
+  { text: 'skin', italic: true },
+  { text: 'asking' },
+  { text: 'for?' },
+] as const
 
 export function HomeConcerns() {
   const scope = useGsap(() => {
     if (!scope.current) return
-    revealOnScroll(scope.current.querySelectorAll('[data-reveal]'))
+
+    const eyebrow = scope.current.querySelector('[data-reveal-eyebrow]')
+    const titleWordsEls = scope.current.querySelectorAll('[data-title-word]')
+    const subtitleEl = scope.current.querySelector<HTMLElement>('[data-word-split="subtitle"]')
+    const cards = scope.current.querySelectorAll('[data-reveal-card]')
+    const quizBar = scope.current.querySelector('[data-reveal-quiz]')
+    const quizPromptEl = scope.current.querySelector<HTMLElement>('[data-word-split="quiz"]')
+    const quizCta = scope.current.querySelector('[data-reveal-quiz-cta]')
+
+    const subtitleWords = subtitleEl ? splitText(subtitleEl, 'words') : []
+    const quizWords = quizPromptEl ? splitText(quizPromptEl, 'words') : []
+
+    gsap.set(
+      [eyebrow, ...Array.from(titleWordsEls), ...subtitleWords, ...Array.from(cards), quizBar, quizCta].filter(
+        Boolean,
+      ),
+      { y: 28, opacity: 0 },
+    )
+    if (quizWords.length) gsap.set(quizWords, { y: 16, opacity: 0 })
+
+    const tl = gsap.timeline({ paused: true })
+
+    if (eyebrow) {
+      tl.fromTo(
+        eyebrow,
+        { y: 28, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.55, ease: 'power3.out' },
+      )
+    }
+
+    if (titleWordsEls.length) {
+      tl.fromTo(
+        titleWordsEls,
+        { y: 28, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.45, stagger: 0.07, ease: 'power3.out' },
+        '-=0.15',
+      )
+    }
+
+    if (subtitleWords.length) {
+      tl.fromTo(
+        subtitleWords,
+        { y: 22, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.4, stagger: 0.045, ease: 'power3.out' },
+        '-=0.1',
+      )
+    }
+
+    if (cards.length) {
+      tl.fromTo(
+        cards,
+        { y: 40, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7, stagger: 0.14, ease: 'power3.out' },
+        '-=0.05',
+      )
+    }
+
+    if (quizBar) {
+      tl.fromTo(
+        quizBar,
+        { y: 28, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.55, ease: 'power3.out' },
+        '-=0.1',
+      )
+    }
+
+    if (quizWords.length) {
+      tl.fromTo(
+        quizWords,
+        { y: 16, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.35, stagger: 0.04, ease: 'power3.out' },
+        '-=0.25',
+      )
+    }
+
+    if (quizCta) {
+      tl.fromTo(
+        quizCta,
+        { y: 12, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.45, ease: 'power3.out' },
+        '-=0.15',
+      )
+    }
+
+    const trigger = ScrollTrigger.create({
+      trigger: scope.current,
+      start: 'top 78%',
+      onEnter: () => tl.restart(),
+      onEnterBack: () => tl.restart(),
+    })
+
+    return () => {
+      tl.kill()
+      trigger.kill()
+    }
   }, [])
 
   return (
-    <section ref={scope} className="section-aura">
-      <div className="container-aura">
-        <div className="mx-auto max-w-2xl text-center">
-          <Eyebrow data-reveal="">Shop by concern</Eyebrow>
-          <Display data-reveal="" as="h2" size="lg" className="mt-4 text-forest">
-            What is your skin asking for?
-          </Display>
-          <Body data-reveal="" muted className="mt-4">
+    <section
+      ref={scope}
+      className="relative overflow-hidden bg-[#f6f1e8] py-[clamp(4.5rem,9vw,7.5rem)]"
+    >
+      {/* Soft leaf shadows — realistic SVG leaves */}
+      <svg
+        aria-hidden
+        className="pointer-events-none absolute -left-4 -top-6 w-[min(52vw,28rem)] opacity-[0.14]"
+        viewBox="0 0 500 600"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <g className="text-[#2d4a32]" fill="currentColor" stroke="none">
+          {/* Branch */}
+          <path d="M340 0 C320 60, 280 120, 240 180 C220 210, 190 240, 160 280 C140 310, 120 340, 110 380" fill="none" stroke="currentColor" strokeWidth="2.5" opacity="0.7" />
+          {/* Leaves along branch */}
+          <path d="M340 20 C355 35, 360 60, 345 75 C330 60, 325 35, 340 20Z" />
+          <path d="M320 60 C300 50, 280 55, 275 75 C290 80, 310 75, 320 60Z" />
+          <path d="M300 100 C320 95, 340 105, 340 125 C320 125, 300 115, 300 100Z" />
+          <path d="M280 130 C260 115, 240 118, 235 138 C250 145, 270 140, 280 130Z" />
+          <path d="M265 165 C285 160, 305 170, 300 190 C280 188, 262 180, 265 165Z" />
+          <path d="M245 200 C225 185, 205 190, 200 210 C218 218, 238 212, 245 200Z" />
+          <path d="M225 240 C245 238, 260 250, 255 268 C238 265, 222 255, 225 240Z" />
+          <path d="M200 270 C180 258, 160 262, 158 282 C175 288, 194 282, 200 270Z" />
+          <path d="M180 310 C198 308, 210 320, 205 338 C188 335, 177 322, 180 310Z" />
+          <path d="M155 340 C138 328, 120 332, 118 350 C134 356, 150 350, 155 340Z" />
+        </g>
+      </svg>
+      <svg
+        aria-hidden
+        className="pointer-events-none absolute -right-6 top-8 w-[min(44vw,24rem)] opacity-[0.12]"
+        viewBox="0 0 440 520"
+        fill="none"
+      >
+        <g className="text-[#2d4a32]" fill="currentColor" stroke="none">
+          {/* Branch */}
+          <path d="M100 0 C130 70, 170 130, 220 190 C250 220, 280 260, 300 310 C310 340, 320 370, 320 410" fill="none" stroke="currentColor" strokeWidth="2.2" opacity="0.6" />
+          {/* Leaves */}
+          <path d="M110 30 C90 40, 82 62, 95 78 C112 68, 118 45, 110 30Z" />
+          <path d="M135 75 C155 68, 172 78, 170 98 C152 96, 136 88, 135 75Z" />
+          <path d="M160 120 C140 112, 125 118, 125 138 C142 142, 158 135, 160 120Z" />
+          <path d="M190 160 C210 155, 225 168, 220 185 C203 182, 188 173, 190 160Z" />
+          <path d="M215 205 C195 195, 180 200, 180 220 C196 224, 212 217, 215 205Z" />
+          <path d="M245 245 C262 240, 278 252, 273 270 C256 266, 243 258, 245 245Z" />
+          <path d="M270 290 C252 280, 238 286, 238 304 C254 308, 268 302, 270 290Z" />
+          <path d="M295 335 C310 330, 322 342, 318 358 C302 354, 293 346, 295 335Z" />
+        </g>
+      </svg>
+
+      <div className="container-aura relative">
+        <header className="mx-auto max-w-2xl text-center">
+          <div data-reveal-eyebrow="" className="flex flex-col items-center gap-3">
+            <Leaf className="h-7 w-7 text-[#b8975c]" strokeWidth={1.2} />
+            <p className="text-[0.62rem] font-medium tracking-[0.32em] uppercase text-[#8a8478]">
+              Shop by concern
+            </p>
+          </div>
+          <h2
+            className="mt-4 font-display text-[clamp(2rem,4.2vw,3.1rem)] leading-[1.12] tracking-tight text-forest"
+            aria-label="What is your skin asking for?"
+          >
+            {titleWords.map((word, i) => (
+              <span key={`${word.text}-${i}`}>
+                {i > 0 ? ' ' : null}
+                <span
+                  data-title-word=""
+                  className={`inline-block ${word.italic ? 'italic font-normal' : ''}`}
+                >
+                  {word.text}
+                </span>
+              </span>
+            ))}
+          </h2>
+          <p
+            data-word-split="subtitle"
+            className="mx-auto mt-4 max-w-md text-[0.95rem] font-light leading-[1.7] text-[#6a645c]"
+          >
             Begin with the concern — we will meet you with botanicals that listen.
-          </Body>
+          </p>
+        </header>
+
+        <div className="mt-12 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:mt-14 lg:grid-cols-3">
+          {concerns.map((item) => {
+            const Icon = concernIcons[item.icon]
+            return (
+              <Link
+                key={item.id}
+                data-reveal-card=""
+                to={item.to}
+                className="group relative flex min-h-[11rem] overflow-hidden rounded-[1.15rem] bg-[#faf7f1] px-5 py-5 shadow-[0_1px_0_rgba(36,53,40,0.04)] ring-1 ring-[#243528]/10 transition-[box-shadow,transform] duration-400 hover:-translate-y-0.5 hover:shadow-[0_14px_32px_rgba(36,53,40,0.1)] sm:min-h-[12.25rem] sm:px-6 sm:py-6"
+              >
+                {/* Active corner tag */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute -right-px -top-px h-0 w-0 border-l-[2.4rem] border-t-[2.4rem] border-l-transparent border-t-forest opacity-0 transition-opacity duration-400 group-hover:opacity-100"
+                />
+                <ArrowUpRight
+                  aria-hidden
+                  className="pointer-events-none absolute right-1.5 top-1.5 z-10 h-3 w-3 text-warm-white opacity-0 transition-opacity duration-400 group-hover:opacity-100"
+                  strokeWidth={2}
+                />
+
+                <div className="relative z-10 flex w-[48%] flex-col justify-between py-0.5">
+                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#b8975c]/12 text-[#b8975c] sm:h-12 sm:w-12">
+                    <Icon className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={1.5} />
+                  </span>
+                  <div>
+                    <h3 className="font-display text-[1.2rem] leading-tight tracking-tight text-[#243528] sm:text-[1.35rem]">
+                      {item.label}
+                    </h3>
+                    <span className="mt-2.5 inline-flex items-center gap-1.5 text-[0.58rem] font-medium tracking-[0.22em] uppercase text-[#8a8478] transition-colors duration-400 group-hover:text-forest">
+                      Shop
+                      <span aria-hidden>→</span>
+                    </span>
+                  </div>
+                </div>
+
+                <div className="absolute inset-y-1.5 right-2 w-[54%] overflow-hidden rounded-[0.95rem] sm:inset-y-2 sm:right-3">
+                  <img
+                    src={item.image}
+                    alt={item.imageAlt}
+                    className="h-full w-full object-cover object-[55%_center] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+                    loading="lazy"
+                  />
+                  <div
+                    aria-hidden
+                    className="absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-[#faf7f1] to-transparent"
+                  />
+                </div>
+              </Link>
+            )
+          })}
         </div>
 
-        <div className="mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {concerns.map((item) => (
-            <Link
-              key={item.label}
-              data-reveal=""
-              to={item.to}
-              className="group flex items-center justify-between border border-charcoal/10 px-6 py-5 transition-colors duration-400 hover:border-forest hover:bg-beige/40"
+        {/* Quiz CTA bar */}
+        <Link
+          data-reveal-quiz=""
+          to={concernsQuiz.to}
+          className="group relative mt-12 flex flex-col items-start gap-4 overflow-hidden rounded-full bg-[#f0e9dc] px-6 py-4 ring-1 ring-[#243528]/12 transition-colors duration-400 hover:bg-[#ebe3d4] sm:mt-14 sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:px-8 sm:py-5"
+        >
+          <div className="relative z-10 flex items-start gap-3 sm:items-center">
+            <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#b8975c]/15 text-[#b8975c] sm:mt-0">
+              <Leaf className="h-3.5 w-3.5" strokeWidth={1.5} />
+            </span>
+            <p
+              data-word-split="quiz"
+              className="max-w-md text-[0.95rem] font-light leading-snug text-[#3d3a34]"
             >
-              <span className="font-display text-2xl text-charcoal group-hover:text-forest">
-                {item.label}
-              </span>
-              <span className="text-micro text-olive opacity-70 transition-opacity md:opacity-0 md:group-hover:opacity-100">
-                Shop
-              </span>
-            </Link>
-          ))}
-        </div>
+              {concernsQuiz.prompt}
+            </p>
+          </div>
+
+          <div
+            data-reveal-quiz-cta=""
+            className="relative z-10 flex items-center gap-6 sm:pl-6"
+          >
+            <span
+              aria-hidden
+              className="hidden h-8 w-px bg-[#243528]/15 sm:block"
+            />
+            <span className="inline-flex items-center gap-2 text-[0.62rem] font-medium tracking-[0.22em] uppercase text-forest transition-transform duration-400 group-hover:translate-x-0.5">
+              {concernsQuiz.cta}
+              <span aria-hidden>→</span>
+            </span>
+          </div>
+
+          <Leaf
+            aria-hidden
+            className="pointer-events-none absolute -right-2 bottom-[-0.5rem] h-24 w-24 text-[#243528]/[0.04] sm:right-4 sm:h-28 sm:w-28"
+            strokeWidth={0.8}
+          />
+        </Link>
       </div>
     </section>
   )

@@ -7,6 +7,7 @@ import {
   useGsap,
   prefersReducedMotion,
   ScrollTrigger,
+  splitText,
 } from '@animations/gsap'
 import { useInView } from '@hooks/useInView'
 import { scrollToY } from '@/lib/lenisControl'
@@ -747,43 +748,138 @@ function CollectionBanner({
   panel: (typeof featuredSplit.panels)[number]
   index: number
 }) {
-  const ref = useRef<HTMLElement>(null)
-  const inView = useInView(ref, { threshold: 0.2, rootMargin: '8% 0%' })
   const accent = collectionAccents[index % collectionAccents.length]
   const productLeft = accent.productSide === 'left'
+  const titleChars = panel.title.split('')
 
-  useEffect(() => {
-    const el = ref.current
+  const scope = useGsap(() => {
+    const el = scope.current
     if (!el) return
-    const items = el.querySelectorAll<HTMLElement>('[data-banner-reveal]')
-    if (!items.length) return
 
-    if (!inView || prefersReducedMotion()) {
-      gsap.set(items, { opacity: 1, y: 0 })
+    const isDesktop = window.matchMedia('(min-width: 768px)').matches
+    const root = el.querySelector<HTMLElement>(
+      isDesktop ? '[data-banner-desktop]' : '[data-banner-mobile]',
+    )
+    if (!root) return
+
+    const labels = root.querySelectorAll('[data-banner-label]')
+    const rules = root.querySelectorAll('[data-banner-rule]')
+    const ctas = root.querySelectorAll('[data-banner-cta]')
+    const descEls = Array.from(
+      root.querySelectorAll<HTMLElement>('[data-banner-desc]'),
+    )
+    const titleEls = root.querySelectorAll('[data-banner-title-char]')
+    const descWords = descEls.flatMap((node) => {
+      const words = splitText(node, 'words')
+      words.forEach((word) => {
+        const outer = word.parentElement
+        if (outer) outer.style.overflow = 'visible'
+      })
+      return words
+    })
+
+    const chrome = [...labels, ...rules, ...ctas]
+    gsap.set([...chrome, ...Array.from(titleEls), ...descWords], { opacity: 0 })
+    gsap.set(titleEls, { y: 14 })
+    gsap.set(descWords, { y: 28 })
+    gsap.set(chrome, { y: 16 })
+
+    if (prefersReducedMotion()) {
+      gsap.set([...chrome, ...Array.from(titleEls), ...descWords], {
+        opacity: 1,
+        y: 0,
+      })
       return
     }
 
-    gsap.set(items, { opacity: 0, y: 18 })
-    const tween = gsap.to(items, {
-      opacity: 1,
-      y: 0,
-      duration: 0.6,
-      stagger: 0.08,
-      ease: 'power3.out',
-    })
-    return () => {
-      tween.kill()
+    const tl = gsap.timeline({ paused: true })
+
+    if (labels.length) {
+      tl.fromTo(
+        labels,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' },
+      )
     }
-  }, [inView])
+
+    if (titleEls.length) {
+      tl.fromTo(
+        titleEls,
+        { opacity: 0, y: 16 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.35,
+          stagger: 0.045,
+          ease: 'power3.out',
+        },
+        '-=0.1',
+      )
+    }
+
+    if (rules.length) {
+      tl.fromTo(
+        rules,
+        { opacity: 0, scaleX: 0 },
+        {
+          opacity: 1,
+          scaleX: 1,
+          duration: 0.35,
+          transformOrigin: 'left center',
+          ease: 'power3.out',
+        },
+        '-=0.15',
+      )
+    }
+
+    if (descWords.length) {
+      // Words float up into place one by one
+      tl.fromTo(
+        descWords,
+        { opacity: 0, y: 32 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          stagger: 0.06,
+          ease: 'power2.out',
+        },
+        '-=0.05',
+      )
+    }
+
+    if (ctas.length) {
+      tl.fromTo(
+        ctas,
+        { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' },
+        '-=0.35',
+      )
+    }
+
+    const trigger = ScrollTrigger.create({
+      trigger: el,
+      start: 'top 78%',
+      onEnter: () => tl.restart(),
+      onEnterBack: () => tl.restart(),
+    })
+
+    return () => {
+      tl.kill()
+      trigger.kill()
+    }
+  }, [panel.title, panel.description])
 
   return (
     <article
-      ref={ref}
+      ref={scope}
       className={`relative overflow-visible ${productLeft ? '' : 'pt-0 md:pt-1'}`}
     >
       {/* Mobile stacked */}
-      <div className="overflow-hidden rounded-[1.35rem] bg-[#faf7f2] shadow-[0_14px_36px_rgba(70,55,25,0.1)] md:hidden">
-        <Link
+      <div
+        data-banner-mobile
+        className="overflow-hidden rounded-[1.35rem] bg-[#faf7f2] shadow-[0_14px_36px_rgba(70,55,25,0.1)] md:hidden"
+      >        <Link
           to={panel.productTo}
           aria-label={panel.imageAlt}
           className="relative block aspect-[5/3] overflow-hidden"
@@ -806,30 +902,56 @@ function CollectionBanner({
           />
         </Link>
         <div className="px-6 py-7">
-          <p className={`text-[0.58rem] font-medium tracking-[0.28em] uppercase ${accent.label}`}>
+          <p
+            data-banner-label
+            className={`text-[0.58rem] font-medium tracking-[0.28em] uppercase ${accent.label}`}
+          >
             {panel.label}
           </p>
-          <h3 className="mt-2 font-display text-[1.7rem] leading-none tracking-[0.02em] text-[#1f1c18] uppercase">
-            {panel.title}
+          <h3
+            className="mt-2 font-display text-[1.7rem] leading-none tracking-[0.02em] text-[#1f1c18] uppercase"
+            aria-label={panel.title}
+          >
+            {titleChars.map((ch, i) => (
+              <span
+                key={`${ch}-${i}`}
+                data-banner-title-char
+                className="inline-block leading-none"
+              >
+                {ch === ' ' ? '\u00A0' : ch}
+              </span>
+            ))}
           </h3>
-          <span aria-hidden className={`mt-2.5 block h-px w-8 ${accent.rule}`} />
-          <p className="mt-3 text-[0.86rem] font-light leading-[1.65] text-[#5c574f]">
+          <span
+            data-banner-rule
+            aria-hidden
+            className={`mt-0.5 block h-px w-8 origin-left ${accent.rule}`}
+          />
+          <p
+            data-banner-desc
+            className="mt-4 text-[0.86rem] font-light leading-[1.65] text-[#5c574f]"
+          >
             {panel.description}
           </p>
-          <Link
-            to={panel.to}
-            className={`mt-5 inline-flex h-10 items-center gap-2.5 rounded-full py-1 pl-5 pr-1.5 text-[0.56rem] font-medium tracking-[0.16em] uppercase !text-white ${accent.button}`}
-          >
-            {panel.cta}
-            <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/20 text-white">
-              <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={1.6} />
-            </span>
-          </Link>
+          <div data-banner-cta>
+            <Link
+              to={panel.to}
+              className={`mt-5 inline-flex h-10 items-center gap-2.5 rounded-full py-1 pl-5 pr-1.5 text-[0.56rem] font-medium tracking-[0.16em] uppercase !text-white ${accent.button}`}
+            >
+              {panel.cta}
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/20 text-white">
+                <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={1.6} />
+              </span>
+            </Link>
+          </div>
         </div>
       </div>
 
       {/* Desktop — card size stays fixed; only peach breaks out above */}
-      <div className="relative hidden h-[clamp(15rem,20vw,19.5rem)] md:block">
+      <div
+        data-banner-desktop
+        className="relative hidden h-[clamp(15rem,20vw,19.5rem)] md:block"
+      >
         <div className="absolute inset-0 overflow-hidden rounded-[1.75rem] shadow-[0_14px_36px_rgba(70,55,25,0.1)] lg:rounded-[2rem]">
           <img
             src={panel.scene}
@@ -879,29 +1001,37 @@ function CollectionBanner({
           }`}
         >
           <p
-            data-banner-reveal
+            data-banner-label
             className={`text-[0.58rem] font-medium tracking-[0.3em] uppercase lg:text-[0.62rem] ${accent.label}`}
           >
             {panel.label}
           </p>
           <h3
-            data-banner-reveal
-            className="mt-2.5 font-display text-[clamp(1.55rem,2.6vw,2.4rem)] leading-[1] tracking-[0.03em] text-[#1f1c18] uppercase"
+            className="mt-2.5 font-display text-[clamp(1.55rem,2.6vw,2.4rem)] leading-none tracking-[0.03em] text-[#1f1c18] uppercase"
+            aria-label={panel.title}
           >
-            {panel.title}
+            {titleChars.map((ch, i) => (
+              <span
+                key={`${ch}-${i}`}
+                data-banner-title-char
+                className="inline-block leading-none"
+              >
+                {ch === ' ' ? '\u00A0' : ch}
+              </span>
+            ))}
           </h3>
           <span
-            data-banner-reveal
+            data-banner-rule
             aria-hidden
-            className={`mt-2.5 h-px w-8 ${accent.rule}`}
+            className={`mt-0.5 block h-px w-8 origin-left ${accent.rule}`}
           />
           <p
-            data-banner-reveal
-            className="mt-3 max-w-[17rem] text-[0.82rem] font-light leading-[1.6] text-[#5c574f] lg:text-[0.88rem]"
+            data-banner-desc
+            className="mt-4 max-w-[17rem] text-[0.82rem] font-light leading-[1.6] text-[#5c574f] lg:text-[0.88rem]"
           >
             {panel.description}
           </p>
-          <div data-banner-reveal className="mt-5">
+          <div data-banner-cta className="mt-5">
             <Link
               to={panel.to}
               className={`group/cta inline-flex h-10 items-center gap-2.5 rounded-full py-1 pl-5 pr-1.5 text-[0.56rem] font-medium tracking-[0.16em] uppercase !text-white transition-colors duration-400 lg:text-[0.58rem] ${accent.button}`}
