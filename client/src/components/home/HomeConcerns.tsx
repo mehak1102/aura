@@ -21,14 +21,14 @@ const concernIcons: Record<(typeof concerns)[number]['icon'], LucideIcon> = {
   leaf: Leaf,
 }
 
-const titleWords = [
+const titleWords: { text: string; italic?: boolean }[] = [
   { text: 'What' },
   { text: 'is' },
   { text: 'your' },
   { text: 'skin', italic: true },
   { text: 'asking' },
   { text: 'for?' },
-] as const
+]
 
 export function HomeConcerns() {
   const scope = useGsap(() => {
