@@ -6,6 +6,7 @@ import {
   HomeEditorialScroll,
   HomeFeaturedSplit,
   HomeConcerns,
+  HomeSplitJourney,
   HomeExpectations,
   HomeIngredients,
   HomeCategories,
@@ -35,6 +36,7 @@ export default function HomePage() {
       {/* <HomeConcerns /> */}
       <HomeExpectations />
       <HomeConcerns />
+      <HomeSplitJourney />
 
       <HomeIngredients />
       <HomeCategories />

@@ -232,6 +232,71 @@ export const concernsQuiz = {
   to: ROUTES.skinQuiz,
 }
 
+/** Pinned FLIP split journey — after Shop by Concern */
+export const splitJourney = {
+  eyebrow: 'The botanical path',
+  title: 'A ritual that moves with you',
+  titleItalic: 'moves',
+  subtitle: 'Scroll through four pure botanicals — each pause a different kind of care.',
+  slides: [
+    {
+      id: 'lavender',
+      step: '01',
+      label: 'Evening Calm',
+      titleLines: ['Breathe in', 'the quiet'],
+      titleItalic: 'quiet',
+      description:
+        'Lavender Essential Oil — distilled at peak bloom for serene aroma, softer evenings, and rituals that ask nothing more.',
+      note: '100% pure oil · Skin & mind',
+      image: '/products/_ritual/lavender.png',
+      imageAlt: 'Lavender Essential Oil in a botanical setting',
+      cta: { label: 'Shop Lavender', to: productPath('lavender-essential-oil') },
+    },
+    {
+      id: 'tea-tree',
+      step: '02',
+      label: 'Clarify',
+      titleLines: ['Clear skin,', 'clear mind'],
+      titleItalic: 'clear mind',
+      description:
+        'Tea Tree Essential Oil — a crisp, clarifying botanical for blemish-prone skin and a refreshed scalp ritual.',
+      note: 'Clarifying · Targeted care',
+      image: '/products/_ritual/tea-tree.png',
+      imageAlt: 'Tea Tree Essential Oil bottle',
+      cta: { label: 'Shop Tea Tree', to: productPath('tea-tree-essential-oil') },
+    },
+    {
+      id: 'jojoba',
+      step: '03',
+      label: 'Cold Pressed',
+      titleLines: ['Balance', 'that lasts'],
+      titleItalic: 'lasts',
+      description:
+        'Jojoba Cold Pressed Oil — lightweight liquid gold that mirrors skin’s own oils for lasting, quiet moisture.',
+      note: 'Cold pressed · Vitamin rich',
+      image: '/products/_ritual/jojoba.png',
+      imageAlt: 'Jojoba Cold Pressed Oil',
+      cta: { label: 'Shop Jojoba', to: productPath('jojoba-cold-pressed-oil') },
+    },
+    {
+      id: 'black-cumin',
+      step: '04',
+      label: 'Hair Ritual',
+      titleLines: ['Strength', 'from the seed'],
+      titleItalic: 'seed',
+      description:
+        'Black Cumin Cold Pressed Oil — dense botanical nourishment for scalp and strands; a smooth massage that helps temper hair fall.',
+      note: 'Cold pressed · Controls hair fall',
+      image: '/products/_ritual/black-cumin.png',
+      imageAlt: 'Black Cumin cold pressed oil bottle and box',
+      cta: {
+        label: 'Shop Black Cumin',
+        to: productPath('black-cumin-cold-pressed-oil'),
+      },
+    },
+  ],
+}
+
 /** Luxury slider slides — Grand Hotel editorial layout */
 export const luxurySlides: LuxurySlide[] = [
   {

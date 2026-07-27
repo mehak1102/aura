@@ -75,9 +75,9 @@ export function HomeConcerns() {
     if (subtitleWords.length) {
       tl.fromTo(
         subtitleWords,
-        { y: 22, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.4, stagger: 0.045, ease: 'power3.out' },
-        '-=0.1',
+        { y: 16, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.28, stagger: 0.018, ease: 'power2.out' },
+        '-=0.25',
       )
     }
 
@@ -133,7 +133,7 @@ export function HomeConcerns() {
   return (
     <section
       ref={scope}
-      className="relative overflow-hidden bg-[#f6f1e8] pt-[clamp(2.75rem,6vw,4.5rem)] pb-[clamp(5rem,10vw,8.5rem)]"
+      className="relative overflow-hidden bg-[#f6f1e8] pt-[clamp(2.75rem,6vw,4.5rem)] pb-[clamp(2.75rem,5vw,4.25rem)]"
     >
       {/* Soft leaf shadows — realistic SVG leaves */}
       <svg
