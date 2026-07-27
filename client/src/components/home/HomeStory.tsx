@@ -134,9 +134,53 @@ export function HomeStory() {
     <section
       ref={scope}
       id="our-story"
-      className="overflow-hidden bg-[#f4efe6]"
+      className="relative overflow-hidden bg-[#f4efe6]"
     >
-      <div className="mx-auto w-full max-w-[86rem] px-[var(--spacing-gutter)] py-[var(--spacing-section)]">
+      {/* Soft leaf shadows — same style as Shop by Concern */}
+      <svg
+        aria-hidden
+        className="pointer-events-none absolute -left-4 -top-6 w-[min(52vw,28rem)] opacity-[0.14]"
+        viewBox="0 0 500 600"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <g className="text-[#2d4a32]" fill="currentColor" stroke="none">
+          <path d="M340 0 C320 60, 280 120, 240 180 C220 210, 190 240, 160 280 C140 310, 120 340, 110 380" fill="none" stroke="currentColor" strokeWidth="2.5" opacity="0.7" />
+          <path d="M340 20 C355 35, 360 60, 345 75 C330 60, 325 35, 340 20Z" />
+          <path d="M320 60 C300 50, 280 55, 275 75 C290 80, 310 75, 320 60Z" />
+          <path d="M300 100 C320 95, 340 105, 340 125 C320 125, 300 115, 300 100Z" />
+          <path d="M280 130 C260 115, 240 118, 235 138 C250 145, 270 140, 280 130Z" />
+          <path d="M265 165 C285 160, 305 170, 300 190 C280 188, 262 180, 265 165Z" />
+          <path d="M245 200 C225 185, 205 190, 200 210 C218 218, 238 212, 245 200Z" />
+          <path d="M225 240 C245 238, 260 250, 255 268 C238 265, 222 255, 225 240Z" />
+          <path d="M200 270 C180 258, 160 262, 158 282 C175 288, 194 282, 200 270Z" />
+          <path d="M180 310 C198 308, 210 320, 205 338 C188 335, 177 322, 180 310Z" />
+          <path d="M155 340 C138 328, 120 332, 118 350 C134 356, 150 350, 155 340Z" />
+        </g>
+      </svg>
+      <svg
+        aria-hidden
+        className="pointer-events-none absolute -right-6 top-8 w-[min(44vw,24rem)] opacity-[0.12]"
+        viewBox="0 0 440 520"
+        fill="none"
+      >
+        <g className="text-[#2d4a32]" fill="currentColor" stroke="none">
+          <path d="M100 0 C130 70, 170 130, 220 190 C250 220, 280 260, 300 310 C310 340, 320 370, 320 410" fill="none" stroke="currentColor" strokeWidth="2.2" opacity="0.6" />
+          <path d="M110 30 C90 40, 82 62, 95 78 C112 68, 118 45, 110 30Z" />
+          <path d="M135 75 C155 68, 172 78, 170 98 C152 96, 136 88, 135 75Z" />
+          <path d="M160 120 C140 112, 125 118, 125 138 C142 142, 158 135, 160 120Z" />
+          <path d="M190 160 C210 155, 225 168, 220 185 C203 182, 188 173, 190 160Z" />
+          <path d="M215 205 C195 195, 180 200, 180 220 C196 224, 212 217, 215 205Z" />
+          <path d="M245 245 C262 240, 278 252, 273 270 C256 266, 243 258, 245 245Z" />
+          <path d="M270 290 C252 280, 238 286, 238 304 C254 308, 268 302, 270 290Z" />
+          <path d="M295 335 C310 330, 322 342, 318 358 C302 354, 293 346, 295 335Z" />
+        </g>
+      </svg>
+
+      <div className="relative mx-auto w-full max-w-[86rem] px-[var(--spacing-gutter)] py-[var(--spacing-section)]">
         <div className="grid items-center gap-10 lg:grid-cols-[0.9fr_1.35fr] lg:gap-12 xl:gap-16">
           {/* Text — left */}
           <div ref={textRef} className="min-w-0 max-w-[28rem] lg:max-w-none lg:pr-6">
@@ -149,7 +193,7 @@ export function HomeStory() {
 
             <div data-reveal="" className="mt-4 flex items-center gap-3" aria-hidden>
               <span className="h-px w-12 bg-[#1b261e]/25" />
-              <span className="h-1.5 w-1.5 rotate-45 border border-[#b8975c]/80 bg-transparent" />
+              <Leaf className="h-4 w-4 text-[#b8975c]" strokeWidth={1.4} />
               <span className="h-px w-12 bg-[#1b261e]/25" />
             </div>
 
