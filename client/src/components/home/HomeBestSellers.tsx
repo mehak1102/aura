@@ -1,10 +1,20 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Heart, Leaf } from 'lucide-react'
-import { bestSellers } from '@/data/home'
+import {
+  ArrowRight,
+  Droplets,
+  Hand,
+  Heart,
+  Leaf,
+  Sparkles,
+  Sprout,
+  Sun,
+} from 'lucide-react'
+import { bestSellers, type BestSellerPill } from '@/data/home'
 import { formatCurrency, cn } from '@utils/index'
 import { productImageUrl } from '@utils/productImage'
 import { ROUTES } from '@/routes/paths'
-import { gsap, ScrollTrigger, useGsap } from '@animations/gsap'
+import { gsap, ScrollTrigger, useGsap, prefersReducedMotion } from '@animations/gsap'
 import { useCart } from '@contexts/CartContext'
 import { useWishlist } from '@contexts/WishlistContext'
 import { useCatalog } from '@contexts/CatalogContext'
@@ -15,63 +25,201 @@ const titleWords: { text: string; italic?: boolean }[] = [
   { text: 'rituals', italic: true },
 ]
 
+const pillIconColor: Record<BestSellerPill['icon'], string> = {
+  leaf: 'text-[#5a8a52]',
+  drop: 'text-[#5a7fa0]',
+  sprout: 'text-[#5a8a4a]',
+  spark: 'text-[#b8975c]',
+  heart: 'text-[#8a5c6a]',
+  sun: 'text-[#c08a3a]',
+  hand: 'text-[#8a7348]',
+}
+
+function PillIcon({ icon }: { icon: BestSellerPill['icon'] }) {
+  const cls = cn('h-2.5 w-2.5 shrink-0', pillIconColor[icon])
+  switch (icon) {
+    case 'drop':
+      return <Droplets className={cls} strokeWidth={2.2} />
+    case 'sprout':
+      return <Sprout className={cls} strokeWidth={2.2} />
+    case 'spark':
+      return <Sparkles className={cls} strokeWidth={2.2} />
+    case 'heart':
+      return <Heart className={cls} strokeWidth={2.2} />
+    case 'sun':
+      return <Sun className={cls} strokeWidth={2.2} />
+    case 'hand':
+      return <Hand className={cls} strokeWidth={2.2} />
+    default:
+      return <Leaf className={cls} strokeWidth={2.2} />
+  }
+}
+
+function WishlistFlashButton({
+  title,
+  productId,
+  wished,
+  onToggle,
+}: {
+  title: string
+  productId?: string
+  wished: boolean
+  onToggle: () => void
+}) {
+  const [flash, setFlash] = useState(false)
+  const heartRef = useRef<HTMLSpanElement>(null)
+  const timerRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) window.clearTimeout(timerRef.current)
+    }
+  }, [])
+
+  const handleClick = () => {
+    if (!productId) return
+    const adding = !wished
+    onToggle()
+    if (!adding) return
+
+    setFlash(true)
+    if (heartRef.current && !prefersReducedMotion()) {
+      gsap.fromTo(
+        heartRef.current,
+        { scale: 1 },
+        {
+          scale: 1.35,
+          duration: 0.22,
+          yoyo: true,
+          repeat: 1,
+          ease: 'power2.out',
+          overwrite: 'auto',
+        },
+      )
+    }
+    if (timerRef.current) window.clearTimeout(timerRef.current)
+    timerRef.current = window.setTimeout(() => setFlash(false), 800)
+  }
+
+  return (
+    <div className="absolute right-3 top-3 z-10 sm:right-4 sm:top-4">
+      {flash && (
+        <span
+          role="status"
+          className="pointer-events-none absolute right-full top-1/2 mr-2 -translate-y-1/2 whitespace-nowrap rounded-full bg-[#b08d57] px-2 py-0.5 text-[0.55rem] font-semibold tracking-wide text-white shadow-[0_6px_16px_rgba(176,141,87,0.35)]"
+        >
+          Saved!
+        </span>
+      )}
+      <button
+        type="button"
+        aria-label={
+          wished || flash
+            ? `Remove ${title} from wishlist`
+            : `Add ${title} to wishlist`
+        }
+        aria-pressed={wished || flash}
+        disabled={!productId}
+        onClick={handleClick}
+        className={cn(
+          'inline-flex items-center justify-center rounded-full p-1 transition-colors duration-300',
+          wished || flash
+            ? 'text-[#b08d57]'
+            : 'text-charcoal/70 hover:text-forest',
+        )}
+      >
+        <span ref={heartRef} className="inline-flex origin-center">
+          <Heart
+            className={cn(
+              'h-4 w-4 sm:h-[1.05rem] sm:w-[1.05rem]',
+              (wished || flash) && 'fill-current',
+            )}
+            strokeWidth={1.5}
+          />
+        </span>
+      </button>
+    </div>
+  )
+}
+
 export function HomeBestSellers() {
-  const { addItem } = useCart()
+  const { addItem, updateQty, items } = useCart()
   const { has, toggle } = useWishlist()
   const { getBySlug } = useCatalog()
 
   const getBurstTheme = (slug: string) => {
-    if (slug.includes('coffee')) return 'coffee'
-    if (slug.includes('lavender')) return 'lavender'
-    if (slug.includes('tea-tree')) return 'tea-tree'
+    if (slug.includes('coffee')) return 'coffee' as const
+    if (slug.includes('lavender')) return 'lavender' as const
+    if (slug.includes('tea-tree')) return 'tea-tree' as const
     return 'botanical' as const
   }
 
+  // Warm the image cache before the section enters view
+  useEffect(() => {
+    bestSellers.slice(0, 8).forEach((item) => {
+      const img = new Image()
+      img.decoding = 'async'
+      img.src = productImageUrl(item.image, 'full')
+    })
+  }, [])
+
   const scope = useGsap(() => {
     if (!scope.current) return
+    if (prefersReducedMotion()) return
 
     const eyebrow = scope.current.querySelector('[data-bs-eyebrow]')
     const words = scope.current.querySelectorAll('[data-bs-word]')
     const subtitle = scope.current.querySelector('[data-bs-subtitle]')
-    const cards = scope.current.querySelectorAll('[data-bs-card]')
+    const cards = Array.from(scope.current.querySelectorAll<HTMLElement>('[data-bs-card]'))
     const cta = scope.current.querySelector('[data-bs-cta]')
 
-    gsap.set(
-      [eyebrow, ...Array.from(words), subtitle, ...Array.from(cards), cta].filter(Boolean),
-      { y: 24, opacity: 0 },
-    )
+    gsap.set([eyebrow, ...Array.from(words), subtitle, cta].filter(Boolean), {
+      y: 18,
+      opacity: 0,
+    })
+    gsap.set(cards, { y: 28, opacity: 0.001 })
 
     const tl = gsap.timeline({ paused: true })
 
     if (eyebrow) {
-      tl.to(eyebrow, { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out' })
+      tl.to(eyebrow, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' })
     }
     if (words.length) {
       tl.to(
         words,
-        { y: 0, opacity: 1, duration: 0.45, stagger: 0.06, ease: 'power3.out' },
+        { y: 0, opacity: 1, duration: 0.35, stagger: 0.05, ease: 'power2.out' },
         '-=0.2',
       )
     }
     if (subtitle) {
-      tl.to(subtitle, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, '-=0.2')
+      tl.to(subtitle, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out' }, '-=0.18')
     }
+
+    // One-by-one card flow
     if (cards.length) {
       tl.to(
         cards,
-        { y: 0, opacity: 1, duration: 0.55, stagger: 0.08, ease: 'power3.out' },
-        '-=0.1',
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          stagger: 0.14,
+          ease: 'power2.out',
+          force3D: true,
+        },
+        '-=0.05',
       )
     }
+
     if (cta) {
-      tl.to(cta, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, '-=0.2')
+      tl.to(cta, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out' }, '-=0.15')
     }
 
     const trigger = ScrollTrigger.create({
       trigger: scope.current,
-      start: 'top 78%',
-      onEnter: () => tl.restart(),
-      onEnterBack: () => tl.restart(),
+      start: 'top 80%',
+      once: true,
+      onEnter: () => tl.play(0),
     })
 
     return () => {
@@ -83,61 +231,8 @@ export function HomeBestSellers() {
   return (
     <section
       ref={scope}
-      className="relative overflow-hidden pt-[clamp(3rem,6vw,4.75rem)] pb-[clamp(3.5rem,7vw,5.5rem)]"
-      style={{
-        backgroundColor: '#f5f0e7',
-        backgroundImage: [
-          'radial-gradient(ellipse 75% 50% at 8% 18%, rgba(158,138,98,0.18), transparent 62%)',
-          'radial-gradient(ellipse 60% 48% at 96% 22%, rgba(112,128,92,0.11), transparent 58%)',
-          'radial-gradient(ellipse 90% 40% at 48% 0%, rgba(255,252,246,0.85), transparent 55%)',
-          'radial-gradient(ellipse 70% 42% at 70% 95%, rgba(186,150,110,0.12), transparent 58%)',
-          'linear-gradient(180deg, #faf6ef 0%, #f2ebe1 48%, #ebe3d6 100%)',
-        ].join(', '),
-      }}
+      className="relative overflow-hidden bg-[#f3ebe0] pt-[clamp(3rem,6vw,4.75rem)] pb-[clamp(3.5rem,7vw,5.5rem)]"
     >
-      <svg
-        aria-hidden
-        className="pointer-events-none absolute -left-4 -top-4 w-[min(48vw,26rem)] opacity-[0.12]"
-        viewBox="0 0 500 600"
-        fill="none"
-      >
-        <g className="text-[#2d4a32]" fill="currentColor" stroke="none">
-          <path
-            d="M340 0 C320 60, 280 120, 240 180 C220 210, 190 240, 160 280 C140 310, 120 340, 110 380"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            opacity="0.7"
-          />
-          <path d="M340 20 C355 35, 360 60, 345 75 C330 60, 325 35, 340 20Z" />
-          <path d="M320 60 C300 50, 280 55, 275 75 C290 80, 310 75, 320 60Z" />
-          <path d="M300 100 C320 95, 340 105, 340 125 C320 125, 300 115, 300 100Z" />
-          <path d="M280 130 C260 115, 240 118, 235 138 C250 145, 270 140, 280 130Z" />
-          <path d="M245 200 C225 185, 205 190, 200 210 C218 218, 238 212, 245 200Z" />
-          <path d="M200 270 C180 258, 160 262, 158 282 C175 288, 194 282, 200 270Z" />
-        </g>
-      </svg>
-      <svg
-        aria-hidden
-        className="pointer-events-none absolute -right-6 top-10 w-[min(40vw,22rem)] opacity-[0.1]"
-        viewBox="0 0 440 520"
-        fill="none"
-      >
-        <g className="text-[#2d4a32]" fill="currentColor" stroke="none">
-          <path
-            d="M100 0 C130 70, 170 130, 220 190 C250 220, 280 260, 300 310 C310 340, 320 370, 320 410"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.2"
-            opacity="0.6"
-          />
-          <path d="M110 30 C90 40, 82 62, 95 78 C112 68, 118 45, 110 30Z" />
-          <path d="M160 120 C140 112, 125 118, 125 138 C142 142, 158 135, 160 120Z" />
-          <path d="M215 205 C195 195, 180 200, 180 220 C196 224, 212 217, 215 205Z" />
-          <path d="M270 290 C252 280, 238 286, 238 304 C254 308, 268 302, 270 290Z" />
-        </g>
-      </svg>
-
       <div className="container-aura relative">
         <header className="mx-auto max-w-2xl text-center">
           <div data-bs-eyebrow="" className="flex flex-col items-center gap-3">
@@ -171,28 +266,30 @@ export function HomeBestSellers() {
         </header>
 
         <div className="mt-12 grid grid-cols-2 gap-4 sm:gap-5 lg:mt-14 lg:grid-cols-4 lg:gap-5">
-          {bestSellers.slice(0, 8).map((item) => {
+          {bestSellers.slice(0, 8).map((item, index) => {
             const catalog = getBySlug(item.slug)
             const productId = catalog?.id
             const variantId = catalog?.variants[0]?.id
             const wished = productId ? has(productId) : false
+            const imageSrc = productImageUrl(item.image, 'full')
 
             return (
               <article
                 key={item.slug}
                 data-bs-card=""
-                className="group relative flex flex-col overflow-hidden rounded-[1.1rem] bg-[#faf7f1] shadow-[0_1px_0_rgba(36,53,40,0.04)] ring-1 ring-[#243528]/10 transition-[box-shadow,transform] duration-500 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(36,53,40,0.1)]"
+                className="group relative flex flex-col overflow-hidden rounded-[1.1rem] bg-[#faf7f1] shadow-[0_1px_0_rgba(36,53,40,0.04)] ring-1 ring-[#243528]/10 [contain:paint] transition-[box-shadow,transform] duration-500 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(36,53,40,0.1)]"
               >
                 <div className="relative aspect-[9/10] overflow-hidden bg-[#ebe4d8]">
                   <Link to={`/product/${item.slug}`} className="block h-full w-full">
                     <img
-                      src={productImageUrl(item.image, 'card')}
+                      src={imageSrc}
                       alt={item.title}
-                      className="h-full w-full object-contain p-1.5 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] sm:p-2"
-                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                      loading={index < 4 ? 'eager' : 'lazy'}
                       decoding="async"
+                      fetchPriority={index < 2 ? 'high' : 'low'}
                       width={360}
-                      height={450}
+                      height={400}
                     />
                   </Link>
 
@@ -200,38 +297,50 @@ export function HomeBestSellers() {
                     Best seller
                   </span>
 
-                  <button
-                    type="button"
-                    aria-label={
-                      wished
-                        ? `Remove ${item.title} from wishlist`
-                        : `Add ${item.title} to wishlist`
-                    }
-                    aria-pressed={wished}
-                    disabled={!productId}
-                    onClick={() => {
+                  <WishlistFlashButton
+                    title={item.title}
+                    productId={productId}
+                    wished={wished}
+                    onToggle={() => {
                       if (!productId) return
                       toggle(productId)
                     }}
-                    className={cn(
-                      'absolute right-3 top-3 inline-flex items-center justify-center text-charcoal/70 transition-colors duration-300 hover:text-forest sm:right-4 sm:top-4',
-                      wished && 'text-forest',
-                    )}
-                  >
-                    <Heart
-                      className={cn('h-4 w-4 sm:h-[1.05rem] sm:w-[1.05rem]', wished && 'fill-current')}
-                      strokeWidth={1.5}
-                    />
-                  </button>
+                  />
                 </div>
 
                 <div className="flex flex-1 flex-col justify-between px-3.5 py-4 sm:px-4 sm:py-5">
                   <div>
+                    <div className="mb-2.5 flex w-full flex-nowrap items-center gap-1">
+                      {item.pills.map((pill) => (
+                        <span
+                          key={pill.label}
+                          className="inline-flex max-w-full items-center gap-0.5 whitespace-nowrap rounded-full border border-[#c4a35a]/55 bg-[#faf7f1] px-1.5 py-0.5 text-[0.48rem] font-medium leading-none tracking-wide text-[#4a463e] sm:gap-1 sm:px-2 sm:py-[0.2rem] sm:text-[0.55rem]"
+                        >
+                          <PillIcon icon={pill.icon} />
+                          {pill.label}
+                        </span>
+                      ))}
+                    </div>
+
                     <Link to={`/product/${item.slug}`}>
                       <h3 className="font-display text-[1.05rem] leading-snug tracking-tight text-[#243528] transition-colors group-hover:text-forest sm:text-[1.15rem]">
                         {item.title}
                       </h3>
                     </Link>
+
+                    <div className="mt-1.5 flex items-center gap-1.5">
+                      <span
+                        className="text-[0.7rem] tracking-[0.08em] text-[#c4a35a]"
+                        aria-hidden
+                      >
+                        ★★★★★
+                      </span>
+                      <span className="text-[0.68rem] text-[#6a645c]">
+                        {item.rating.toFixed(1)}
+                        <span className="text-[#9a948c]"> ({item.reviewCount})</span>
+                      </span>
+                    </div>
+
                     <div className="mt-2.5 flex items-baseline gap-2">
                       <span className="text-[0.88rem] font-medium text-forest">
                         {formatCurrency(item.price)}
@@ -248,11 +357,41 @@ export function HomeBestSellers() {
                     <AddToCartButton
                       size="sm"
                       fullWidth
+                      deferBurst
                       burstTheme={getBurstTheme(item.slug)}
                       disabled={!productId || !variantId}
-                      onClick={() => {
+                      quantity={
+                        productId && variantId
+                          ? (items.find(
+                              (l) =>
+                                l.productId === productId &&
+                                l.variantId === variantId,
+                            )?.quantity ?? 0)
+                          : 0
+                      }
+                      onAdd={() => {
                         if (!productId || !variantId) return
                         addItem(productId, variantId, 1)
+                      }}
+                      onIncrement={() => {
+                        if (!productId || !variantId) return
+                        const current =
+                          items.find(
+                            (l) =>
+                              l.productId === productId &&
+                              l.variantId === variantId,
+                          )?.quantity ?? 0
+                        updateQty(productId, variantId, current + 1)
+                      }}
+                      onDecrement={() => {
+                        if (!productId || !variantId) return
+                        const current =
+                          items.find(
+                            (l) =>
+                              l.productId === productId &&
+                              l.variantId === variantId,
+                          )?.quantity ?? 0
+                        updateQty(productId, variantId, current - 1)
                       }}
                     />
                   </div>

@@ -5,23 +5,37 @@ import {
   useRef,
   useState,
   type ButtonHTMLAttributes,
-  type MouseEvent as ReactMouseEvent,
 } from 'react'
-import { ArrowRight, Flower2, Leaf, ShoppingBag } from 'lucide-react'
+import {
+  ArrowRight,
+  Check,
+  Flower2,
+  Leaf,
+  Minus,
+  Plus,
+  ShoppingBag,
+} from 'lucide-react'
 import { gsap, prefersReducedMotion } from '@animations/gsap'
 import { cn } from '@utils/index'
 
+type Phase = 'idle' | 'added' | 'qty'
 type BurstTheme = 'botanical' | 'coffee' | 'lavender' | 'tea-tree'
 
 type AddToCartButtonProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
-  'children'
+  'children' | 'onClick'
 > & {
   label?: string
   size?: 'md' | 'sm'
   className?: string
   fullWidth?: boolean
+  quantity?: number
+  onAdd?: () => void
+  onIncrement?: () => void
+  onDecrement?: () => void
+  onClick?: ButtonHTMLAttributes<HTMLButtonElement>['onClick']
   burstTheme?: BurstTheme
+  deferBurst?: boolean
 }
 
 type BurstElement = {
@@ -36,6 +50,9 @@ type BurstElement = {
   anchorX: number
   anchorY: number
 }
+
+const GOLD = '#b08d57'
+const CONFIRM_MS = 800
 
 const BURSTS: Record<BurstTheme, BurstElement[]> = {
   botanical: [
@@ -91,28 +108,25 @@ function BurstShape({
       />
     )
   }
-
   if (kind === 'flower') {
     return (
       <Flower2
-        style={{ width: size, height: size, opacity: 1, color: '#1e3a25' }}
+        style={{ width: size, height: size, color: '#1e3a25' }}
         strokeWidth={2.4}
       />
     )
   }
-
   if (kind === 'bag') {
     return (
       <ShoppingBag
-        style={{ width: size, height: size, opacity: 1, color: '#9d6f2b' }}
+        style={{ width: size, height: size, color: '#9d6f2b' }}
         strokeWidth={2.4}
       />
     )
   }
-
   return (
     <Leaf
-      style={{ width: size, height: size, opacity: 1, color: '#21452b' }}
+      style={{ width: size, height: size, color: '#21452b' }}
       strokeWidth={2.5}
     />
   )
@@ -123,33 +137,48 @@ export function AddToCartButton({
   size = 'md',
   className,
   fullWidth,
-  burstTheme = 'botanical',
-  disabled,
+  quantity = 0,
+  onAdd,
+  onIncrement,
+  onDecrement,
   onClick,
+  disabled,
+  burstTheme = 'botanical',
+  deferBurst = true,
   ...props
 }: AddToCartButtonProps) {
   const isSm = size === 'sm'
-  const rootRef = useRef<HTMLButtonElement>(null)
-  const bagRef = useRef<HTMLSpanElement>(null)
-  const arrowWrapRef = useRef<HTMLSpanElement>(null)
-  const arrowIconRef = useRef<HTMLSpanElement>(null)
-  const glowRef = useRef<HTMLSpanElement>(null)
+  const [phase, setPhase] = useState<Phase>(() => (quantity > 0 ? 'qty' : 'idle'))
+  const [qtyPulse, setQtyPulse] = useState(false)
+  const [burstReady, setBurstReady] = useState(!deferBurst)
+  const confirmTimer = useRef<number | null>(null)
+  const pulseTimer = useRef<number | null>(null)
+  const skipNextQtySync = useRef(false)
   const burstRefs = useRef<Array<HTMLSpanElement | null>>([])
-  const reducedRef = useRef(false)
-  const resetTimerRef = useRef<number | null>(null)
-  const [flashAdded, setFlashAdded] = useState(false)
+  const rootRef = useRef<HTMLDivElement>(null)
   const burst = useMemo(() => BURSTS[burstTheme], [burstTheme])
 
   useEffect(() => {
-    reducedRef.current = prefersReducedMotion()
+    if (skipNextQtySync.current) {
+      skipNextQtySync.current = false
+      return
+    }
+    if (quantity <= 0) {
+      setPhase('idle')
+      return
+    }
+    if (phase === 'idle') setPhase('qty')
+  }, [quantity, phase])
+
+  useEffect(() => {
     return () => {
-      if (resetTimerRef.current) {
-        window.clearTimeout(resetTimerRef.current)
-      }
+      if (confirmTimer.current) window.clearTimeout(confirmTimer.current)
+      if (pulseTimer.current) window.clearTimeout(pulseTimer.current)
     }
   }, [])
 
   useEffect(() => {
+    if (!burstReady) return
     burstRefs.current.forEach((el, index) => {
       const item = burst[index]
       if (!el || !item) return
@@ -163,93 +192,10 @@ export function AddToCartButton({
         rotation: 0,
       })
     })
-  }, [burst])
+  }, [burst, burstReady])
 
-  const animateOut = useCallback(() => {
-    const root = rootRef.current
-    if (!root) return
-
-    gsap.to(root, {
-      x: 0,
-      y: 0,
-      duration: 0.45,
-      ease: 'power3.out',
-      overwrite: 'auto',
-    })
-    if (glowRef.current) {
-      gsap.to(glowRef.current, {
-        opacity: 0,
-        scale: 1,
-        duration: 0.35,
-        ease: 'power3.out',
-        overwrite: 'auto',
-      })
-    }
-    if (bagRef.current) {
-      gsap.to(bagRef.current, { scale: 1, duration: 0.35, ease: 'power3.out', overwrite: 'auto' })
-    }
-    if (arrowWrapRef.current) {
-      gsap.to(arrowWrapRef.current, { scale: 1, duration: 0.35, ease: 'power3.out', overwrite: 'auto' })
-    }
-    if (arrowIconRef.current) {
-      gsap.to(arrowIconRef.current, {
-        x: 0,
-        rotation: 0,
-        duration: 0.35,
-        ease: 'power3.out',
-        overwrite: 'auto',
-      })
-    }
-    burstRefs.current.forEach((el) => {
-      if (!el) return
-      gsap.to(el, {
-        x: 0,
-        y: 0,
-        scale: 0,
-        opacity: 0,
-        rotation: 0,
-        duration: 0.3,
-        ease: 'power3.out',
-        overwrite: 'auto',
-      })
-    })
-  }, [])
-
-  const animateIn = useCallback(() => {
-    const root = rootRef.current
-    if (!root) return
-
-    gsap.to(root, {
-      y: -3,
-      boxShadow: '0 14px 28px rgba(35,69,44,0.26)',
-      duration: 0.45,
-      ease: 'power3.out',
-      overwrite: 'auto',
-    })
-    if (glowRef.current) {
-      gsap.to(glowRef.current, {
-        opacity: 0.22,
-        scale: 1.04,
-        duration: 0.45,
-        ease: 'power3.out',
-        overwrite: 'auto',
-      })
-    }
-    if (bagRef.current) {
-      gsap.to(bagRef.current, { scale: 1.06, duration: 0.4, ease: 'power3.out', overwrite: 'auto' })
-    }
-    if (arrowWrapRef.current) {
-      gsap.to(arrowWrapRef.current, { scale: 1.08, duration: 0.4, ease: 'power3.out', overwrite: 'auto' })
-    }
-    if (arrowIconRef.current) {
-      gsap.to(arrowIconRef.current, {
-        x: 4,
-        rotation: 45,
-        duration: 0.45,
-        ease: 'power3.out',
-        overwrite: 'auto',
-      })
-    }
+  const playBurst = useCallback(() => {
+    if (prefersReducedMotion()) return
     burstRefs.current.forEach((el, index) => {
       const item = burst[index]
       if (!el || !item) return
@@ -301,115 +247,198 @@ export function AddToCartButton({
     })
   }, [burst])
 
-  const handleMove = useCallback((e: ReactMouseEvent<HTMLButtonElement>) => {
-    if (reducedRef.current) return
-    const root = rootRef.current
-    if (!root) return
+  const flashQty = () => {
+    setQtyPulse(true)
+    if (pulseTimer.current) window.clearTimeout(pulseTimer.current)
+    pulseTimer.current = window.setTimeout(() => setQtyPulse(false), 420)
+  }
 
-    const rect = root.getBoundingClientRect()
-    const dx = e.clientX - (rect.left + rect.width / 2)
-    const dy = e.clientY - (rect.top + rect.height / 2)
-    gsap.to(root, {
-      x: dx * 0.12,
-      y: dy * 0.14 - 3,
-      duration: 0.4,
-      ease: 'power3.out',
-      overwrite: 'auto',
-    })
-  }, [])
+  const handleAdd = () => {
+    if (disabled) return
+    skipNextQtySync.current = true
+    onAdd?.()
+    onClick?.({} as never)
 
-  const handleClick = useCallback(
-    (e: ReactMouseEvent<HTMLButtonElement>) => {
-      if (disabled) return
+    const run = () => {
+      playBurst()
+      setPhase('added')
+      if (confirmTimer.current) window.clearTimeout(confirmTimer.current)
+      confirmTimer.current = window.setTimeout(() => setPhase('qty'), CONFIRM_MS)
+    }
 
-      animateIn()
-      if (resetTimerRef.current) {
-        window.clearTimeout(resetTimerRef.current)
-      }
-      setFlashAdded(true)
-      resetTimerRef.current = window.setTimeout(() => {
-        setFlashAdded(false)
-        animateOut()
-      }, 1400)
+    if (deferBurst && !burstReady) {
+      setBurstReady(true)
+      requestAnimationFrame(() => requestAnimationFrame(run))
+    } else {
+      run()
+    }
+  }
 
-      onClick?.(e)
-    },
-    [animateIn, animateOut, disabled, onClick],
-  )
+  const height = isSm ? 'h-10 sm:h-11' : 'h-[52px]'
+  const textSize = isSm
+    ? 'text-[0.8125rem] sm:text-[0.875rem]'
+    : 'text-[15px]'
 
   return (
-    <button
+    <div
       ref={rootRef}
-      type="button"
-      className={cn(
-        'group relative inline-flex items-center justify-between gap-3 overflow-visible rounded-[9999px] bg-[#23452C] text-white',
-        'font-[family-name:var(--font-sans)] font-medium tracking-[-0.01em]',
-        'border border-[#23452C] shadow-[0_8px_24px_rgba(35,69,44,0.18)]',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b8975c] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f6f1e8]',
-        'disabled:cursor-not-allowed disabled:opacity-50',
-        isSm
-          ? 'h-10 px-4 text-[0.8125rem] sm:h-11 sm:px-5 sm:text-[0.875rem]'
-          : 'h-[52px] px-[22px] text-[15px]',
-        fullWidth && 'w-full',
-        className,
-      )}
-      disabled={disabled}
-      onClick={handleClick}
-      onMouseMove={handleMove}
-      {...props}
+      className={cn('relative overflow-visible', fullWidth && 'w-full', className)}
     >
-      <span
-        ref={glowRef}
-        aria-hidden
-        className="pointer-events-none absolute inset-x-[16%] bottom-[-24%] h-[64%] rounded-full bg-[radial-gradient(circle,rgba(216,184,122,0.2)_0%,rgba(216,184,122,0.08)_40%,transparent_76%)] opacity-0 blur-lg"
-      />
-
+      {/* Burst layer — stays mounted so pop-ups are visible across states */}
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-0 overflow-visible rounded-[9999px]"
+        className="pointer-events-none absolute inset-0 z-[3] overflow-visible"
       >
-        {burst.map((item, index) => (
+        {burstReady
+          ? burst.map((item, index) => (
+              <span
+                key={`${burstTheme}-${item.kind}-${index}`}
+                ref={(el) => {
+                  burstRefs.current[index] = el
+                }}
+                className="absolute -translate-x-1/2 -translate-y-1/2"
+              >
+                <BurstShape kind={item.kind} size={item.size} />
+              </span>
+            ))
+          : null}
+      </span>
+
+      {phase === 'added' ? (
+        <div
+          role="status"
+          aria-live="polite"
+          className={cn(
+            'relative z-[2] inline-flex items-center justify-between gap-3 rounded-full text-white',
+            'font-medium tracking-[-0.01em]',
+            height,
+            isSm ? 'px-3.5 sm:px-4' : 'px-5',
+            textSize,
+            fullWidth && 'w-full',
+          )}
+          style={{
+            backgroundColor: GOLD,
+            boxShadow:
+              'inset 0 0 0 2px rgba(255,255,255,0.55), 0 8px 22px rgba(176,141,87,0.28)',
+          }}
+        >
+          <span className="flex min-w-0 flex-1 items-center gap-2.5">
+            <span
+              className={cn(
+                'inline-flex items-center justify-center rounded-full bg-white/95',
+                isSm ? 'h-5 w-5' : 'h-6 w-6',
+              )}
+              style={{ color: GOLD }}
+            >
+              <Check className={cn(isSm ? 'h-3 w-3' : 'h-3.5 w-3.5')} strokeWidth={2.5} />
+            </span>
+            <span className="whitespace-nowrap leading-none">Added!</span>
+          </span>
           <span
-            key={`${burstTheme}-${item.kind}-${index}`}
-            ref={(el) => {
-              burstRefs.current[index] = el
-            }}
-            className="absolute z-[1] -translate-x-1/2 -translate-y-1/2"
+            aria-hidden
+            className={cn(
+              'inline-flex shrink-0 items-center justify-center rounded-full border border-white/70',
+              isSm ? 'h-7 w-7' : 'h-8 w-8',
+            )}
           >
-            <BurstShape kind={item.kind} size={item.size} />
+            <ArrowRight className={cn(isSm ? 'h-3 w-3' : 'h-3.5 w-3.5')} strokeWidth={1.85} />
           </span>
-        ))}
-      </span>
-
-      <span className="relative z-[2] flex min-w-0 flex-1 items-center gap-2.5 text-white">
-        <span className="inline-flex shrink-0" aria-hidden>
-          <span ref={bagRef} className="inline-flex">
-          <ShoppingBag
-            className={cn(isSm ? 'h-3.5 w-3.5' : 'h-4 w-4')}
-            strokeWidth={1.75}
-          />
+        </div>
+      ) : phase === 'qty' && quantity > 0 ? (
+        <div
+          className={cn(
+            'relative z-[2] inline-grid grid-cols-3 items-stretch overflow-hidden rounded-full border bg-[#faf7f1]',
+            height,
+            fullWidth && 'w-full',
+          )}
+          style={{ borderColor: `${GOLD}99` }}
+          role="group"
+          aria-label="Cart quantity"
+        >
+          <button
+            type="button"
+            aria-label="Decrease quantity"
+            disabled={disabled}
+            onClick={() => {
+              onDecrement?.()
+              flashQty()
+            }}
+            className={cn(
+              'inline-flex items-center justify-center border-r text-[#2a2a28] transition-colors hover:bg-black/[0.03] disabled:opacity-50',
+              textSize,
+            )}
+            style={{ borderColor: `${GOLD}55` }}
+          >
+            <Minus className={cn(isSm ? 'h-3.5 w-3.5' : 'h-4 w-4')} strokeWidth={2} />
+          </button>
+          <span
+            className={cn(
+              'inline-flex items-center justify-center border-r font-semibold tabular-nums transition-colors duration-300',
+              textSize,
+              qtyPulse ? 'text-[#b08d57]' : 'text-[#2a2a28]',
+            )}
+            style={{ borderColor: `${GOLD}55` }}
+            aria-live="polite"
+          >
+            {quantity}
           </span>
-        </span>
-        <span className="min-w-0 whitespace-nowrap text-left leading-none text-white">
-          {flashAdded ? 'Added!' : label}
-        </span>
-      </span>
-
-      <span
-        aria-hidden
-        ref={arrowWrapRef}
-        className={cn(
-          'relative z-[2] ml-auto inline-flex shrink-0 items-center justify-center rounded-full border border-white/55 text-white',
-          isSm ? 'h-7 w-7' : 'h-8 w-8',
-        )}
-      >
-        <span ref={arrowIconRef} className="inline-flex">
-          <ArrowRight
-            className={cn(isSm ? 'h-3 w-3' : 'h-3.5 w-3.5')}
-            strokeWidth={1.85}
-          />
-        </span>
-      </span>
-    </button>
+          <button
+            type="button"
+            aria-label="Increase quantity"
+            disabled={disabled}
+            onClick={() => {
+              onIncrement?.()
+              flashQty()
+            }}
+            className={cn(
+              'inline-flex items-center justify-center text-[#2a2a28] transition-colors hover:bg-black/[0.03] disabled:opacity-50',
+              textSize,
+            )}
+          >
+            <Plus className={cn(isSm ? 'h-3.5 w-3.5' : 'h-4 w-4')} strokeWidth={2} />
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          className={cn(
+            'relative z-[2] inline-flex items-center justify-between gap-3 overflow-visible rounded-full text-white',
+            'font-medium tracking-[-0.01em]',
+            'bg-[#23452C] shadow-[0_8px_24px_rgba(35,69,44,0.18)]',
+            'transition-[background-color,box-shadow,transform] duration-300',
+            'hover:bg-[#2a5335] active:scale-[0.99]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b8975c] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f6f1e8]',
+            'disabled:cursor-not-allowed disabled:opacity-50',
+            height,
+            isSm ? 'px-4 sm:px-5' : 'px-[22px]',
+            textSize,
+            fullWidth && 'w-full',
+          )}
+          disabled={disabled}
+          onClick={handleAdd}
+          {...props}
+        >
+          <span className="flex min-w-0 flex-1 items-center gap-2.5">
+            <ShoppingBag
+              className={cn(isSm ? 'h-3.5 w-3.5' : 'h-4 w-4')}
+              strokeWidth={1.75}
+            />
+            <span className="whitespace-nowrap leading-none">{label}</span>
+          </span>
+          <span
+            aria-hidden
+            className={cn(
+              'inline-flex shrink-0 items-center justify-center rounded-full border border-white/55',
+              isSm ? 'h-7 w-7' : 'h-8 w-8',
+            )}
+          >
+            <ArrowRight
+              className={cn(isSm ? 'h-3 w-3' : 'h-3.5 w-3.5')}
+              strokeWidth={1.85}
+            />
+          </span>
+        </button>
+      )}
+    </div>
   )
 }

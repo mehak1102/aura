@@ -7,6 +7,7 @@ import { formatCurrency, cn } from '@utils/index'
 import { Link } from 'react-router-dom'
 import { ROUTES } from '@/routes/paths'
 import { useWishlist } from '@contexts/WishlistContext'
+import { useCart } from '@contexts/CartContext'
 
 type ProductInfoProps = {
   product: CatalogProduct
@@ -16,8 +17,8 @@ type ProductInfoProps = {
 export function ProductInfo({ product, onAddToCart }: ProductInfoProps) {
   const [variantId, setVariantId] = useState(product.variants[0]?.id)
   const [qty, setQty] = useState(1)
-  const [added, setAdded] = useState(false)
   const { has, toggle } = useWishlist()
+  const { items, addItem, updateQty } = useCart()
   const wished = has(product.id)
 
   const variant = useMemo(
@@ -26,19 +27,25 @@ export function ProductInfo({ product, onAddToCart }: ProductInfoProps) {
   )
 
   const inStock = (variant?.stock ?? 0) > 0
+  const cartQty =
+    items.find(
+      (l) => l.productId === product.id && l.variantId === variant?.id,
+    )?.quantity ?? 0
   const burstTheme = product.slug.includes('coffee')
-    ? 'coffee'
+    ? ('coffee' as const)
     : product.slug.includes('lavender')
-      ? 'lavender'
+      ? ('lavender' as const)
       : product.slug.includes('tea-tree')
-        ? 'tea-tree'
-        : 'botanical'
+        ? ('tea-tree' as const)
+        : ('botanical' as const)
 
   const handleAdd = () => {
     if (!variant || !inStock) return
-    onAddToCart?.(variant, qty)
-    setAdded(true)
-    window.setTimeout(() => setAdded(false), 1800)
+    if (onAddToCart) {
+      onAddToCart(variant, qty)
+    } else {
+      addItem(product.id, variant.id, qty)
+    }
   }
 
   return (
@@ -140,10 +147,20 @@ export function ProductInfo({ product, onAddToCart }: ProductInfoProps) {
         </div>
 
         <AddToCartButton
-          disabled={!inStock}
-          onClick={handleAdd}
-          label={added ? 'Added' : inStock ? 'Add to Cart' : 'Out of stock'}
+          disabled={!inStock || !variant}
+          label={inStock ? 'Add to Cart' : 'Out of stock'}
           burstTheme={burstTheme}
+          deferBurst
+          quantity={cartQty}
+          onAdd={handleAdd}
+          onIncrement={() => {
+            if (!variant) return
+            updateQty(product.id, variant.id, cartQty + 1)
+          }}
+          onDecrement={() => {
+            if (!variant) return
+            updateQty(product.id, variant.id, cartQty - 1)
+          }}
         />
 
         <button

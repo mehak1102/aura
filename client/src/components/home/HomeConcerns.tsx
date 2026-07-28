@@ -120,8 +120,8 @@ export function HomeConcerns() {
     const trigger = ScrollTrigger.create({
       trigger: scope.current,
       start: 'top 78%',
-      onEnter: () => tl.restart(),
-      onEnterBack: () => tl.restart(),
+      once: true,
+      onEnter: () => tl.play(0),
     })
 
     return () => {
