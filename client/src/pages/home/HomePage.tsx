@@ -36,11 +36,11 @@ export default function HomePage() {
       {/* <HomeConcerns /> */}
       <HomeExpectations />
       <HomeConcerns />
+      <HomeBestSellers />
       <HomeSplitJourney />
 
       <HomeIngredients />
       <HomeCategories />
-      <HomeBestSellers />
       <HomePhilosophy />
       <HomeWhyUs />
       <HomeIngredientShowcase />

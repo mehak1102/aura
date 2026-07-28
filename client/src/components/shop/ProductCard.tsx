@@ -21,17 +21,17 @@ export function ProductCard({ product, className }: ProductCardProps) {
 
   return (
     <article className={cn('group flex flex-col', className)} data-product-card="">
-      <div className="relative aspect-[4/5] overflow-hidden bg-[#f3efe6]">
+      <div className="relative aspect-[9/10] overflow-hidden bg-[#f3efe6]">
         <Link to={`/product/${product.slug}`} className="block h-full w-full">
           <ProductImage
             src={image?.url ?? ''}
             alt={image?.alt || product.title}
             size="card"
-            className="h-full w-full object-contain p-5 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+            className="h-full w-full object-contain p-1.5 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04] sm:p-2"
             loading="lazy"
             decoding="async"
             width={480}
-            height={600}
+            height={576}
           />
         </Link>
 

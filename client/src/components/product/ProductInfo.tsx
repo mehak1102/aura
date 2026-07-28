@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Heart, Minus, Plus, Star } from 'lucide-react'
 import type { CatalogProduct } from '@/types/shop'
 import type { ProductVariant } from '@/types'
-import { Badge, Body, Display, Eyebrow, MagneticButton } from '@components/ui'
+import { Badge, Body, Display, Eyebrow, AddToCartButton } from '@components/ui'
 import { formatCurrency, cn } from '@utils/index'
 import { Link } from 'react-router-dom'
 import { ROUTES } from '@/routes/paths'
@@ -26,6 +26,13 @@ export function ProductInfo({ product, onAddToCart }: ProductInfoProps) {
   )
 
   const inStock = (variant?.stock ?? 0) > 0
+  const burstTheme = product.slug.includes('coffee')
+    ? 'coffee'
+    : product.slug.includes('lavender')
+      ? 'lavender'
+      : product.slug.includes('tea-tree')
+        ? 'tea-tree'
+        : 'botanical'
 
   const handleAdd = () => {
     if (!variant || !inStock) return
@@ -132,14 +139,12 @@ export function ProductInfo({ product, onAddToCart }: ProductInfoProps) {
           </button>
         </div>
 
-        <MagneticButton
-          variant="primary"
-          size="lg"
+        <AddToCartButton
           disabled={!inStock}
           onClick={handleAdd}
-        >
-          {added ? 'Added' : inStock ? 'Add to bag' : 'Out of stock'}
-        </MagneticButton>
+          label={added ? 'Added' : inStock ? 'Add to Cart' : 'Out of stock'}
+          burstTheme={burstTheme}
+        />
 
         <button
           type="button"

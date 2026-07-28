@@ -1,5 +1,6 @@
 export { Button } from './Button'
 export { MagneticButton } from './MagneticButton'
+export { AddToCartButton } from './AddToCartButton'
 export { TextLink } from './TextLink'
 export { Container, Section } from './Layout'
 export { Glass } from './Glass'

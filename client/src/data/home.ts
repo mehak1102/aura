@@ -461,6 +461,22 @@ export const bestSellers = [
     rating: 0,
     image: '/products/Peach-Lotion/Peach-Lotion-02-card.png',
   },
+  {
+    title: 'Goat Milk Handmade Soap',
+    slug: 'goat-milk-soap',
+    price: 399,
+    mrp: 399,
+    rating: 0,
+    image: '/products/Goad-Milk-Soap/Goat-Milk-01.png',
+  },
+  {
+    title: 'Jojoba Cold Pressed Oil',
+    slug: 'jojoba-cold-pressed-oil',
+    price: 750,
+    mrp: 750,
+    rating: 0,
+    image: '/products/Jojoba-oil/Jojoba-Oil-02.png',
+  },
 ]
 
 export const philosophy = [

@@ -189,24 +189,16 @@ export function Header({ transparent = false }: HeaderProps) {
             >
               <User className="h-[1.15rem] w-[1.15rem]" stroke="currentColor" strokeWidth={1.85} />
             </NavIcon>
-            {!isHome && (
-              <span className="hidden sm:inline-flex">
-                <NavIcon
-                  to={isAuthenticated ? ROUTES.wishlist : ROUTES.login}
-                  label="Wishlist"
-                  inverse={isInverse}
-                >
-                  <span className="relative">
-                    <Heart className="h-[1.15rem] w-[1.15rem]" stroke="currentColor" strokeWidth={1.85} />
-                    {wishCount > 0 && isAuthenticated && (
-                      <span className="absolute -right-2 -top-1.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[#b8975c] px-1 text-[0.5rem] text-[#1b261e]">
-                        {wishCount > 99 ? '99+' : wishCount}
-                      </span>
-                    )}
+            <NavIcon to={ROUTES.wishlist} label="Wishlist" inverse={isInverse}>
+              <span className="relative" style={{ color: iconColor }}>
+                <Heart className="h-[1.15rem] w-[1.15rem]" stroke="currentColor" strokeWidth={1.85} />
+                {wishCount > 0 && (
+                  <span className="absolute -right-2 -top-1.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[#b8975c] px-1 text-[0.5rem] text-[#1b261e]">
+                    {wishCount > 99 ? '99+' : wishCount}
                   </span>
-                </NavIcon>
+                )}
               </span>
-            )}
+            </NavIcon>
             <NavIcon to={ROUTES.cart} label="Cart" inverse={isInverse}>
               <span className="relative" style={{ color: iconColor }}>
                 <ShoppingBag className="h-[1.15rem] w-[1.15rem]" stroke="currentColor" strokeWidth={1.85} />

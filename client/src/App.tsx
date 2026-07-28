@@ -90,6 +90,7 @@ export default function App() {
             <Route path={ROUTES.search} element={<SearchPage />} />
             <Route path={ROUTES.product} element={<ProductDetailsPage />} />
             <Route path={ROUTES.cart} element={<CartPage />} />
+            <Route path={ROUTES.wishlist} element={<WishlistPage />} />
             <Route path={ROUTES.checkout} element={<CheckoutPage />} />
             <Route path={ROUTES.payment} element={<PaymentPage />} />
             <Route path={ROUTES.orderSuccess} element={<OrderSuccessPage />} />
@@ -98,7 +99,6 @@ export default function App() {
               <Route path={ROUTES.account} element={<AccountPage />} />
               <Route path={ROUTES.profile} element={<ProfilePage />} />
               <Route path={ROUTES.addresses} element={<AddressesPage />} />
-              <Route path={ROUTES.wishlist} element={<WishlistPage />} />
               <Route path={ROUTES.orderHistory} element={<OrderHistoryPage />} />
             </Route>
 
