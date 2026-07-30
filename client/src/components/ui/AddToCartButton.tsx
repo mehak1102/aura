@@ -52,7 +52,7 @@ type BurstElement = {
 }
 
 const GOLD = '#b08d57'
-const CONFIRM_MS = 800
+const CONFIRM_MS = 400
 
 const BURSTS: Record<BurstTheme, BurstElement[]> = {
   botanical: [

@@ -14,7 +14,6 @@ import {
   HomePhilosophy,
   HomeWhyUs,
   HomeTimeline,
-  HomeIngredientShowcase,
   HomeReviews,
   HomeInstagram,
   HomeNewsletter,
@@ -43,7 +42,6 @@ export default function HomePage() {
       <HomeCategories />
       <HomePhilosophy />
       <HomeWhyUs />
-      <HomeIngredientShowcase />
       <HomeTimeline />
       <HomeReviews />
       <HomeInstagram />

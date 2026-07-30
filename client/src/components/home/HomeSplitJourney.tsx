@@ -8,9 +8,9 @@ import {
   JourneyMobileStack,
 } from './split-journey/JourneyPanels'
 
-const SWAP_DUR = 1
-const IMAGE_DUR = 0.9
-const HOLD = 0.4
+const SWAP_DUR = 0.75
+const IMAGE_DUR = 0.7
+const HOLD = 0.28
 
 /**
  * Pinned two-column journey: panels physically swap (FLIP-style),
@@ -272,7 +272,7 @@ export function HomeSplitJourney() {
     }
 
     const scrollLen = () =>
-      Math.max(window.innerHeight * (slides.length * 1.25), 1400)
+      Math.max(window.innerHeight * (slides.length * 0.85), 900)
 
     const st = ScrollTrigger.create({
       trigger: pin,

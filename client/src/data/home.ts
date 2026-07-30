@@ -237,7 +237,7 @@ export const splitJourney = {
   eyebrow: 'The botanical path',
   title: 'A ritual that moves with you',
   titleItalic: 'moves',
-  subtitle: 'Scroll through four pure botanicals — each pause a different kind of care.',
+  subtitle: 'Scroll through three pure botanicals — each pause a different kind of care.',
   slides: [
     {
       id: 'lavender',
@@ -277,22 +277,6 @@ export const splitJourney = {
       image: '/products/_ritual/jojoba.png',
       imageAlt: 'Jojoba Cold Pressed Oil',
       cta: { label: 'Shop Jojoba', to: productPath('jojoba-cold-pressed-oil') },
-    },
-    {
-      id: 'black-cumin',
-      step: '04',
-      label: 'Hair Ritual',
-      titleLines: ['Strength', 'from the seed'],
-      titleItalic: 'seed',
-      description:
-        'Black Cumin Cold Pressed Oil — dense botanical nourishment for scalp and strands; a smooth massage that helps temper hair fall.',
-      note: 'Cold pressed · Controls hair fall',
-      image: '/products/_ritual/black-cumin.png',
-      imageAlt: 'Black Cumin cold pressed oil bottle and box',
-      cta: {
-        label: 'Shop Black Cumin',
-        to: productPath('black-cumin-cold-pressed-oil'),
-      },
     },
   ],
 }
@@ -402,6 +386,238 @@ export const ingredients = [
     benefit: 'Removes skin impurities and toxins',
     to: ROUTES.bodyCare,
     image: '/products/Activated-Charcoal/activated-Charcoal-01-card.png',
+  },
+]
+
+export type IngredientShowcaseItem = {
+  id: string
+  indexLabel: string
+  name: string
+  kicker: string
+  description: string
+  benefits: [string, string, string]
+  badges: [string, string, string]
+  navBenefit: string
+  heroImage: string
+  navImage: string
+  theme: string
+  to: string
+  products: Array<{
+    name: string
+    subtitle: string
+    image: string
+    to: string
+  }>
+}
+
+export const ingredientShowcaseItems: IngredientShowcaseItem[] = [
+  {
+    id: 'charcoal',
+    indexLabel: '01 / 13',
+    name: 'Activated Charcoal',
+    kicker: 'SHOP BY INGREDIENT',
+    description:
+      'Detoxifying mineral care that lifts buildup, clears congestion, and resets the skin cleanly.',
+    benefits: ['Detox', 'Refine', 'Cleanse'],
+    badges: ['Mineral Rich', 'Deep Clean', 'Handcrafted'],
+    navBenefit: 'Detoxifies & removes impurities',
+    heroImage: '/ingredients-showcase/01-charcoal.png',
+    navImage: '/ingredients-showcase/01-charcoal.png',
+    theme: 'charcoal',
+    to: productPath('activated-charcoal-soap'),
+    products: [],
+  },
+  {
+    id: 'black-cumin',
+    indexLabel: '02 / 13',
+    name: 'Black Cumin',
+    kicker: 'SHOP BY INGREDIENT',
+    description:
+      'An ultra-smooth seed oil for scalp and skin rituals that need deeper nourishment.',
+    benefits: ['Strengthen', 'Nourish', 'Protect'],
+    badges: ['Cold Pressed', 'Hair & Skin', 'Pure'],
+    navBenefit: 'Nourishes scalp & controls hairfall',
+    heroImage: '/ingredients-showcase/02-black-cumin.png',
+    navImage: '/ingredients-showcase/02-black-cumin.png',
+    theme: 'black-cumin',
+    to: productPath('black-cumin-cold-pressed-oil'),
+    products: [],
+  },
+  {
+    id: 'carrot-seed',
+    indexLabel: '03 / 13',
+    name: 'Carrot Seed',
+    kicker: 'SHOP BY INGREDIENT',
+    description:
+      'A restorative seed oil known for supporting clearer-looking tone and natural glow.',
+    benefits: ['Brighten', 'Repair', 'Glow'],
+    badges: ['Pure Distilled', 'Skin Loving', 'Natural'],
+    navBenefit: 'Supports glow & even tone',
+    heroImage: '/ingredients-showcase/03-carrot-seed.png',
+    navImage: '/ingredients-showcase/03-carrot-seed.png',
+    theme: 'carrot-seed',
+    to: productPath('carrot-seed-essential-oil'),
+    products: [],
+  },
+  {
+    id: 'coffee',
+    indexLabel: '04 / 13',
+    name: 'Coffee',
+    kicker: 'SHOP BY INGREDIENT',
+    description:
+      'Antioxidant-rich coffee extract for a fresher cleanse, tighter-feeling pores, and natural glow.',
+    benefits: ['Glow', 'Refresh', 'Tone'],
+    badges: ['Antioxidant', 'Daily Cleanse', 'All Skin'],
+    navBenefit: 'Brightens & refreshes daily',
+    heroImage: '/ingredients-showcase/04-coffee.png',
+    navImage: '/ingredients-showcase/04-coffee.png',
+    theme: 'coffee',
+    to: productPath('fresh-coffee-face-wash'),
+    products: [],
+  },
+  {
+    id: 'cucumber-seed',
+    indexLabel: '05 / 13',
+    name: 'Cucumber Seed',
+    kicker: 'SHOP BY INGREDIENT',
+    description:
+      'Cooling antioxidant-rich seed oil that supports softer skin and a fresher everyday feel.',
+    benefits: ['Cool', 'Protect', 'Refresh'],
+    badges: ['Antioxidant', 'Cold Pressed', 'Lightweight'],
+    navBenefit: 'Cools skin & supports softness',
+    heroImage: '/ingredients-showcase/05-cucumber-seed.png',
+    navImage: '/ingredients-showcase/05-cucumber-seed.png',
+    theme: 'cucumber-seed',
+    to: productPath('cucumber-seed-cold-pressed-oil'),
+    products: [],
+  },
+  {
+    id: 'eucalyptus',
+    indexLabel: '06 / 13',
+    name: 'Eucalyptus',
+    kicker: 'SHOP BY INGREDIENT',
+    description:
+      'A clarifying aromatic oil that freshens the air, supports ease, and keeps rituals crisp.',
+    benefits: ['Freshen', 'Clarify', 'Ease'],
+    badges: ['100% Pure', 'Aromatic', 'Therapeutic'],
+    navBenefit: 'Freshens air & eases joints',
+    heroImage: '/ingredients-showcase/06-eucalyptus.png',
+    navImage: '/ingredients-showcase/06-eucalyptus.png',
+    theme: 'eucalyptus',
+    to: productPath('eucalyptus-essential-oil'),
+    products: [],
+  },
+  {
+    id: 'goat-milk',
+    indexLabel: '07 / 13',
+    name: 'Goat Milk',
+    kicker: 'SHOP BY INGREDIENT',
+    description:
+      'Creamy, comforting care that moisturizes gently and leaves skin soft without stripping.',
+    benefits: ['Moisturize', 'Soothe', 'Nourish'],
+    badges: ['Handmade', 'Gentle', 'Natural'],
+    navBenefit: 'Rejuvenates & moisturizes skin',
+    heroImage: '/ingredients-showcase/07-goat-milk.png',
+    navImage: '/ingredients-showcase/07-goat-milk.png',
+    theme: 'goat-milk',
+    to: productPath('goat-milk-soap'),
+    products: [],
+  },
+  {
+    id: 'jojoba',
+    indexLabel: '08 / 13',
+    name: 'Jojoba',
+    kicker: 'SHOP BY INGREDIENT',
+    description:
+      'A skin-mirroring oil that balances, cushions, and keeps moisture close without feeling heavy.',
+    benefits: ['Balance', 'Nourish', 'Soften'],
+    badges: ['100% Pure', 'Barrier Friendly', 'Everyday Use'],
+    navBenefit: 'Balances oil & deeply nourishes',
+    heroImage: '/ingredients-showcase/08-jojoba.png',
+    navImage: '/ingredients-showcase/08-jojoba.png',
+    theme: 'jojoba',
+    to: productPath('jojoba-cold-pressed-oil'),
+    products: [],
+  },
+  {
+    id: 'lavender',
+    indexLabel: '09 / 13',
+    name: 'Lavender',
+    kicker: 'SHOP BY INGREDIENT',
+    description:
+      'A calming floral note for quieter evenings, comforted skin, and a softer sensory routine.',
+    benefits: ['Calm', 'Soothe', 'Restore'],
+    badges: ['Aromatic', 'Skin Loving', 'Pure Distilled'],
+    navBenefit: 'Calms the mind & soothes skin',
+    heroImage: '/ingredients-showcase/09-lavender.png',
+    navImage: '/ingredients-showcase/09-lavender.png',
+    theme: 'lavender',
+    to: productPath('lavender-essential-oil'),
+    products: [],
+  },
+  {
+    id: 'peach',
+    indexLabel: '10 / 13',
+    name: 'Peach',
+    kicker: 'SHOP BY INGREDIENT',
+    description:
+      'Soft peach nourishment with Kumkumadi care for ultra-hydrated, smoother-feeling skin.',
+    benefits: ['Hydrate', 'Repair', 'Smooth'],
+    badges: ['Body Care', 'Rich Moisture', 'Daily Ritual'],
+    navBenefit: 'Hydrates & softens body skin',
+    heroImage: '/ingredients-showcase/10-peach.png',
+    navImage: '/ingredients-showcase/10-peach.png',
+    theme: 'peach',
+    to: productPath('nourishing-peach-lotion-kumkumadi-oil'),
+    products: [],
+  },
+  {
+    id: 'tea-tree',
+    indexLabel: '11 / 13',
+    name: 'Tea Tree',
+    kicker: 'SHOP BY INGREDIENT',
+    description:
+      'Naturally purifies skin, helps reduce blemishes, and promotes a fresher scalp ritual.',
+    benefits: ['Purify', 'Clarify', 'Renew'],
+    badges: ['100% Pure', 'Natural', 'Therapeutic Grade'],
+    navBenefit: 'Purifies & promotes healthy hair',
+    heroImage: '/ingredients-showcase/11-tea-tree.png',
+    navImage: '/ingredients-showcase/11-tea-tree.png',
+    theme: 'tea-tree',
+    to: productPath('tea-tree-essential-oil'),
+    products: [],
+  },
+  {
+    id: 'watermelon',
+    indexLabel: '12 / 13',
+    name: 'Watermelon Seed',
+    kicker: 'SHOP BY INGREDIENT',
+    description:
+      'Lightweight cold-pressed hydration that supports glow, elasticity, and an easy everyday finish.',
+    benefits: ['Hydrate', 'Glow', 'Balance'],
+    badges: ['Cold Pressed', 'Vitamin Rich', 'Lightweight'],
+    navBenefit: 'Hydrates & improves skin elasticity',
+    heroImage: '/ingredients-showcase/12-watermelon.png',
+    navImage: '/ingredients-showcase/12-watermelon.png',
+    theme: 'watermelon',
+    to: productPath('watermelon-seed-cold-pressed-oil'),
+    products: [],
+  },
+  {
+    id: 'wild-apricot',
+    indexLabel: '13 / 13',
+    name: 'Wild Apricot',
+    kicker: 'SHOP BY INGREDIENT',
+    description:
+      'A light cold-pressed oil that softens skin and supports a smoother, comforted finish.',
+    benefits: ['Soften', 'Nourish', 'Smooth'],
+    badges: ['Cold Pressed', 'Lightweight', 'Lab Tested'],
+    navBenefit: 'Softens skin & reduces dryness',
+    heroImage: '/ingredients-showcase/13-wild-apricot.png',
+    navImage: '/ingredients-showcase/13-wild-apricot.png',
+    theme: 'wild-apricot',
+    to: productPath('wild-apricot-cold-pressed-oil'),
+    products: [],
   },
 ]
 
