@@ -16,12 +16,12 @@ export function HomeInstagram() {
           <div>
             <Eyebrow data-reveal="">Instagram</Eyebrow>
             <Display data-reveal="" as="h2" size="md" className="mt-3 text-forest">
-              @auraofnature
+              @auraofnatureofficial
             </Display>
           </div>
           <div data-reveal="">
             <a
-              href="https://www.instagram.com/"
+              href="https://www.instagram.com/auraofnatureofficial/"
               target="_blank"
               rel="noreferrer"
               className="text-micro tracking-[0.22em] uppercase text-charcoal transition-colors hover:text-forest"
@@ -35,7 +35,7 @@ export function HomeInstagram() {
           {instagram.map((src, i) => (
             <a
               key={src}
-              href="https://www.instagram.com/"
+              href="https://www.instagram.com/auraofnatureofficial/"
               target="_blank"
               rel="noreferrer"
               className="group block aspect-square overflow-hidden"

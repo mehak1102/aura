@@ -763,11 +763,19 @@ export const philosophy = [
   },
 ]
 
+export const INSTAGRAM_URL = 'https://www.instagram.com/auraofnatureofficial/'
+
 export const whyUs = [
   { value: 100, suffix: '%', label: 'Natural intent' },
   { value: 50, suffix: '+', label: 'Botanical formulas' },
   { value: 12, suffix: 'k', label: 'Rituals shared' },
   { value: 4.9, suffix: '', label: 'Average rating', decimals: 1 },
+  {
+    value: 8,
+    suffix: 'k',
+    label: 'Instagram followers',
+    href: INSTAGRAM_URL,
+  },
 ]
 
 export const timeline = [

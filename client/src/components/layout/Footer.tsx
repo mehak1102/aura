@@ -70,13 +70,13 @@ export function Footer() {
 
           <div className="flex flex-wrap items-center gap-6">
             <a
-              href="https://www.instagram.com/"
+              href="https://www.instagram.com/auraofnatureofficial/"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 text-micro tracking-[0.22em] uppercase text-warm-white/80 transition-colors hover:text-warm-white"
             >
               <Instagram className="h-4 w-4" strokeWidth={1.5} />
-              @auraofnature
+              @auraofnatureofficial
             </a>
             <p className="text-micro text-warm-white/45">
               © {new Date().getFullYear()} Aura of Nature

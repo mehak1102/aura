@@ -9,7 +9,6 @@ import {
   HomeSplitJourney,
   HomeExpectations,
   HomeIngredients,
-  HomeCategories,
   HomeBestSellers,
   HomePhilosophy,
   HomeWhyUs,
@@ -39,7 +38,6 @@ export default function HomePage() {
       <HomeSplitJourney />
 
       <HomeIngredients />
-      <HomeCategories />
       <HomePhilosophy />
       <HomeWhyUs />
       <HomeTimeline />

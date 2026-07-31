@@ -95,22 +95,6 @@ const productSlugByIngredientId: Record<string, string> = {
   'wild-apricot': 'wild-apricot-cold-pressed-oil',
 }
 
-const themeClasses: Record<string, { glow: string }> = {
-  'tea-tree': { glow: 'bg-[#95a773]/20' },
-  lavender: { glow: 'bg-[#a08fc7]/18' },
-  charcoal: { glow: 'bg-[#798273]/18' },
-  watermelon: { glow: 'bg-[#c58b78]/16' },
-  jojoba: { glow: 'bg-[#9da66e]/16' },
-  'goat-milk': { glow: 'bg-[#c8b48b]/16' },
-  coffee: { glow: 'bg-[#8b6b4a]/16' },
-  peach: { glow: 'bg-[#d4a574]/16' },
-  eucalyptus: { glow: 'bg-[#7a9a6a]/18' },
-  'carrot-seed': { glow: 'bg-[#c9854a]/16' },
-  'wild-apricot': { glow: 'bg-[#d4a05a]/16' },
-  'black-cumin': { glow: 'bg-[#6b6358]/16' },
-  'cucumber-seed': { glow: 'bg-[#7ea06a]/18' },
-}
-
 const showcaseHeroImages: Record<string, string> = {
   charcoal: '/ingredients-showcase/01-charcoal.png',
   'black-cumin': '/ingredients-showcase/02-black-cumin.png',
@@ -133,7 +117,6 @@ export function HomeIngredients() {
   const productSwiperRef = useRef<SwiperInstance | null>(null)
   const syncingFromNavRef = useRef(false)
   const active = ingredientShowcaseItems[activeIndex]
-  const theme = themeClasses[active.theme] ?? { glow: 'bg-[#95a773]/20' }
 
   // Products ordered to match Meet the Plants slides
   const allProducts = useMemo(
@@ -213,12 +196,12 @@ export function HomeIngredients() {
                   backgroundPosition: 'right center',
                   backgroundSize: 'cover',
                   transitionDuration: `${FADE_MS}ms`,
-                  // Soft merge: photo feathers left + bottom into cream (no hard cut)
+                  // Soft merge only at the very bottom — keep photo clear up top
                   WebkitMaskImage:
-                    'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.35) 22%, #000 48%, #000 100%), linear-gradient(to bottom, #000 0%, #000 52%, rgba(0,0,0,0.55) 72%, rgba(0,0,0,0.15) 88%, transparent 100%)',
+                    'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.45) 18%, #000 42%, #000 100%), linear-gradient(to bottom, #000 0%, #000 72%, rgba(0,0,0,0.65) 88%, transparent 100%)',
                   WebkitMaskComposite: 'source-in',
                   maskImage:
-                    'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.35) 22%, #000 48%, #000 100%), linear-gradient(to bottom, #000 0%, #000 52%, rgba(0,0,0,0.55) 72%, rgba(0,0,0,0.15) 88%, transparent 100%)',
+                    'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.45) 18%, #000 42%, #000 100%), linear-gradient(to bottom, #000 0%, #000 72%, rgba(0,0,0,0.65) 88%, transparent 100%)',
                   maskComposite: 'intersect',
                 }}
               />
@@ -226,17 +209,10 @@ export function HomeIngredients() {
           })}
         </div>
 
-        {/* Soft washes — reinforce the feather into cream */}
+        {/* Soft washes — left for copy only; short bottom fade (no veil on photo) */}
         <div className="pointer-events-none absolute inset-0 z-[2]">
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(243,235,221,0.88)_0%,rgba(243,235,221,0.45)_24%,rgba(243,235,221,0.12)_48%,rgba(243,235,221,0)_72%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-48 bg-[linear-gradient(0deg,#F3EBDD_0%,rgba(243,235,221,0.85)_28%,rgba(243,235,221,0.35)_62%,rgba(243,235,221,0)_100%)] lg:h-56" />
-          <div
-            className={cn(
-              'absolute -right-6 top-10 h-72 w-72 rounded-full blur-3xl transition-colors ease-in-out',
-              theme.glow,
-            )}
-            style={{ transitionDuration: `${FADE_MS}ms` }}
-          />
+          <div className="absolute inset-y-0 left-0 w-[48%] bg-[linear-gradient(90deg,rgba(243,235,221,0.92)_0%,rgba(243,235,221,0.5)_55%,rgba(243,235,221,0)_100%)]" />
+          <div className="absolute bottom-0 left-0 h-24 w-full bg-[linear-gradient(0deg,#F3EBDD_0%,rgba(243,235,221,0.55)_45%,rgba(243,235,221,0)_100%)] lg:h-28 lg:w-[52%]" />
         </div>
 
         <BotanicalStamp className="pointer-events-none absolute top-4 right-4 z-20 hidden h-[7.5rem] w-[7.5rem] lg:block xl:top-5 xl:right-5 xl:h-[8.5rem] xl:w-[8.5rem]" />
@@ -292,12 +268,14 @@ export function HomeIngredients() {
             </div>
 
             <div className="relative hidden lg:block">
-              <div className="absolute bottom-8 right-0 z-10 inline-flex items-center gap-2.5 rounded-full border border-[#D4C4A0] bg-[#F3EBDD]/85 px-4 py-2.5 backdrop-blur-sm">
+              <div className="absolute bottom-6 right-0 z-20 inline-flex items-center gap-2.5 rounded-full border border-[#C8A96A] bg-[#F7F0E3] px-5 py-2.5 shadow-[0_4px_16px_rgba(36,53,40,0.08)]">
                 <Leaf className="h-3.5 w-3.5 shrink-0 text-[#5B5E45]" strokeWidth={1.75} />
-                <div className="flex items-center gap-2 text-[0.68rem] font-medium tracking-[0.04em] text-[#5B5E45]">
+                <div className="flex items-center gap-2.5 text-[0.68rem] font-medium tracking-[0.04em] text-[#5B5E45]">
                   {active.badges.map((badge, index) => (
-                    <span key={badge} className="flex items-center gap-2">
-                      {index > 0 ? <span className="h-1 w-1 rounded-full bg-[#C5A059]" /> : null}
+                    <span key={badge} className="flex items-center gap-2.5">
+                      {index > 0 ? (
+                        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#C5A059]" />
+                      ) : null}
                       {badge}
                     </span>
                   ))}

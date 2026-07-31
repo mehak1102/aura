@@ -98,22 +98,32 @@ export function animateCounters(root: HTMLElement) {
     const decimals = Number(el.dataset.decimals || 0)
     const obj = { val: 0 }
 
-    gsap.to(obj, {
-      val: target,
-      duration: 1.8,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger: el,
-        start: 'top 85%',
-        toggleActions: 'play none none none',
+    const format = (val: number) =>
+      decimals > 0 ? `${val.toFixed(decimals)}${suffix}` : `${Math.floor(val)}${suffix}`
+
+    gsap.fromTo(
+      obj,
+      { val: 0 },
+      {
+        val: target,
+        duration: 1.8,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: root,
+          start: 'top 80%',
+          end: 'bottom 20%',
+          // Replay count-up whenever the section enters the viewport
+          toggleActions: 'restart none restart none',
+        },
+        onStart: () => {
+          obj.val = 0
+          el.textContent = format(0)
+        },
+        onUpdate: () => {
+          el.textContent = format(obj.val)
+        },
       },
-      onUpdate: () => {
-        el.textContent =
-          decimals > 0
-            ? `${obj.val.toFixed(decimals)}${suffix}`
-            : `${Math.floor(obj.val)}${suffix}`
-      },
-    })
+    )
   })
 }
 
