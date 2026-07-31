@@ -12,6 +12,7 @@ import paymentRoutes from './payment.routes.js'
 import uploadRoutes from './upload.routes.js'
 import analyticsRoutes from './analytics.routes.js'
 import adminRoutes from './admin.routes.js'
+import instagramRoutes from './instagram.routes.js'
 
 const router = Router()
 
@@ -28,5 +29,6 @@ router.use('/payments', paymentRoutes)
 router.use('/upload', uploadRoutes)
 router.use('/admin/analytics', analyticsRoutes)
 router.use('/admin', adminRoutes)
+router.use('/instagram', instagramRoutes)
 
 export default router

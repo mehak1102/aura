@@ -23,4 +23,10 @@ export const env = {
     pass: process.env.SMTP_PASS || '',
     from: process.env.SMTP_FROM || 'Aura of Nature <noreply@auraofnature.local>',
   },
+  instagram: {
+    username: process.env.INSTAGRAM_USERNAME || 'auraofnatureofficial',
+    // Optional — never required for the feed to work
+    accessToken: process.env.INSTAGRAM_ACCESS_TOKEN || '',
+    userId: process.env.INSTAGRAM_USER_ID || '',
+  },
 }

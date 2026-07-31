@@ -12,6 +12,7 @@ import { errorHandler } from './middleware/errorHandler.js'
 import { notFound } from './middleware/notFound.js'
 import routes from './routes/index.js'
 import { memoryAuth } from './services/memoryAuth.js'
+import { warmInstagramCache } from './services/instagram.service.js'
 
 const app = express()
 
@@ -82,6 +83,7 @@ async function start() {
   app.listen(env.port, () => {
     console.log(`API listening on http://localhost:${env.port}`)
     console.log(`Database mode: ${getDatabaseMode()}`)
+    warmInstagramCache()
   })
 }
 

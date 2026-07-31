@@ -39,6 +39,7 @@ coverage/
 server/src/uploads/*
 !server/src/uploads/.gitkeep
 .cache/
+server/.cache/
 .turbo/
 .tmp-*
 tmp-*-frames/
