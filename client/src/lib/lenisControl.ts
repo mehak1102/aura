@@ -1,8 +1,10 @@
 type LenisLike = {
   scrollTo: (
     target: string | number | HTMLElement,
-    options?: { offset?: number; duration?: number },
+    options?: { offset?: number; duration?: number; immediate?: boolean },
   ) => void
+  stop?: () => void
+  start?: () => void
 }
 
 type LenisListener = () => void

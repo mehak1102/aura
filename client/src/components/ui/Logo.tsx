@@ -24,11 +24,11 @@ export function Logo({ className, tone = 'dark', compact, editorial }: LogoProps
     <Link
       to={ROUTES.home}
       aria-label="Aura of Nature home"
-      className={cn('group inline-flex flex-col items-center gap-1', className)}
+      className={cn('group inline-flex flex-col items-center gap-0.5 py-1', className)}
     >
       <svg
         viewBox="0 0 28 26"
-        className="h-6 w-6 md:h-7 md:w-7"
+        className="h-5 w-5 md:h-6 md:w-6"
         fill="none"
         aria-hidden
         style={{ color: leafColor }}
@@ -51,7 +51,7 @@ export function Logo({ className, tone = 'dark', compact, editorial }: LogoProps
       {!compact && editorial && (
         <span className="text-center leading-none">
           <span
-            className="block text-[1.15rem] font-medium tracking-[0.16em] sm:text-[1.4rem] sm:tracking-[0.2em] md:text-[1.65rem]"
+            className="block text-[1.1rem] font-medium tracking-[0.16em] sm:text-[1.3rem] sm:tracking-[0.2em] md:text-[1.5rem]"
             style={{
               fontFamily: "'Bodoni Moda', 'Cormorant Garamond', serif",
               color: wordColor,
@@ -60,7 +60,7 @@ export function Logo({ className, tone = 'dark', compact, editorial }: LogoProps
             AURA
           </span>
           <span
-            className="mt-1.5 block text-[0.5rem] font-medium tracking-[0.4em] uppercase sm:text-[0.58rem] sm:tracking-[0.48em] md:text-[0.65rem]"
+            className="mt-1 block text-[0.48rem] font-medium tracking-[0.4em] uppercase sm:text-[0.55rem] sm:tracking-[0.48em] md:text-[0.6rem]"
             style={{ color: wordColor }}
           >
             Of Nature

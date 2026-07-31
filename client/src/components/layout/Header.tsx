@@ -10,6 +10,7 @@ import { useWishlist } from '@contexts/WishlistContext'
 import { useTheme } from '@contexts/ThemeContext'
 import { ROUTES } from '@/routes/paths'
 import { primaryNav } from '@/lib/navigation'
+import { pauseLenis, resumeLenis } from '@/lib/lenisControl'
 import { cn } from '@utils/index'
 import { SiteMenu } from './SiteMenu'
 import { PredictiveSearch } from './PredictiveSearch'
@@ -79,8 +80,20 @@ export function Header({ transparent = false }: HeaderProps) {
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
+    if (menuOpen) {
+      pauseLenis()
+      return () => {
+        document.body.style.overflow = ''
+        resumeLenis()
+      }
+    }
+
+    // Let the drawer finish sliding out before Lenis resumes
+    const t = window.setTimeout(() => resumeLenis(), 820)
     return () => {
       document.body.style.overflow = ''
+      window.clearTimeout(t)
+      resumeLenis()
     }
   }, [menuOpen])
 
@@ -97,14 +110,15 @@ export function Header({ transparent = false }: HeaderProps) {
     <>
       <header
         className={cn(
-          'fixed inset-x-0 top-0 z-[var(--z-header)] transition-colors duration-300',
+          'fixed inset-x-0 top-0 transition-colors duration-300',
+          menuOpen ? 'z-[calc(var(--z-menu)+1)]' : 'z-[var(--z-header)]',
           scrolled || menuOpen
             ? 'border-b border-[#1b261e]/10 bg-[#F8F5EE]'
             : 'bg-transparent',
         )}
       >
         <div
-          className="relative z-50 mx-auto flex h-16 max-w-[86rem] items-center justify-between px-[var(--spacing-gutter)] font-nav md:h-[4.5rem]"
+          className="relative z-50 mx-auto flex h-[4.75rem] max-w-[86rem] items-center justify-between px-[var(--spacing-gutter)] font-nav md:h-[5.35rem]"
         >
           <div className="relative z-50 flex min-w-[5.5rem] items-center gap-7 md:min-w-[7rem] md:gap-8">
             <button
