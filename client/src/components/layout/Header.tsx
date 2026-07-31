@@ -88,8 +88,7 @@ export function Header({ transparent = false }: HeaderProps) {
       }
     }
 
-    // Let the drawer finish sliding out before Lenis resumes
-    const t = window.setTimeout(() => resumeLenis(), 820)
+    const t = window.setTimeout(() => resumeLenis(), 1000)
     return () => {
       document.body.style.overflow = ''
       window.clearTimeout(t)

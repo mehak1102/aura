@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight,
@@ -8,6 +8,7 @@ import {
   ShoppingBag,
   UserRound,
 } from 'lucide-react'
+import { gsap } from '@animations/gsap'
 import { menuGroups } from '@/lib/navigation'
 import { ROUTES } from '@/routes/paths'
 import { contactInfo } from '@/data/stores'
@@ -81,24 +82,120 @@ function FlourishDivider() {
   )
 }
 
-const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)'
-const PANEL_MS = 820
-const BACKDROP_MS = 560
-
-function revealStyle(open: boolean, delayMs: number): CSSProperties {
-  return {
-    opacity: open ? 1 : 0,
-    transform: open ? 'translate3d(0,0,0)' : 'translate3d(-18px, 10px, 0)',
-    transition: `opacity ${open ? 620 : 280}ms ${EASE} ${open ? delayMs : 0}ms, transform ${open ? 720 : 280}ms ${EASE} ${open ? delayMs : 0}ms`,
-  }
-}
-
+/**
+ * Quiet luxury drawer:
+ * — panel slides as one piece (clip + x)
+ * — content gently rises once the panel is in
+ * — close is the same motion reversed, no busy stagger
+ */
 export function SiteMenu({ open, onClose }: SiteMenuProps) {
   const navigate = useNavigate()
+  const backdropRef = useRef<HTMLButtonElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const tlRef = useRef<gsap.core.Timeline | null>(null)
+  const [mounted, setMounted] = useState(open)
+
   const whatsappDigits = contactInfo.whatsapp.replace(/\D/g, '')
   const whatsappHref = `https://wa.me/${whatsappDigits}?text=${encodeURIComponent(
     'Hi Aura of Nature — I’d like help choosing a ritual.',
   )}`
+
+  useEffect(() => {
+    if (open) setMounted(true)
+  }, [open])
+
+  useEffect(() => {
+    if (!mounted) return
+
+    const panel = panelRef.current
+    const backdrop = backdropRef.current
+    const content = contentRef.current
+    if (!panel || !backdrop || !content) return
+
+    tlRef.current?.kill()
+
+    if (open) {
+      gsap.set(backdrop, { opacity: 0 })
+      gsap.set(panel, { xPercent: -100, opacity: 0 })
+      gsap.set(content, { opacity: 0, y: 22 })
+
+      const tl = gsap.timeline()
+      tlRef.current = tl
+
+      tl.to(
+        backdrop,
+        { opacity: 1, duration: 0.65, ease: 'power2.out' },
+        0,
+      )
+      tl.to(
+        panel,
+        {
+          xPercent: 0,
+          opacity: 1,
+          duration: 0.9,
+          ease: 'power4.out',
+        },
+        0,
+      )
+      tl.to(
+        content,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          ease: 'power3.out',
+        },
+        0.28,
+      )
+
+      return () => {
+        tl.kill()
+      }
+    }
+
+    // Close — same calm motion in reverse
+    const tl = gsap.timeline({
+      onComplete: () => setMounted(false),
+    })
+    tlRef.current = tl
+
+    tl.to(
+      content,
+      {
+        opacity: 0,
+        y: 14,
+        duration: 0.32,
+        ease: 'power2.in',
+      },
+      0,
+    )
+    tl.to(
+      panel,
+      {
+        xPercent: -100,
+        opacity: 0,
+        duration: 0.75,
+        ease: 'power3.inOut',
+      },
+      0.06,
+    )
+    tl.to(
+      backdrop,
+      {
+        opacity: 0,
+        duration: 0.5,
+        ease: 'power2.inOut',
+      },
+      0.1,
+    )
+
+    return () => {
+      tl.kill()
+    }
+  }, [open, mounted])
+
+  if (!mounted) return null
 
   return (
     <div
@@ -108,47 +205,38 @@ export function SiteMenu({ open, onClose }: SiteMenuProps) {
       aria-hidden={!open}
       className={cn(
         'fixed inset-0 z-[var(--z-menu)]',
-        open ? 'pointer-events-auto visible' : 'pointer-events-none invisible',
+        open ? 'pointer-events-auto' : 'pointer-events-none',
       )}
-      style={{
-        transition: `visibility 0ms linear ${open ? 0 : PANEL_MS}ms`,
-      }}
     >
       <button
+        ref={backdropRef}
         type="button"
         aria-label="Close menu"
         onClick={onClose}
         tabIndex={open ? 0 : -1}
-        className={cn(
-          'absolute inset-0 bg-[#0f1611]/50 backdrop-blur-[3px]',
-          open ? 'opacity-100' : 'opacity-0',
-        )}
-        style={{
-          transition: `opacity ${BACKDROP_MS}ms ${EASE}, backdrop-filter ${BACKDROP_MS}ms ${EASE}`,
-        }}
+        className="absolute inset-0 bg-[#0f1611]/45"
+        style={{ willChange: 'opacity' }}
       />
 
       <div
+        ref={panelRef}
         data-lenis-prevent
-        className={cn(
-          'absolute inset-y-0 left-0 flex h-full w-full max-w-xl flex-col bg-[#1e2a20] text-[#f3ede2] shadow-[0_24px_80px_rgba(8,12,8,0.45)] will-change-transform md:max-w-2xl',
-          open ? 'translate-x-0' : '-translate-x-full',
-        )}
+        className="absolute inset-y-0 left-0 flex h-full w-full max-w-xl flex-col bg-[#1e2a20] text-[#f3ede2] shadow-[0_28px_90px_rgba(8,12,8,0.5)] will-change-transform md:max-w-2xl"
         style={{
           backgroundImage:
-            'radial-gradient(ellipse at 20% 0%, rgba(212,184,122,0.07), transparent 45%), radial-gradient(ellipse at 90% 80%, rgba(212,184,122,0.05), transparent 40%)',
-          transition: `transform ${PANEL_MS}ms ${EASE}`,
+            'radial-gradient(ellipse at 18% 0%, rgba(212,184,122,0.08), transparent 48%), radial-gradient(ellipse at 92% 85%, rgba(212,184,122,0.05), transparent 42%)',
         }}
       >
         <CornerBotanical className="-right-4 -top-2 h-[min(42vh,18rem)] w-[min(55%,14rem)] rotate-12" />
         <CornerBotanical className="-bottom-6 -left-8 h-[min(40vh,16rem)] w-[min(50%,13rem)] -scale-x-100 rotate-[-8deg]" />
 
         <div
+          ref={contentRef}
           data-lenis-prevent
           className="relative z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain px-[var(--spacing-gutter)] pb-10 pt-32 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          style={{ willChange: 'opacity, transform' }}
         >
-          {/* Header */}
-          <header style={revealStyle(open, 120)}>
+          <header>
             <p className="inline-flex items-center gap-2 text-[0.65rem] font-medium tracking-[0.32em] uppercase text-[#d4b87a]">
               <MenuLeafMark />
               Navigate
@@ -161,16 +249,15 @@ export function SiteMenu({ open, onClose }: SiteMenuProps) {
             </div>
           </header>
 
-          {/* Link columns */}
           <nav
             aria-label="Site navigation"
             className="mt-10 grid gap-x-8 gap-y-10 sm:grid-cols-2"
           >
-            {menuGroups.map((group, gi) => {
+            {menuGroups.map((group) => {
               const Icon =
                 GROUP_ICONS[group.title as keyof typeof GROUP_ICONS] ?? Leaf
               return (
-                <div key={group.title} style={revealStyle(open, 180 + gi * 70)}>
+                <div key={group.title}>
                   <p className="mb-4 flex items-center gap-2.5 text-[0.62rem] font-semibold tracking-[0.28em] uppercase text-[#d4b87a]">
                     <Icon className="h-3.5 w-3.5" strokeWidth={1.5} aria-hidden />
                     {group.title}
@@ -199,11 +286,7 @@ export function SiteMenu({ open, onClose }: SiteMenuProps) {
             })}
           </nav>
 
-          {/* Bottom bar */}
-          <div
-            className="mt-10 border-t border-[#d4b87a]/28 pt-7"
-            style={revealStyle(open, 480)}
-          >
+          <div className="mt-10 border-t border-[#d4b87a]/28 pt-7">
             <div className="flex flex-col gap-6">
               <div className="flex items-start gap-4">
                 <a
