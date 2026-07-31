@@ -765,34 +765,133 @@ export const philosophy = [
 
 export const INSTAGRAM_URL = 'https://www.instagram.com/auraofnatureofficial/'
 
+/** Site-wide Instagram brand strip (ACG-style) */
+export const instagramProfile = {
+  displayName: 'Aura of Nature',
+  handle: '@auraofnatureofficial',
+  profileUrl: INSTAGRAM_URL,
+  avatarSrc: '/instagram/profile.png',
+  bio: 'Pure · Natural · Nourishing botanical rituals for skin, body & hair.',
+  verified: true,
+  stats: {
+    posts: 163,
+    followers: 7200,
+    following: 0,
+  },
+}
+
+export type InstagramPost = {
+  id: string
+  image: string
+  url: string
+  alt: string
+  isVideo?: boolean
+}
+
+/** Packaging lineup matching @auraofnatureofficial — live feed overrides via /api/instagram/profile */
+export const instagramPosts: InstagramPost[] = [
+  {
+    id: 'ig-1',
+    image: '/products/fresh-coffee-face-wash/04-hero-card.png',
+    url: INSTAGRAM_URL,
+    alt: 'Fresh Coffee Face Wash',
+  },
+  {
+    id: 'ig-2',
+    image: '/products/Lavender-Oil/Lavender-oil-02-card.png',
+    url: INSTAGRAM_URL,
+    alt: 'Lavender Essential Oil',
+  },
+  {
+    id: 'ig-3',
+    image: '/products/Wild-Apricot/Wild-Apricot-02-card.png',
+    url: INSTAGRAM_URL,
+    alt: 'Wild Apricot Cold Pressed Oil',
+  },
+  {
+    id: 'ig-4',
+    image: '/products/Eucalyptus-Oil/Eucalyptus-Oil-01-card.png',
+    url: INSTAGRAM_URL,
+    alt: 'Eucalyptus Essential Oil',
+    isVideo: true,
+  },
+  {
+    id: 'ig-5',
+    image: '/products/Jojoba-oil/Jojoba-Oil-02-card.png',
+    url: INSTAGRAM_URL,
+    alt: 'Jojoba Cold Pressed Oil',
+  },
+  {
+    id: 'ig-6',
+    image: '/products/Black-Cumin/Black-Cumin-02-card.png',
+    url: INSTAGRAM_URL,
+    alt: 'Black Cumin Cold Pressed Oil',
+  },
+  {
+    id: 'ig-7',
+    image: '/products/Tea-Tree-Oil/Tea-Tree-Oil-01-card.png',
+    url: INSTAGRAM_URL,
+    alt: 'Tea Tree Essential Oil',
+    isVideo: true,
+  },
+  {
+    id: 'ig-8',
+    image: '/products/Peach-Lotion/Peach-Lotion-02-card.png',
+    url: INSTAGRAM_URL,
+    alt: 'Nourishing Peach Lotion',
+  },
+  {
+    id: 'ig-9',
+    image: '/products/Watermelon/Watermelon-cold-Oil-02-card.png',
+    url: INSTAGRAM_URL,
+    alt: 'Watermelon Seed Cold Pressed Oil',
+  },
+  {
+    id: 'ig-10',
+    image: '/products/Activated-Charcoal/activated-Charcoal-01-card.png',
+    url: INSTAGRAM_URL,
+    alt: 'Activated Charcoal Handmade Soap',
+  },
+]
+
+/** @deprecated use instagramPosts — kept for any legacy imports */
+export const instagram = instagramPosts.map((p) => p.image)
+
 export const whyUs = [
   { value: 100, suffix: '%', label: 'Natural intent' },
   { value: 50, suffix: '+', label: 'Botanical formulas' },
   { value: 12, suffix: 'k', label: 'Rituals shared' },
   { value: 4.9, suffix: '', label: 'Average rating', decimals: 1 },
   {
-    value: 8,
+    value: 7.2,
     suffix: 'k',
     label: 'Instagram followers',
     href: INSTAGRAM_URL,
+    decimals: 1,
   },
 ]
 
 export const timeline = [
   {
-    year: 'Origin',
+    year: 'Beginning',
     title: 'A kitchen atelier',
-    body: 'Small-batch oils and soaps made for family — the first Aura rituals.',
+    body: 'Small-batch oils and soaps made for family — the first of many little rituals.',
+    image: '/timeline/01-timeline.png',
+    imageAlt: 'Ceramic jug and bowl of seeds on wood',
   },
   {
     year: 'Craft',
     title: 'Ayurvedic discipline',
     body: 'We rooted every formula in plant timing, texture, and sensory honesty.',
+    image: '/timeline/02-timeline.png',
+    imageAlt: 'Stone mortar and pestle with fresh herbs',
   },
   {
     year: 'Today',
     title: 'A living collection',
     body: 'Skin, body, hair, and oils — still handcrafted, still transparent.',
+    image: '/timeline/03-timeline.png',
+    imageAlt: 'Amber dropper bottle and cream jar with botanicals',
   },
 ]
 
@@ -802,28 +901,28 @@ export const reviews = [
     rating: 5,
     text: 'The charcoal soap clarified my skin without stripping it. Quiet luxury in a simple bar — and the ritual feels calm every evening.',
     product: 'Activated Charcoal Handmade Soap',
-    image: '/products/Activated-Charcoal/activated-Charcoal-01-card.png',
+    image: '/reviews/01-charcoal.png',
   },
   {
     name: 'Arjun S.',
     rating: 5,
     text: 'Tea tree oil became my evening reset. Clean scent, honest label, beautiful bottle. I recommend Aura of Nature for anyone who wants plant care without the noise.',
     product: 'Tea Tree Essential Oil',
-    image: '/products/Tea-Tree-Oil/Tea-Tree-Oil-01-card.png',
+    image: '/reviews/02-tea-tree.png',
   },
   {
     name: 'Nisha R.',
     rating: 5,
     text: 'Watermelon seed oil absorbs like silk. My skin looks rested, not shiny. Flawless on texture, scent, and how it layers under moisturizer.',
     product: 'Watermelon Seed Cold Pressed Oil',
-    image: '/products/Watermelon/Watermelon-cold-Oil-02-card.png',
+    image: '/reviews/04-watermelon.png',
   },
   {
     name: 'Priya M.',
     rating: 5,
     text: "I've used the peach lotion through two winters. Soft, gentle enough for sensitive skin, and it never feels heavy. Honest care I trust.",
     product: 'Nourishing Peach Lotion',
-    image: '/products/Peach-Lotion/Peach-Lotion-02-card.png',
+    image: '/reviews/03-peach.png',
   },
 ]
 
@@ -838,15 +937,6 @@ export const showcaseIngredients = [
     body: 'Oils extracted without heat so nutrients stay vivid and true to the plant.',
     image: '/products/Watermelon/Watermelon-cold-Oil-03-card.png',
   },
-]
-
-export const instagram = [
-  '/products/Activated-Charcoal/activated-Charcoal-01-card.png',
-  '/products/fresh-coffee-face-wash/04-hero-card.png',
-  '/products/Tea-Tree-Oil/Tea-Tree-Oil-01-card.png',
-  '/products/Lavender-Oil/Lavender-oil-02-card.png',
-  '/products/Peach-Lotion/Peach-Lotion-02-card.png',
-  '/products/Wild-Apricot/Wild-Apricot-02-card.png',
 ]
 
 /** Typographic manifesto — hotel “strive / exceed” band above footer */

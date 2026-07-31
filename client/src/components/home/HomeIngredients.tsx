@@ -113,6 +113,8 @@ const showcaseHeroImages: Record<string, string> = {
 
 export function HomeIngredients() {
   const [activeIndex, setActiveIndex] = useState(0)
+  const [fadeFrom, setFadeFrom] = useState<number | null>(null)
+  const fadeTimerRef = useRef<number | null>(null)
   const navScrollRef = useRef<HTMLDivElement | null>(null)
   const productSwiperRef = useRef<SwiperInstance | null>(null)
   const syncingFromNavRef = useRef(false)
@@ -140,9 +142,18 @@ export function HomeIngredients() {
     [],
   )
 
-  const goToIngredient = (index: number) => {
+  const selectIngredient = (index: number) => {
     const next = (index + ingredientShowcaseItems.length) % ingredientShowcaseItems.length
+    if (next === activeIndex) return
+    setFadeFrom(activeIndex)
     setActiveIndex(next)
+    if (fadeTimerRef.current) window.clearTimeout(fadeTimerRef.current)
+    fadeTimerRef.current = window.setTimeout(() => setFadeFrom(null), FADE_MS)
+  }
+
+  const goToIngredient = (index: number) => {
+    selectIngredient(index)
+    const next = (index + ingredientShowcaseItems.length) % ingredientShowcaseItems.length
     const swiper = productSwiperRef.current
     if (!swiper) return
     syncingFromNavRef.current = true
@@ -164,6 +175,12 @@ export function HomeIngredients() {
   }, [])
 
   useEffect(() => {
+    return () => {
+      if (fadeTimerRef.current) window.clearTimeout(fadeTimerRef.current)
+    }
+  }, [])
+
+  useEffect(() => {
     const container = navScrollRef.current
     if (!container) return
     const activeEl = container.querySelector<HTMLElement>(
@@ -174,13 +191,19 @@ export function HomeIngredients() {
     container.scrollTo({ left: Math.max(0, left), behavior: 'smooth' })
   }, [activeIndex])
 
+  const visibleHeroIndexes =
+    fadeFrom !== null && fadeFrom !== activeIndex
+      ? [fadeFrom, activeIndex]
+      : [activeIndex]
+
   return (
     <section className="relative overflow-hidden bg-[#F3EBDD]">
       {/* One continuous full-bleed plane — no contain seam */}
       <div className="relative min-h-[64svh] w-full lg:min-h-[68svh]">
-        {/* Stacked slides — feathered bottom edge (soft merge) */}
+        {/* At most 2 masked layers (outgoing + active) — all 13 froze the GPU */}
         <div className="absolute inset-0 bg-[#F3EBDD]">
-          {ingredientShowcaseItems.map((item, index) => {
+          {visibleHeroIndexes.map((index) => {
+            const item = ingredientShowcaseItems[index]
             const src = showcaseHeroImages[item.id] ?? item.heroImage
             const isActive = index === activeIndex
             return (
@@ -405,7 +428,7 @@ export function HomeIngredients() {
                 }}
                 onSlideChange={(swiper) => {
                   if (syncingFromNavRef.current) return
-                  setActiveIndex(swiper.realIndex)
+                  selectIngredient(swiper.realIndex)
                 }}
                 className="bestsellers-luxury [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
               >
@@ -419,7 +442,7 @@ export function HomeIngredients() {
                       <Link
                         to={product.to}
                         onMouseEnter={() => {
-                          if (index !== activeIndex) setActiveIndex(index)
+                          if (index !== activeIndex) selectIngredient(index)
                         }}
                         className={cn(
                           'group relative flex h-full min-h-[110px] items-center gap-3.5 border-r border-[#C8A96A]/40 px-3.5 py-3.5 text-left transition duration-500 hover:-translate-y-0.5 sm:min-h-[116px] sm:py-4',

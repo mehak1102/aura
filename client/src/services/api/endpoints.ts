@@ -51,6 +51,11 @@ export const API_ENDPOINTS = {
     list: '/blogs',
     detail: (slug: string) => `/blogs/${slug}`,
   },
+  instagram: {
+    profile: '/instagram/profile',
+    feed: '/instagram/feed',
+    image: '/instagram/image',
+  },
   coupons: {
     validate: '/coupons/validate',
   },

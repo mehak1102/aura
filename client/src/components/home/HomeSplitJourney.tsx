@@ -112,8 +112,11 @@ export function HomeSplitJourney() {
       }
     })
 
+    let activeStep = -1
     const setActiveStep = (index: number) => {
       const clamped = Math.max(0, Math.min(total - 1, index))
+      if (clamped === activeStep) return
+      activeStep = clamped
       if (stepCurrent) {
         stepCurrent.textContent = String(clamped + 1).padStart(2, '0')
       }
@@ -274,22 +277,17 @@ export function HomeSplitJourney() {
     const scrollLen = () =>
       Math.max(window.innerHeight * (slides.length * 0.85), 900)
 
+    // No snap — Lenis + ScrollTrigger snap fight and freeze mid-section
     const st = ScrollTrigger.create({
       trigger: pin,
       start: 'top top',
       end: () => `+=${scrollLen()}`,
       pin: true,
-      scrub: 0.7,
+      scrub: 0.45,
       anticipatePin: 1,
       pinSpacing: true,
       animation: tl,
       invalidateOnRefresh: true,
-      snap: {
-        snapTo: 'labels',
-        duration: { min: 0.18, max: 0.55 },
-        delay: 0.04,
-        ease: 'power1.inOut',
-      },
       onUpdate: (self) => {
         if (progressFill) {
           gsap.set(progressFill, { scaleY: self.progress })

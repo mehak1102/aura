@@ -104,6 +104,11 @@ type JourneyCopyProps = {
   className?: string
 }
 
+/** Blurred copy bg uses the *next* slide (last → first) so it never mirrors the media panel. */
+function copyBackgroundSrc(slides: SplitJourneySlide[], index: number) {
+  return slides[(index + 1) % slides.length]?.image ?? slides[index].image
+}
+
 /** Text panel — content layers crossfade via GSAP */
 export function JourneyCopyPanel({ slides, total, className }: JourneyCopyProps) {
   return (
@@ -113,6 +118,7 @@ export function JourneyCopyPanel({ slides, total, className }: JourneyCopyProps)
     >
       {slides.map((slide, i) => {
         const descLines = splitDescriptionLines(slide.description)
+        const bgSrc = copyBackgroundSrc(slides, i)
         return (
           <div
             key={slide.id}
@@ -126,17 +132,17 @@ export function JourneyCopyPanel({ slides, total, className }: JourneyCopyProps)
             }}
           >
             <img
-              src={slide.image}
+              src={bgSrc}
               alt=""
               aria-hidden
-              className="pointer-events-none absolute inset-0 h-full w-full scale-110 object-cover object-center blur-[6px] opacity-80"
+              className="pointer-events-none absolute inset-0 h-full w-full scale-110 object-cover object-center blur-[3px] opacity-95"
               loading={i === 0 ? 'eager' : 'lazy'}
               decoding="async"
             />
-            <div aria-hidden className="absolute inset-0 bg-[#2f3829]/52" />
+            <div aria-hidden className="absolute inset-0 bg-[#2f3829]/32" />
             <div
               aria-hidden
-              className="absolute inset-0 bg-gradient-to-r from-[#2a3324]/72 via-[#2a3324]/40 to-[#2a3324]/25"
+              className="absolute inset-0 bg-gradient-to-r from-[#2a3324]/55 via-[#2a3324]/28 to-[#2a3324]/15"
             />
 
             <div className="relative z-[1] flex h-full flex-col justify-center px-[clamp(1.75rem,4vw,3.5rem)] py-10">
@@ -206,7 +212,7 @@ export function JourneyCopyPanel({ slides, total, className }: JourneyCopyProps)
 export function JourneyMobileStack({ slides }: { slides: SplitJourneySlide[] }) {
   return (
     <div className="space-y-6">
-      {slides.map((slide) => (
+      {slides.map((slide, i) => (
         <article
           key={slide.id}
           className="overflow-hidden rounded-[1.25rem] bg-[#3e4736] shadow-[0_1px_0_rgba(36,53,40,0.04)] ring-1 ring-[#243528]/20"
@@ -221,13 +227,13 @@ export function JourneyMobileStack({ slides }: { slides: SplitJourneySlide[] }) 
           </div>
           <div className="relative overflow-hidden px-6 py-7">
             <img
-              src={slide.image}
+              src={copyBackgroundSrc(slides, i)}
               alt=""
               aria-hidden
-              className="pointer-events-none absolute inset-0 h-full w-full scale-110 object-cover object-center blur-[6px]"
+              className="pointer-events-none absolute inset-0 h-full w-full scale-110 object-cover object-center blur-[3px] opacity-95"
               loading="lazy"
             />
-            <div aria-hidden className="absolute inset-0 bg-[#2f3829]/75" />
+            <div aria-hidden className="absolute inset-0 bg-[#2f3829]/45" />
             <div className="relative z-[1]">
             <div className="flex items-center gap-2.5">
               <span className="font-display text-[0.85rem] tabular-nums text-[#e8dcc8]">

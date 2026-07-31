@@ -1,5 +1,6 @@
 export { Header } from './Header'
 export { Footer } from './Footer'
+export { SiteInstagram } from './SiteInstagram'
 export { SiteMenu } from './SiteMenu'
 export { SmoothScroll } from './SmoothScroll'
 export { ScrollTriggerRefresh } from './ScrollTriggerRefresh'

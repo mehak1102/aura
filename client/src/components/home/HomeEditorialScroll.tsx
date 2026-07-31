@@ -75,32 +75,20 @@ function RitualTitle({
   const inView = useInView(ref, { threshold: 0.2, rootMargin: '10% 20%', initial: false })
   const timelineRef = useRef<gsap.core.Timeline | null>(null)
 
+  // Build once — do not kill/rebuild on IO flicker (that froze the editorial scroll)
   useEffect(() => {
     const el = ref.current
-    if (!el) return
+    if (!el || prefersReducedMotion()) return
 
     const words = el.querySelectorAll<HTMLElement>('[data-ritual-word]')
     if (!words.length) return
-
-    timelineRef.current?.kill()
-    timelineRef.current = null
-
-    if (!inView) {
-      // Stay readable inside the horizontal track even if IO flickers
-      gsap.set(words, { y: 0, opacity: 1 })
-      return
-    }
-
-    if (prefersReducedMotion()) {
-      gsap.set(words, { y: 0, opacity: 1 })
-      return
-    }
 
     gsap.set(words, { y: '110%', opacity: 0 })
 
     const tl = gsap.timeline({
       repeat: -1,
       repeatDelay: 0.55,
+      paused: true,
     })
 
     words.forEach((word, i) => {
@@ -132,13 +120,27 @@ function RitualTitle({
     })
 
     tl.set(words, { y: '110%', opacity: 0 })
-
     timelineRef.current = tl
 
     return () => {
       tl.kill()
       timelineRef.current = null
     }
+  }, [])
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const words = el.querySelectorAll<HTMLElement>('[data-ritual-word]')
+    const tl = timelineRef.current
+
+    if (!inView || prefersReducedMotion() || !tl) {
+      tl?.pause()
+      if (words.length) gsap.set(words, { y: 0, opacity: 1 })
+      return
+    }
+
+    tl.play()
   }, [inView])
 
   return (

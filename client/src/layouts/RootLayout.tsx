@@ -2,6 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import {
   Header,
   Footer,
+  SiteInstagram,
   SmoothScroll,
   ScrollTriggerRefresh,
   ScrollToTop,
@@ -36,6 +37,7 @@ export function RootLayout() {
           <main className="flex-1">
             <Outlet />
           </main>
+          {!isAuthPage && <SiteInstagram />}
           {!isAuthPage && <Footer />}
           {!isAuthPage && <CartToast />}
           {!isAuthPage && <ScrollToTop />}

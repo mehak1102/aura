@@ -14,7 +14,6 @@ import {
   HomeWhyUs,
   HomeTimeline,
   HomeReviews,
-  HomeInstagram,
   HomeNewsletter,
   HomeManifesto,
 } from '@components/home'
@@ -34,17 +33,19 @@ export default function HomePage() {
       {/* <HomeConcerns /> */}
       <HomeExpectations />
       <HomeConcerns />
-      <HomeBestSellers />
       <HomeSplitJourney />
+      <HomeBestSellers />
+   
 
       <HomeIngredients />
       <HomePhilosophy />
-      <HomeWhyUs />
+    
       <HomeTimeline />
-      <HomeReviews />
-      <HomeInstagram />
+      <HomeWhyUs />
       <HomeNewsletter />
-      <HomeManifesto />
+      <HomeReviews />
+     
+      {/* <HomeManifesto /> */}
     </>
   )
 }

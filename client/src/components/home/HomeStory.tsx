@@ -21,7 +21,26 @@ const TITLE_MS = 38
 const BODY_MS = 16
 const TITLE_PAUSE = 350
 
-function StoryTypewriter({ playKey, active }: { playKey: number; active: boolean }) {
+function TitleMarkup({ visible }: { visible: string }) {
+  if (RITUAL_START === -1 || visible.length <= RITUAL_START) {
+    return <>{visible}</>
+  }
+
+  const before = visible.slice(0, RITUAL_START)
+  const ritual = visible.slice(RITUAL_START, Math.min(visible.length, RITUAL_END))
+  const after = visible.length > RITUAL_END ? visible.slice(RITUAL_END) : ''
+
+  return (
+    <>
+      {before}
+      <em className="font-medium text-[#b8975c]">{ritual}</em>
+      {after}
+    </>
+  )
+}
+
+/** Once started, always finishes — pausing on IO flicker left copy stuck mid-sentence. */
+function StoryTypewriter({ playKey }: { playKey: number }) {
   const [titleChars, setTitleChars] = useState(0)
   const [bodyChars, setBodyChars] = useState(0)
   const [phase, setPhase] = useState<'idle' | 'title' | 'body' | 'done'>('idle')
@@ -42,7 +61,7 @@ function StoryTypewriter({ playKey, active }: { playKey: number; active: boolean
   }, [playKey])
 
   useEffect(() => {
-    if (!active || phase === 'idle' || phase === 'done') return
+    if (phase === 'idle' || phase === 'done') return
 
     let timer: number
 
@@ -61,7 +80,7 @@ function StoryTypewriter({ playKey, active }: { playKey: number; active: boolean
     }
 
     return () => window.clearTimeout(timer)
-  }, [phase, titleChars, bodyChars, active])
+  }, [phase, titleChars, bodyChars])
 
   const titleVisible = TITLE.slice(0, titleChars)
   const showTitleCaret = phase === 'title'
@@ -74,17 +93,8 @@ function StoryTypewriter({ playKey, active }: { playKey: number; active: boolean
         style={{ fontFamily: "'Bodoni Moda', 'Cormorant Garamond', serif" }}
         aria-label={TITLE}
       >
-        {titleVisible.split('').map((ch, i) => {
-          const isRitual = RITUAL_START !== -1 && i >= RITUAL_START && i < RITUAL_END
-          return isRitual ? (
-            <em key={i} className="font-medium text-[#b8975c]">
-              {ch}
-            </em>
-          ) : (
-            <span key={i}>{ch}</span>
-          )
-        })}
-        {showTitleCaret && active && (
+        <TitleMarkup visible={titleVisible} />
+        {showTitleCaret && (
           <span
             aria-hidden
             className="hero-caret ml-0.5 inline-block w-[0.08em] translate-y-[0.05em] bg-[#b8975c] align-baseline"
@@ -98,7 +108,7 @@ function StoryTypewriter({ playKey, active }: { playKey: number; active: boolean
         aria-label={BODY}
       >
         {BODY.slice(0, bodyChars)}
-        {showBodyCaret && active && (
+        {showBodyCaret && (
           <span
             aria-hidden
             className="hero-caret ml-0.5 inline-block w-[0.06em] translate-y-[0.04em] bg-[#b8975c]/80 align-baseline"
@@ -115,7 +125,8 @@ export function HomeStory() {
   const [playKey, setPlayKey] = useState(0)
   const textRef = useRef<HTMLDivElement>(null)
   const wasInView = useRef(false)
-  const inView = useInView(textRef, { threshold: 0.35 })
+  // Generous margin so Lenis + layout shifts don't flicker the trigger
+  const inView = useInView(textRef, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' })
 
   const scope = useGsap(() => {
     if (!scope.current) return
@@ -197,7 +208,7 @@ export function HomeStory() {
               <span className="h-px w-12 bg-[#1b261e]/25" />
             </div>
 
-            <StoryTypewriter playKey={playKey} active={inView} />
+            <StoryTypewriter playKey={playKey} />
 
             <div data-reveal="" className="mt-8">
               <button
