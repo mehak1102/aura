@@ -18,7 +18,12 @@ const app = express()
 
 app.set('trust proxy', 1)
 
-app.use(helmet())
+// cross-origin so the static client (separate Render service) can load /api/instagram/image
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+  }),
+)
 app.use(
   cors({
     origin: env.clientOrigins,

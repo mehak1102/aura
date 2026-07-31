@@ -29,4 +29,10 @@ export const env = {
     accessToken: process.env.INSTAGRAM_ACCESS_TOKEN || '',
     userId: process.env.INSTAGRAM_USER_ID || '',
   },
+  /** Public origin of this API (e.g. https://aura-api.onrender.com) — used for absolute image proxy URLs */
+  publicApiUrl: (
+    process.env.PUBLIC_API_URL ||
+    process.env.RENDER_EXTERNAL_URL ||
+    ''
+  ).replace(/\/$/, ''),
 }

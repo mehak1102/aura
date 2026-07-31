@@ -375,7 +375,10 @@ export function SiteInstagram({
                     <PostImage
                       src={post.image}
                       alt={post.alt}
-                      fallbackSrc={profile.avatarSrc || '/instagram/profile.png'}
+                      fallbackSrc={
+                        instagramPosts[index % instagramPosts.length]?.image ||
+                        '/products/fresh-coffee-face-wash/04-hero-card.png'
+                      }
                       eager={index < EAGER_TILES}
                     />
 

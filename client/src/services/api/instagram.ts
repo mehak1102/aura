@@ -1,5 +1,6 @@
 import { api } from './client'
 import { API_ENDPOINTS } from './endpoints'
+import { resolveApiUrl } from './resolveApiUrl'
 import {
   INSTAGRAM_URL,
   instagramPosts,
@@ -24,7 +25,10 @@ type InstagramFeedResponse = ApiResponse<InstagramFeed>
 const MAX_POSTS = 12
 
 function takePosts(posts: InstagramPost[]) {
-  return posts.slice(0, MAX_POSTS)
+  return posts.slice(0, MAX_POSTS).map((post) => ({
+    ...post,
+    image: resolveApiUrl(post.image),
+  }))
 }
 
 export const instagramApi = {

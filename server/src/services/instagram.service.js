@@ -191,7 +191,9 @@ function proxyImageUrl(remoteUrl) {
   } catch {
     return remoteUrl
   }
-  return `/api/instagram/image?url=${encodeURIComponent(remoteUrl)}`
+  const path = `/api/instagram/image?url=${encodeURIComponent(remoteUrl)}`
+  // Absolute URL when API is on a different host than the static client (Render)
+  return env.publicApiUrl ? `${env.publicApiUrl}${path}` : path
 }
 
 function mapWebEdge(edge) {
