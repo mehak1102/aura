@@ -57,7 +57,7 @@ export const collections = [
     title: 'Cold Pressed Oils',
     subtitle: 'Raw · Potent · Pure',
     to: ROUTES.coldPressedOils,
-    image: '/products/Watermelon/Watermelon-cold-Oil-02-card.png',
+    image: '/products/Watermelon/Watermelon-02-card.png',
   },
 ]
 
@@ -79,7 +79,7 @@ export const editorialScroll = {
       secondary: '/products/Goad-Milk-Soap/Goat-Milk-01-card.png',
       secondaryAlt: 'Goat Milk Handmade Soap',
       secondaryTo: productPath('goat-milk-soap'),
-      tall: '/products/Watermelon/Watermelon-cold-Oil-02-card.png',
+      tall: '/products/Watermelon/Watermelon-02-card.png',
       tallAlt: 'Watermelon Seed Cold Pressed Oil',
       tallTo: productPath('watermelon-seed-cold-pressed-oil'),
     },
@@ -121,13 +121,13 @@ export const editorialScroll = {
       overlap: '/products/Activated-Charcoal/activated-Charcoal-01-card.png',
       overlapAlt: 'Activated Charcoal Handmade Soap',
       overlapTo: productPath('activated-charcoal-soap'),
-      accent: '/products/Black-Cumin/Black-Cumin-02-card.png',
+      accent: '/products/Black-Cumin/Black-Cumin-editorial.png',
       accentAlt: 'Black Cumin Cold Pressed Oil',
       accentTo: productPath('black-cumin-cold-pressed-oil'),
-      detail: '/products/Carrot-seed-oil/Corrot-Seed-Oil-05-card.png',
+      detail: '/products/Carrot-seed-oil/Carrot-Seed-editorial.png',
       detailAlt: 'Carrot Seed Oil',
       detailTo: productPath('carrot-seed-essential-oil'),
-      tertiary: '/products/Goad-Milk-Soap/Goat-Milk-02-card.png',
+      tertiary: '/products/Goad-Milk-Soap/Goat-Milk-editorial.png',
       tertiaryAlt: 'Goat Milk Handmade Soap',
       tertiaryTo: productPath('goat-milk-soap'),
     },
@@ -379,7 +379,7 @@ export const ingredients = [
     name: 'Watermelon Seed',
     benefit: 'Fights uneven skin tone naturally',
     to: ROUTES.coldPressedOils,
-    image: '/products/Watermelon/Watermelon-cold-Oil-02-card.png',
+    image: '/products/Watermelon/Watermelon-02-card.png',
   },
   {
     name: 'Activated Charcoal',
@@ -842,7 +842,7 @@ export const instagramPosts: InstagramPost[] = [
   },
   {
     id: 'ig-9',
-    image: '/products/Watermelon/Watermelon-cold-Oil-02-card.png',
+    image: '/products/Watermelon/Watermelon-02-card.png',
     url: INSTAGRAM_URL,
     alt: 'Watermelon Seed Cold Pressed Oil',
   },
@@ -935,7 +935,7 @@ export const showcaseIngredients = [
   {
     name: 'Cold-pressed purity',
     body: 'Oils extracted without heat so nutrients stay vivid and true to the plant.',
-    image: '/products/Watermelon/Watermelon-cold-Oil-03-card.png',
+    image: '/products/Watermelon/Watermelon-03-card.png',
   },
 ]
 

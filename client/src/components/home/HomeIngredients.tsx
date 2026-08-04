@@ -411,7 +411,7 @@ export function HomeIngredients() {
             <div className="overflow-hidden rounded-[1.25rem] border border-[#C8A96A]/80 bg-transparent py-1.5 sm:py-2">
               <Swiper
                 modules={[Autoplay]}
-                loop
+                loop={allProducts.length >= 4}
                 slidesPerView="auto"
                 spaceBetween={0}
                 speed={700}

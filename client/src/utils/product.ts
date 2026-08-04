@@ -58,34 +58,130 @@ export function getRelatedProducts(
   source: CatalogProduct[] = PRODUCTS,
   limit = 4,
 ) {
-  const related = product.relatedProductIds
-    .map((id) => source.find((p) => p.id === id))
+  const exclude = new Set([product.id])
+  const pool = source.filter((p) => !exclude.has(p.id))
+
+  const fromIds = product.relatedProductIds
+    .map((id) => pool.find((p) => p.id === id))
     .filter(Boolean) as CatalogProduct[]
 
-  if (related.length >= limit) return related.slice(0, limit).map(enrichProduct)
+  const scored = pool
+    .filter((p) => !product.relatedProductIds.includes(p.id))
+    .map((p) => ({
+      product: p,
+      score: relatedScore(product, p),
+    }))
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => b.score - a.score || b.product.ratingAverage - a.product.ratingAverage)
 
-  const fillers = source.filter(
-    (p) =>
-      p.id !== product.id &&
-      !product.relatedProductIds.includes(p.id) &&
-      (p.category === product.category ||
-        p.concerns.some((c) => product.concerns.includes(c))),
-  )
+  const merged = dedupeProducts([
+    ...fromIds,
+    ...scored.map((entry) => entry.product),
+  ]).slice(0, limit)
 
-  return [...related, ...fillers]
-    .slice(0, limit)
-    .map((p) => enrichProduct(p))
+  // If catalog is thin, fill with other items still excluding self
+  if (merged.length < limit) {
+    const used = new Set(merged.map((p) => p.id))
+    const fillers = pool
+      .filter((p) => !used.has(p.id))
+      .sort((a, b) => b.ratingAverage - a.ratingAverage || Number(b.isBestSeller) - Number(a.isBestSeller))
+    merged.push(...fillers.slice(0, limit - merged.length))
+  }
+
+  return merged.map(enrichProduct)
 }
 
+/**
+ * Cross-category ritual companions — excludes current product and
+ * anything already shown in "You may also like".
+ */
 export function getRecommendedProducts(
   product: CatalogProduct,
   source: CatalogProduct[] = PRODUCTS,
   limit = 4,
+  excludeProducts: CatalogProduct[] = [],
 ) {
-  return source
-    .filter(
-      (p) => p.id !== product.id && (p.isBestSeller || p.ratingAverage >= 4.7),
-    )
-    .slice(0, limit)
-    .map(enrichProduct)
+  const exclude = new Set([
+    product.id,
+    ...excludeProducts.map((p) => p.id),
+    ...product.relatedProductIds,
+  ])
+
+  const pool = source.filter((p) => !exclude.has(p.id))
+
+  const scored = pool
+    .map((p) => ({
+      product: p,
+      score: ritualScore(product, p),
+    }))
+    .sort((a, b) => b.score - a.score || b.product.ratingAverage - a.product.ratingAverage)
+
+  const picked = scored.slice(0, limit).map((entry) => entry.product)
+
+  if (picked.length < limit) {
+    const used = new Set(picked.map((p) => p.id))
+    const fillers = pool
+      .filter((p) => !used.has(p.id))
+      .sort((a, b) => Number(b.isBestSeller) - Number(a.isBestSeller) || b.ratingAverage - a.ratingAverage)
+    picked.push(...fillers.slice(0, limit - picked.length))
+  }
+
+  return picked.map(enrichProduct)
+}
+
+function relatedScore(current: CatalogProduct, candidate: CatalogProduct) {
+  let score = 0
+
+  if (candidate.category === current.category) score += 8
+  if (candidate.subcategory && candidate.subcategory === current.subcategory) score += 4
+
+  const sharedConcerns = candidate.concerns.filter((c) => current.concerns.includes(c)).length
+  score += sharedConcerns * 3
+
+  const sharedTags = candidate.tags.filter((t) => current.tags.includes(t)).length
+  score += sharedTags
+
+  if (candidate.gender && current.gender && candidate.gender === current.gender) score += 1
+  if (candidate.isBestSeller) score += 1
+  if (candidate.ratingAverage >= 4.7) score += 1
+
+  return score
+}
+
+/** Prefer complementary categories that complete a ritual, not same-shelf duplicates. */
+function ritualScore(current: CatalogProduct, candidate: CatalogProduct) {
+  let score = 0
+  const companions = RITUAL_COMPANIONS[current.category] ?? []
+
+  if (companions.includes(candidate.category)) score += 10
+  else if (candidate.category !== current.category) score += 4
+  else score -= 6 // deprioritize same category (that's "You may also like")
+
+  const sharedConcerns = candidate.concerns.filter((c) => current.concerns.includes(c)).length
+  score += sharedConcerns * 4
+
+  if (candidate.isBestSeller) score += 3
+  if (candidate.isNewArrival) score += 2
+  if (candidate.ratingAverage >= 4.7) score += 2
+  if (candidate.ratingCount >= 50) score += 1
+
+  return score
+}
+
+const RITUAL_COMPANIONS: Record<CatalogProduct['category'], CatalogProduct['category'][]> = {
+  'skin-care': ['essential-oils', 'cold-pressed-oils', 'body-care'],
+  'body-care': ['skin-care', 'essential-oils', 'cold-pressed-oils'],
+  'hair-care': ['cold-pressed-oils', 'essential-oils', 'combos'],
+  'essential-oils': ['skin-care', 'body-care', 'cold-pressed-oils', 'hair-care'],
+  'cold-pressed-oils': ['hair-care', 'skin-care', 'essential-oils', 'body-care'],
+  combos: ['skin-care', 'body-care', 'hair-care', 'essential-oils', 'cold-pressed-oils'],
+}
+
+function dedupeProducts(list: CatalogProduct[]) {
+  const seen = new Set<string>()
+  return list.filter((p) => {
+    if (seen.has(p.id)) return false
+    seen.add(p.id)
+    return true
+  })
 }

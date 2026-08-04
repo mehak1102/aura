@@ -29,6 +29,7 @@ type AddToCartButtonProps = Omit<
   size?: 'md' | 'sm'
   className?: string
   fullWidth?: boolean
+  compact?: boolean
   quantity?: number
   onAdd?: () => void
   onIncrement?: () => void
@@ -137,6 +138,7 @@ export function AddToCartButton({
   size = 'md',
   className,
   fullWidth,
+  compact = false,
   quantity = 0,
   onAdd,
   onIncrement,
@@ -274,10 +276,29 @@ export function AddToCartButton({
     }
   }
 
-  const height = isSm ? 'h-10 sm:h-11' : 'h-[52px]'
-  const textSize = isSm
-    ? 'text-[0.8125rem] sm:text-[0.875rem]'
-    : 'text-[15px]'
+  const height = compact
+    ? 'h-8'
+    : isSm
+      ? 'h-10 sm:h-11'
+      : 'h-[52px]'
+  const textSize = compact
+    ? 'text-[0.7rem]'
+    : isSm
+      ? 'text-[0.8125rem] sm:text-[0.875rem]'
+      : 'text-[15px]'
+  const iconSize = compact ? 'h-3 w-3' : isSm ? 'h-3.5 w-3.5' : 'h-4 w-4'
+  const checkWrap = compact ? 'h-4 w-4' : isSm ? 'h-5 w-5' : 'h-6 w-6'
+  const checkIcon = compact ? 'h-2.5 w-2.5' : isSm ? 'h-3 w-3' : 'h-3.5 w-3.5'
+  const padX = compact
+    ? 'px-3'
+    : isSm
+      ? 'px-4 sm:px-5'
+      : 'px-[22px]'
+  const addedPadX = compact
+    ? 'px-3'
+    : isSm
+      ? 'px-3.5 sm:px-4'
+      : 'px-5'
 
   return (
     <div
@@ -309,10 +330,11 @@ export function AddToCartButton({
           role="status"
           aria-live="polite"
           className={cn(
-            'relative z-[2] inline-flex items-center justify-between gap-3 rounded-full text-white',
+            'relative z-[2] inline-flex items-center gap-3 rounded-full text-white',
             'font-medium tracking-[-0.01em]',
             height,
-            isSm ? 'px-3.5 sm:px-4' : 'px-5',
+            compact ? 'justify-center' : 'justify-between',
+            addedPadX,
             textSize,
             fullWidth && 'w-full',
           )}
@@ -322,27 +344,29 @@ export function AddToCartButton({
               'inset 0 0 0 2px rgba(255,255,255,0.55), 0 8px 22px rgba(176,141,87,0.28)',
           }}
         >
-          <span className="flex min-w-0 flex-1 items-center gap-2.5">
+          <span className="flex min-w-0 items-center gap-2">
             <span
               className={cn(
                 'inline-flex items-center justify-center rounded-full bg-white/95',
-                isSm ? 'h-5 w-5' : 'h-6 w-6',
+                checkWrap,
               )}
               style={{ color: GOLD }}
             >
-              <Check className={cn(isSm ? 'h-3 w-3' : 'h-3.5 w-3.5')} strokeWidth={2.5} />
+              <Check className={checkIcon} strokeWidth={2.5} />
             </span>
             <span className="whitespace-nowrap leading-none">Added!</span>
           </span>
-          <span
-            aria-hidden
-            className={cn(
-              'inline-flex shrink-0 items-center justify-center rounded-full border border-white/70',
-              isSm ? 'h-7 w-7' : 'h-8 w-8',
-            )}
-          >
-            <ArrowRight className={cn(isSm ? 'h-3 w-3' : 'h-3.5 w-3.5')} strokeWidth={1.85} />
-          </span>
+          {!compact && (
+            <span
+              aria-hidden
+              className={cn(
+                'inline-flex shrink-0 items-center justify-center rounded-full border border-white/70',
+                isSm ? 'h-7 w-7' : 'h-8 w-8',
+              )}
+            >
+              <ArrowRight className={cn(isSm ? 'h-3 w-3' : 'h-3.5 w-3.5')} strokeWidth={1.85} />
+            </span>
+          )}
         </div>
       ) : phase === 'qty' && quantity > 0 ? (
         <div
@@ -369,7 +393,7 @@ export function AddToCartButton({
             )}
             style={{ borderColor: `${GOLD}55` }}
           >
-            <Minus className={cn(isSm ? 'h-3.5 w-3.5' : 'h-4 w-4')} strokeWidth={2} />
+            <Minus className={iconSize} strokeWidth={2} />
           </button>
           <span
             className={cn(
@@ -395,22 +419,23 @@ export function AddToCartButton({
               textSize,
             )}
           >
-            <Plus className={cn(isSm ? 'h-3.5 w-3.5' : 'h-4 w-4')} strokeWidth={2} />
+            <Plus className={iconSize} strokeWidth={2} />
           </button>
         </div>
       ) : (
         <button
           type="button"
           className={cn(
-            'relative z-[2] inline-flex items-center justify-between gap-3 overflow-visible rounded-full text-white',
+            'relative z-[2] inline-flex items-center gap-2 overflow-visible rounded-full text-white',
             'font-medium tracking-[-0.01em]',
             'bg-[#23452C] shadow-[0_8px_24px_rgba(35,69,44,0.18)]',
             'transition-[background-color,box-shadow,transform] duration-300',
             'hover:bg-[#2a5335] active:scale-[0.99]',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b8975c] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f6f1e8]',
             'disabled:cursor-not-allowed disabled:opacity-50',
+            compact ? 'justify-center' : 'justify-between gap-3',
             height,
-            isSm ? 'px-4 sm:px-5' : 'px-[22px]',
+            padX,
             textSize,
             fullWidth && 'w-full',
           )}
@@ -418,25 +443,24 @@ export function AddToCartButton({
           onClick={handleAdd}
           {...props}
         >
-          <span className="flex min-w-0 flex-1 items-center gap-2.5">
-            <ShoppingBag
-              className={cn(isSm ? 'h-3.5 w-3.5' : 'h-4 w-4')}
-              strokeWidth={1.75}
-            />
+          <span className="flex min-w-0 items-center gap-2">
+            <ShoppingBag className={iconSize} strokeWidth={1.75} />
             <span className="whitespace-nowrap leading-none">{label}</span>
           </span>
-          <span
-            aria-hidden
-            className={cn(
-              'inline-flex shrink-0 items-center justify-center rounded-full border border-white/55',
-              isSm ? 'h-7 w-7' : 'h-8 w-8',
-            )}
-          >
-            <ArrowRight
-              className={cn(isSm ? 'h-3 w-3' : 'h-3.5 w-3.5')}
-              strokeWidth={1.85}
-            />
-          </span>
+          {!compact && (
+            <span
+              aria-hidden
+              className={cn(
+                'inline-flex shrink-0 items-center justify-center rounded-full border border-white/55',
+                isSm ? 'h-7 w-7' : 'h-8 w-8',
+              )}
+            >
+              <ArrowRight
+                className={cn(isSm ? 'h-3 w-3' : 'h-3.5 w-3.5')}
+                strokeWidth={1.85}
+              />
+            </span>
+          )}
         </button>
       )}
     </div>

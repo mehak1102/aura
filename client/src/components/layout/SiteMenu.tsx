@@ -26,6 +26,9 @@ const GROUP_ICONS = {
   Account: UserRound,
 } as const
 
+/** Close timeline length — Header Lenis resume should match */
+export const MENU_CLOSE_MS = 850
+
 function MenuLeafMark({ className }: { className?: string }) {
   return (
     <svg
@@ -83,10 +86,8 @@ function FlourishDivider() {
 }
 
 /**
- * Quiet luxury drawer:
- * — panel slides as one piece (clip + x)
- * — content gently rises once the panel is in
- * — close is the same motion reversed, no busy stagger
+ * Open: quick slide in (panel + content as one).
+ * Close: kept as before — soft content fade, then panel + backdrop ease out.
  */
 export function SiteMenu({ open, onClose }: SiteMenuProps) {
   const navigate = useNavigate()
@@ -116,25 +117,24 @@ export function SiteMenu({ open, onClose }: SiteMenuProps) {
     tlRef.current?.kill()
 
     if (open) {
+      // OPEN — longer, softer glide (close timeline below is untouched)
       gsap.set(backdrop, { opacity: 0 })
-      gsap.set(panel, { xPercent: -100, opacity: 0 })
-      gsap.set(content, { opacity: 0, y: 22 })
+      gsap.set(panel, { xPercent: -100, opacity: 1 })
+      gsap.set(content, { opacity: 0.2, y: 16 })
 
       const tl = gsap.timeline()
       tlRef.current = tl
-
       tl.to(
         backdrop,
-        { opacity: 1, duration: 0.65, ease: 'power2.out' },
+        { opacity: 1, duration: 1.05, ease: 'power1.out' },
         0,
       )
       tl.to(
         panel,
         {
           xPercent: 0,
-          opacity: 1,
-          duration: 0.9,
-          ease: 'power4.out',
+          duration: 1.2,
+          ease: 'expo.out',
         },
         0,
       )
@@ -143,10 +143,10 @@ export function SiteMenu({ open, onClose }: SiteMenuProps) {
         {
           opacity: 1,
           y: 0,
-          duration: 0.7,
-          ease: 'power3.out',
+          duration: 0.95,
+          ease: 'power2.out',
         },
-        0.28,
+        0.35,
       )
 
       return () => {
@@ -154,7 +154,7 @@ export function SiteMenu({ open, onClose }: SiteMenuProps) {
       }
     }
 
-    // Close — same calm motion in reverse
+    // CLOSE — do not change this choreography
     const tl = gsap.timeline({
       onComplete: () => setMounted(false),
     })
@@ -214,14 +214,13 @@ export function SiteMenu({ open, onClose }: SiteMenuProps) {
         aria-label="Close menu"
         onClick={onClose}
         tabIndex={open ? 0 : -1}
-        className="absolute inset-0 bg-[#0f1611]/45"
-        style={{ willChange: 'opacity' }}
+        className="absolute inset-0 bg-[#0f1611]/40"
       />
 
       <div
         ref={panelRef}
         data-lenis-prevent
-        className="absolute inset-y-0 left-0 flex h-full w-full max-w-xl flex-col bg-[#1e2a20] text-[#f3ede2] shadow-[0_28px_90px_rgba(8,12,8,0.5)] will-change-transform md:max-w-2xl"
+        className="absolute inset-y-0 left-0 flex h-full w-full max-w-xl flex-col bg-[#1e2a20] text-[#f3ede2] shadow-[0_24px_64px_rgba(8,12,8,0.4)] will-change-transform md:max-w-2xl"
         style={{
           backgroundImage:
             'radial-gradient(ellipse at 18% 0%, rgba(212,184,122,0.08), transparent 48%), radial-gradient(ellipse at 92% 85%, rgba(212,184,122,0.05), transparent 42%)',
@@ -234,7 +233,6 @@ export function SiteMenu({ open, onClose }: SiteMenuProps) {
           ref={contentRef}
           data-lenis-prevent
           className="relative z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain px-[var(--spacing-gutter)] pb-10 pt-32 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-          style={{ willChange: 'opacity, transform' }}
         >
           <header>
             <p className="inline-flex items-center gap-2 text-[0.65rem] font-medium tracking-[0.32em] uppercase text-[#d4b87a]">

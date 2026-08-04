@@ -49,7 +49,7 @@ export const botanicals: Botanical[] = [
     slug: 'watermelon-seed-oil',
     name: 'Watermelon seed oil',
     latin: 'Citrullus lanatus',
-    image: '/products/Watermelon/Watermelon-cold-Oil-02.png',
+    image: '/products/Watermelon/Watermelon-02.png',
     benefits: [
       'Lightweight moisture that absorbs fast',
       'Supports even-looking tone over time',

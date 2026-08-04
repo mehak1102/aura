@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Body, Display, Eyebrow } from '@components/ui'
+import { Body, Display, Eyebrow, LeafShadows } from '@components/ui'
 import { Seo } from '@components/seo/Seo'
 import { ProductCard } from './ProductCard'
 import { ShopFiltersPanel } from './ShopFilters'
@@ -25,6 +25,16 @@ type ShopViewProps = {
   defaults?: Partial<ShopFilters>
   hideCategoryFilter?: boolean
   seoTitle?: string
+}
+
+function LeafDivider() {
+  return (
+    <div className="mt-3 flex items-center justify-center gap-3" aria-hidden>
+      <span className="h-px w-10 bg-[#b8975c]/45 sm:w-14" />
+      <span className="h-1 w-1 rounded-full bg-[#b8975c]/70" />
+      <span className="h-px w-10 bg-[#b8975c]/45 sm:w-14" />
+    </div>
+  )
 }
 
 export function ShopView({
@@ -64,64 +74,80 @@ export function ShopView({
         description={description || meta.description}
       />
 
-      <div ref={scope}>
-      <section className="pt-28 md:pt-32">
-        <div className="container-aura pb-10 md:pb-14">
-          <Eyebrow data-page-reveal="">{eyebrow || meta.eyebrow}</Eyebrow>
-          <Display data-page-reveal="" as="h1" size="lg" className="mt-3 text-forest">
-            {title || meta.title}
-          </Display>
-          <Body data-page-reveal="" muted className="mt-4 max-w-xl">
-            {description || meta.description}
-          </Body>
-        </div>
-      </section>
+      <div ref={scope} className="shop-page relative min-h-full overflow-hidden bg-[#eae2d4]">
+        <LeafShadows />
 
-      <section className="pb-[var(--spacing-section)]">
-        <div className="container-aura flex gap-10 lg:gap-14">
-          <ShopFiltersPanel
-            filters={filters}
-            setFilter={setFilter}
-            clearFilters={clearFilters}
-            open={filtersOpen}
-            onClose={() => setFiltersOpen(false)}
-            hideCategory={hideCategoryFilter}
-          />
+        <section className="shop-hero relative z-[1] overflow-hidden pt-24 md:pt-28">
+          <div className="container-aura relative z-[1] pb-6 text-center md:pb-8">
+            <Eyebrow data-page-reveal="" tone="gold">
+              {eyebrow || meta.eyebrow}
+            </Eyebrow>
+            <Display
+              data-page-reveal=""
+              as="h1"
+              size="md"
+              className="mt-2 text-forest"
+            >
+              {title || meta.title}
+            </Display>
+            <div data-page-reveal="">
+              <LeafDivider />
+            </div>
+            <Body
+              data-page-reveal=""
+              muted
+              className="mx-auto mt-3 max-w-xl text-balance text-[0.95rem]"
+            >
+              {description || meta.description}
+            </Body>
+          </div>
+        </section>
 
-          <div className="min-w-0 flex-1">
-            <ShopToolbar
-              count={products.length}
-              sort={filters.sort ?? 'featured'}
-              onSortChange={(sort: ShopSort) => setFilter('sort', sort)}
-              onOpenFilters={() => setFiltersOpen(true)}
+        <section className="relative z-[1] pb-[var(--spacing-section)]">
+          <div className="container-aura flex gap-8 lg:gap-12 xl:gap-14">
+            <ShopFiltersPanel
+              filters={filters}
+              setFilter={setFilter}
+              clearFilters={clearFilters}
+              open={filtersOpen}
+              onClose={() => setFiltersOpen(false)}
+              hideCategory={hideCategoryFilter}
             />
 
-            {products.length === 0 ? (
-              <div className="py-24 text-center">
-                <Display as="h2" size="sm" className="text-forest">
-                  No products found
-                </Display>
-                <Body muted className="mt-3">
-                  Try clearing filters or searching a different botanical.
-                </Body>
-                <button
-                  type="button"
-                  onClick={clearFilters}
-                  className="mt-6 text-micro text-olive hover:text-forest"
-                >
-                  Clear filters
-                </button>
-              </div>
-            ) : (
-              <div className="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 xl:grid-cols-3">
-                {products.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            )}
+            <div className="min-w-0 flex-1">
+              <ShopToolbar
+                count={products.length}
+                sort={filters.sort ?? 'featured'}
+                onSortChange={(sort: ShopSort) => setFilter('sort', sort)}
+                onOpenFilters={() => setFiltersOpen(true)}
+              />
+
+              {products.length === 0 ? (
+                <div className="py-24 text-center">
+                  <Display as="h2" size="sm" className="text-forest">
+                    No products found
+                  </Display>
+                  <Body muted className="mt-3">
+                    Try clearing filters or searching a different botanical.
+                  </Body>
+                  <button
+                    type="button"
+                    onClick={clearFilters}
+                    className="mt-6 text-micro text-olive hover:text-forest"
+                  >
+                    Clear filters
+                  </button>
+                </div>
+              ) : (
+                <div className="mt-8 grid gap-6 sm:grid-cols-2 sm:gap-7 xl:grid-cols-3 xl:gap-8">
+                  {products.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
       </div>
     </>
   )

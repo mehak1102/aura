@@ -1,15 +1,13 @@
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Heart, Moon, Search, ShoppingBag, Sun, User } from 'lucide-react'
+import { Heart, Search, ShoppingBag, User } from 'lucide-react'
 import { HiOutlineMenuAlt2, HiOutlineX } from 'react-icons/hi'
 import { Logo } from '@components/ui'
 import { useAuth } from '@contexts/AuthContext'
 import { useCart } from '@contexts/CartContext'
 import { useWishlist } from '@contexts/WishlistContext'
-import { useTheme } from '@contexts/ThemeContext'
 import { ROUTES } from '@/routes/paths'
-import { primaryNav } from '@/lib/navigation'
 import { pauseLenis, resumeLenis } from '@/lib/lenisControl'
 import { cn } from '@utils/index'
 import { SiteMenu } from './SiteMenu'
@@ -19,8 +17,8 @@ type HeaderProps = {
   transparent?: boolean
 }
 
-/** Home hero chrome — matches the portal mockup nav */
-const homeHeroNav = [
+/** Primary header links — same on every page */
+const headerNav = [
   { label: 'Shop', to: ROUTES.shop },
   { label: 'Ingredients', to: ROUTES.ingredients },
   { label: 'Our Story', to: ROUTES.ourStory },
@@ -30,23 +28,23 @@ const homeHeroNav = [
 function NavIcon({
   to,
   label,
-  inverse = false,
+  light = false,
   children,
 }: {
   to: string
   label: string
-  inverse?: boolean
+  light?: boolean
   children: ReactNode
 }) {
   return (
     <Link
       to={to}
       aria-label={label}
-      className="inline-flex h-10 w-10 items-center justify-center transition-opacity duration-300 hover:opacity-60"
+      className="inline-flex h-9 w-9 items-center justify-center transition-opacity duration-300 hover:opacity-65 md:h-10 md:w-10"
       style={{
-        color: inverse ? '#ffffff' : '#0c0f0c',
-        filter: inverse
-          ? 'drop-shadow(0 1px 2px rgba(0,0,0,0.45))'
+        color: light ? '#faf8f4' : '#0c0f0c',
+        filter: light
+          ? 'drop-shadow(0 1px 2px rgba(0,0,0,0.35))'
           : 'drop-shadow(0 0 1px rgba(248,245,238,0.95))',
       }}
     >
@@ -63,8 +61,9 @@ export function Header({ transparent = false }: HeaderProps) {
   const { isAuthenticated } = useAuth()
   const { count } = useCart()
   const { count: wishCount } = useWishlist()
-  const { theme, toggleTheme } = useTheme()
   const isHome = location.pathname === ROUTES.home
+  /** All pages except home use solid forest nav */
+  const isForestNav = !isHome
 
   useEffect(() => {
     setMenuOpen(false)
@@ -88,7 +87,7 @@ export function Header({ transparent = false }: HeaderProps) {
       }
     }
 
-    const t = window.setTimeout(() => resumeLenis(), 1000)
+    const t = window.setTimeout(() => resumeLenis(), 850)
     return () => {
       document.body.style.overflow = ''
       window.clearTimeout(t)
@@ -96,14 +95,15 @@ export function Header({ transparent = false }: HeaderProps) {
     }
   }, [menuOpen])
 
-  const isInverse = (transparent || isHome) && !scrolled && !menuOpen
-  const chrome = isInverse ? 'text-[#faf8f4]' : 'text-[#0c0f0c]'
-  const chromeLift = isInverse
-    ? 'drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)]'
-    : 'drop-shadow-[0_0_1.2px_rgba(248,245,238,0.9)]'
-  const iconColor = isInverse ? '#ffffff' : '#0c0f0c'
+  const isHomeInverse =
+    !isForestNav && (isHome || transparent) && !scrolled && !menuOpen
+  const isLightChrome = isForestNav || isHomeInverse
 
-  const navLinks = isHome ? homeHeroNav : primaryNav.slice(0, 5)
+  const chrome = isLightChrome ? 'text-[#faf8f4]' : 'text-[#0c0f0c]'
+  const chromeLift = isLightChrome
+    ? 'drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]'
+    : 'drop-shadow-[0_0_1.2px_rgba(248,245,238,0.9)]'
+  const iconColor = isLightChrome ? '#faf8f4' : '#0c0f0c'
 
   return (
     <>
@@ -111,20 +111,20 @@ export function Header({ transparent = false }: HeaderProps) {
         className={cn(
           'fixed inset-x-0 top-0 transition-colors duration-300',
           menuOpen ? 'z-[calc(var(--z-menu)+1)]' : 'z-[var(--z-header)]',
-          scrolled || menuOpen
-            ? 'border-b border-[#1b261e]/10 bg-[#F8F5EE]'
-            : 'bg-transparent',
+          isForestNav
+            ? 'border-b border-warm-white/10 bg-[#1b261e]'
+            : scrolled || menuOpen
+              ? 'border-b border-[#1b261e]/10 bg-[#F8F5EE]'
+              : 'bg-transparent',
         )}
       >
-        <div
-          className="relative z-50 mx-auto flex h-[4.75rem] max-w-[86rem] items-center justify-between px-[var(--spacing-gutter)] font-nav md:h-[5.35rem]"
-        >
-          <div className="relative z-50 flex min-w-[5.5rem] items-center gap-7 md:min-w-[7rem] md:gap-8">
+        <div className="relative z-50 mx-auto flex h-[4.25rem] max-w-[86rem] items-center justify-between px-[var(--spacing-gutter)] font-nav md:h-[4.75rem]">
+          <div className="relative z-50 flex min-w-[5.5rem] items-center gap-6 md:min-w-[7rem] md:gap-7">
             <button
               type="button"
               onClick={() => setMenuOpen((v) => !v)}
               className={cn(
-                'group flex items-center gap-3 text-[0.78rem] font-semibold tracking-[0.22em] uppercase transition-opacity hover:opacity-60',
+                'group flex items-center gap-2.5 text-[0.72rem] font-semibold tracking-[0.2em] uppercase transition-opacity hover:opacity-65',
                 chrome,
                 chromeLift,
               )}
@@ -141,17 +141,17 @@ export function Header({ transparent = false }: HeaderProps) {
 
             <nav
               className={cn(
-                'relative z-50 hidden items-center gap-5 lg:flex xl:gap-7',
+                'relative z-50 hidden items-center gap-4 lg:flex xl:gap-6',
                 chrome,
                 chromeLift,
               )}
               aria-label="Primary"
             >
-              {navLinks.map((link) => (
+              {headerNav.map((link) => (
                 <Link
                   key={link.to}
                   to={link.to}
-                  className="text-[0.75rem] font-semibold tracking-[0.2em] uppercase text-current transition-opacity hover:opacity-60"
+                  className="text-[0.7rem] font-semibold tracking-[0.18em] uppercase text-current transition-opacity hover:opacity-65"
                 >
                   {link.label}
                 </Link>
@@ -160,8 +160,8 @@ export function Header({ transparent = false }: HeaderProps) {
           </div>
 
           <Logo
-            tone={isInverse ? 'gold' : 'dark'}
-            editorial={isHome}
+            tone={isLightChrome ? 'gold' : 'dark'}
+            editorial
             className="absolute left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2"
           />
 
@@ -170,41 +170,26 @@ export function Header({ transparent = false }: HeaderProps) {
               type="button"
               aria-label="Search"
               onClick={() => setSearchOpen(true)}
-              className="inline-flex h-10 w-10 items-center justify-center transition-opacity duration-300 hover:opacity-60"
+              className="inline-flex h-9 w-9 items-center justify-center transition-opacity duration-300 hover:opacity-65 md:h-10 md:w-10"
               style={{
                 color: iconColor,
-                filter: isInverse
-                  ? 'drop-shadow(0 1px 2px rgba(0,0,0,0.45))'
+                filter: isLightChrome
+                  ? 'drop-shadow(0 1px 2px rgba(0,0,0,0.35))'
                   : 'drop-shadow(0 0 1px rgba(248,245,238,0.95))',
               }}
             >
-              <Search className="h-[1.15rem] w-[1.15rem]" stroke="currentColor" strokeWidth={1.85} />
+              <Search className="h-[1.1rem] w-[1.1rem]" stroke="currentColor" strokeWidth={1.85} />
             </button>
-            {!isHome && (
-              <button
-                type="button"
-                aria-label={theme === 'dark' ? 'Light mode' : 'Dark mode'}
-                onClick={toggleTheme}
-                className="hidden h-10 w-10 items-center justify-center transition-opacity hover:opacity-60 lg:inline-flex"
-                style={{ color: iconColor }}
-              >
-                {theme === 'dark' ? (
-                  <Sun className="h-[1.15rem] w-[1.15rem]" stroke="currentColor" strokeWidth={1.85} />
-                ) : (
-                  <Moon className="h-[1.15rem] w-[1.15rem]" stroke="currentColor" strokeWidth={1.85} />
-                )}
-              </button>
-            )}
             <NavIcon
               to={isAuthenticated ? ROUTES.account : ROUTES.login}
               label={isAuthenticated ? 'Account' : 'Sign in'}
-              inverse={isInverse}
+              light={isLightChrome}
             >
-              <User className="h-[1.15rem] w-[1.15rem]" stroke="currentColor" strokeWidth={1.85} />
+              <User className="h-[1.1rem] w-[1.1rem]" stroke="currentColor" strokeWidth={1.85} />
             </NavIcon>
-            <NavIcon to={ROUTES.wishlist} label="Wishlist" inverse={isInverse}>
+            <NavIcon to={ROUTES.wishlist} label="Wishlist" light={isLightChrome}>
               <span className="relative" style={{ color: iconColor }}>
-                <Heart className="h-[1.15rem] w-[1.15rem]" stroke="currentColor" strokeWidth={1.85} />
+                <Heart className="h-[1.1rem] w-[1.1rem]" stroke="currentColor" strokeWidth={1.85} />
                 {wishCount > 0 && (
                   <span className="absolute -right-2 -top-1.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[#b8975c] px-1 text-[0.5rem] text-[#1b261e]">
                     {wishCount > 99 ? '99+' : wishCount}
@@ -212,9 +197,9 @@ export function Header({ transparent = false }: HeaderProps) {
                 )}
               </span>
             </NavIcon>
-            <NavIcon to={ROUTES.cart} label="Cart" inverse={isInverse}>
+            <NavIcon to={ROUTES.cart} label="Cart" light={isLightChrome}>
               <span className="relative" style={{ color: iconColor }}>
-                <ShoppingBag className="h-[1.15rem] w-[1.15rem]" stroke="currentColor" strokeWidth={1.85} />
+                <ShoppingBag className="h-[1.1rem] w-[1.1rem]" stroke="currentColor" strokeWidth={1.85} />
                 {count > 0 && (
                   <span className="absolute -right-2 -top-1.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[#b8975c] px-1 text-[0.5rem] text-[#1b261e]">
                     {count > 99 ? '99+' : count}

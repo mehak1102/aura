@@ -108,6 +108,43 @@ body::-webkit-scrollbar,
   -ms-overflow-style: none;
 }
 
+/* Visible scrollbar for shop filter sidebar — gold */
+.shop-filters-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(196, 163, 90, 0.8) transparent;
+  -ms-overflow-style: auto;
+}
+
+.shop-filters-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  display: block;
+  background: transparent;
+}
+
+.shop-filters-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.shop-filters-scroll::-webkit-scrollbar-thumb {
+  background: rgba(196, 163, 90, 0.75);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.shop-filters-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 151, 92, 0.95);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.shop-filters-scroll::-webkit-scrollbar-thumb:active {
+  background: #b8975c;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
 body {
   margin: 0;
   min-width: 320px;
@@ -319,5 +356,99 @@ html[data-theme='dark'] .text-charcoal\/75 {
 html.aura-custom-cursor,
 html.aura-custom-cursor * {
   cursor: none !important;
+}
+
+/* Product gallery stage */
+.product-gallery-stage {
+  background:
+    radial-gradient(ellipse 70% 55% at 18% 12%, rgba(184, 151, 92, 0.14), transparent 55%),
+    radial-gradient(ellipse 55% 45% at 88% 78%, rgba(90, 107, 72, 0.1), transparent 50%),
+    linear-gradient(165deg, #f7f2e8 0%, #ebe3d4 48%, #e4dac8 100%);
+}
+
+.product-gallery-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(250, 248, 244, 0.35), transparent 58%);
+}
+
+.shop-page {
+  position: relative;
+  isolation: isolate;
+  min-height: 100%;
+  background-color: #eae2d4;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 12% 0%, rgba(184, 151, 92, 0.1), transparent 55%),
+    radial-gradient(ellipse 55% 40% at 100% 8%, rgba(90, 107, 72, 0.07), transparent 50%);
+}
+
+.shop-hero {
+  background:
+    radial-gradient(ellipse 50% 60% at 8% 20%, rgba(184, 151, 92, 0.1), transparent 55%),
+    radial-gradient(ellipse 45% 55% at 92% 18%, rgba(90, 107, 72, 0.08), transparent 50%);
+}
+
+.shop-range {
+  pointer-events: none;
+}
+
+.shop-range::-webkit-slider-thumb {
+  pointer-events: auto;
+  appearance: none;
+  width: 1.05rem;
+  height: 1.05rem;
+  border-radius: 999px;
+  background: var(--color-forest);
+  border: 2px solid #faf8f4;
+  box-shadow: 0 2px 8px rgba(36, 53, 40, 0.28);
+  cursor: grab;
+}
+
+.shop-range::-moz-range-thumb {
+  pointer-events: auto;
+  width: 1.05rem;
+  height: 1.05rem;
+  border-radius: 999px;
+  background: var(--color-forest);
+  border: 2px solid #faf8f4;
+  box-shadow: 0 2px 8px rgba(36, 53, 40, 0.28);
+  cursor: grab;
+}
+
+.shop-range::-webkit-slider-runnable-track {
+  background: transparent;
+  height: 0.35rem;
+}
+
+.shop-range::-moz-range-track {
+  background: transparent;
+  height: 0.35rem;
+}
+
+.product-pdp-shell {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  background-color: #f8f4ec;
+}
+
+.product-pdp-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: min(70vh, 44rem);
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 50% at 12% 20%, rgba(184, 151, 92, 0.1), transparent 60%),
+    radial-gradient(ellipse 45% 40% at 90% 10%, rgba(90, 107, 72, 0.08), transparent 55%);
+}
+
+.product-pdp-shell > *:not([data-leaf-shadows]) {
+  position: relative;
+  z-index: 1;
 }
 

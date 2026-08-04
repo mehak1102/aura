@@ -8,8 +8,9 @@ import {
   ProductTabs,
   ProductReviews,
   ProductRail,
+  ProductRoutineTimeline,
 } from '@components/product'
-import { Body, Display, MagneticButton } from '@components/ui'
+import { Body, Display, MagneticButton, LeafShadows } from '@components/ui'
 import {
   getRecommendedProducts,
   getRelatedProducts,
@@ -21,7 +22,6 @@ import { productsApi } from '@services/api/products'
 import {
   useGsap,
   revealCommerceBlocks,
-  revealCommerceGrid,
 } from '@animations/gsap'
 import { ROUTES } from '@/routes/paths'
 import {
@@ -51,7 +51,6 @@ export default function ProductDetailsPage() {
   const scope = useGsap(() => {
     if (!scope.current) return
     revealCommerceBlocks(scope.current)
-    revealCommerceGrid(scope.current)
   }, [slug])
 
   if (!resolved) {
@@ -76,7 +75,7 @@ export default function ProductDetailsPage() {
   }
 
   const related = getRelatedProducts(resolved, catalog)
-  const recommended = getRecommendedProducts(resolved, catalog)
+  const recommended = getRecommendedProducts(resolved, catalog, 4, related)
 
   const handleAdd = (variant: ProductVariant, qty: number) => {
     addItem(resolved.id, variant.id, qty)
@@ -99,83 +98,60 @@ export default function ProductDetailsPage() {
           ]),
         ]}
       />
-      <main ref={scope} className="pb-24 pt-28">
+      <main ref={scope} className="product-pdp-shell relative pb-24 pt-28">
+        <LeafShadows />
         <section className="container-aura" data-block-reveal="">
           <ProductBreadcrumb product={resolved} />
 
-          <div className="mt-8 grid gap-12 lg:grid-cols-2 lg:gap-16">
-            <ProductGallery
-              images={[...resolved.images, ...resolved.gallery]}
-              title={resolved.title}
-            />
+          <div className="mt-8 grid gap-12 lg:grid-cols-2 lg:gap-16 lg:items-start">
+            <div className="lg:sticky lg:top-28">
+              <ProductGallery
+                images={[...resolved.images, ...resolved.gallery]}
+                title={resolved.title}
+              />
+            </div>
             <ProductInfo product={resolved} onAddToCart={handleAdd} />
           </div>
         </section>
 
-        <div data-block-reveal="">
-          <ProductTabs product={resolved} />
-        </div>
+        <ProductTabs product={resolved} />
 
-        <section data-block-reveal="" className="section-aura border-y border-charcoal/10 bg-[#f3efe6]">
-          <div className="container-aura">
-            <p className="text-micro tracking-[0.16em] uppercase text-[#b8975c]">
-              Routine
-            </p>
-            <h2 className="font-display mt-3 text-3xl text-forest md:text-4xl">
-              How it fits your day
-            </h2>
-            <div className="mt-10 grid gap-6 md:grid-cols-3">
-              {[
-                {
-                  step: '01',
-                  title: 'Prep',
-                  body: resolved.howToUse[0] ?? 'Cleanse gently before applying.',
-                },
-                {
-                  step: '02',
-                  title: 'Apply',
-                  body:
-                    resolved.howToUse[1] ??
-                    resolved.benefits[0] ??
-                    'Use as directed for your skin or hair type.',
-                },
-                {
-                  step: '03',
-                  title: 'Layer',
-                  body:
-                    resolved.howToUse[2] ??
-                    'Follow with oil or lotion from the same ritual family.',
-                },
-              ].map((item) => (
-                <article key={item.step} className="bg-cream p-7">
-                  <span className="text-micro tracking-[0.2em] text-[#b8975c]">
-                    {item.step}
-                  </span>
-                  <h3 className="font-display mt-3 text-2xl text-forest">{item.title}</h3>
-                  <p className="mt-3 text-sm font-light leading-relaxed text-charcoal/75">
-                    {item.body}
-                  </p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
+        <ProductRoutineTimeline
+          steps={[
+            {
+              step: '01',
+              title: 'Prep',
+              body: resolved.howToUse[0] ?? 'Cleanse gently before applying.',
+            },
+            {
+              step: '02',
+              title: 'Apply',
+              body:
+                resolved.howToUse[1] ??
+                resolved.benefits[0] ??
+                'Use as directed for your skin or hair type.',
+            },
+            {
+              step: '03',
+              title: 'Layer',
+              body:
+                resolved.howToUse[2] ??
+                'Follow with oil or lotion from the same ritual family.',
+            },
+          ]}
+        />
 
         <div data-block-reveal="">
           <ProductReviews product={resolved} />
         </div>
 
-        <div data-block-reveal="">
+        <div className="space-y-2 pb-6 md:pb-8">
           <ProductRail title="You may also like" products={related} />
-        </div>
-        <div data-block-reveal="">
           <ProductRail title="Recommended rituals" products={recommended} />
-        </div>
-        {recentlyViewed.length > 0 && (
-          <div data-block-reveal="">
+          {recentlyViewed.length > 0 && (
             <ProductRail title="Recently viewed" products={recentlyViewed} />
-          </div>
-        )}
+          )}
+        </div>
       </main>
     </>
   )

@@ -177,7 +177,7 @@ export function HomeReviews() {
             modules={[Autoplay, Pagination, Navigation]}
             spaceBetween={22}
             slidesPerView={1}
-            loop
+            loop={reviews.length >= 6}
             loopAdditionalSlides={2}
             centeredSlides={false}
             speed={700}

@@ -58,8 +58,8 @@ export const PRODUCTS: CatalogProduct[] = [
     ),
     gallery: gallery([
       {
-        url: '/products/Activated-Charcoal/activated-Charcoal-003.png',
-        alt: 'Activated Charcoal Soap packaging and MRP',
+        url: '/products/Activated-Charcoal/activated-Charcoal-02.png',
+        alt: 'Activated Charcoal Soap back label and details',
       },
     ]),
     videos: [],
@@ -104,7 +104,7 @@ export const PRODUCTS: CatalogProduct[] = [
     gallery: gallery([
       {
         url: '/products/Goad-Milk-Soap/Goat-Milk-02.png',
-        alt: 'Goat Milk Soap packaging',
+        alt: 'Goat Milk Soap bar and packaging',
       },
       {
         url: '/products/Goad-Milk-Soap/Goat-Milk-03.png',
@@ -284,7 +284,7 @@ export const PRODUCTS: CatalogProduct[] = [
         alt: 'Tea Tree Essential Oil packaging',
       },
       {
-        url: '/products/Tea-Tree-Oil/Tea-Tree-Oil-04.png',
+        url: '/products/Tea-Tree-Oil/Tea-Tree-Oil-03.png',
         alt: 'Tea Tree Essential Oil bottle',
       },
     ]),
@@ -424,21 +424,21 @@ export const PRODUCTS: CatalogProduct[] = [
     ratingCount: 0,
     faqs: [],
     images: primary(
-      '/products/Carrot-seed-oil/Corrot-Seed-Oil-01.png',
+      '/products/Carrot-seed-oil/Carrot-Seed-Oil-01.png',
       'Carrot Seed Essential Oil',
     ),
     gallery: gallery([
       {
-        url: '/products/Carrot-seed-oil/Corrot-Seed-Oil-03.png',
+        url: '/products/Carrot-seed-oil/Carrot-Seed-Oil-02.png',
+        alt: 'Carrot Seed Essential Oil bottle and box',
+      },
+      {
+        url: '/products/Carrot-seed-oil/Carrot-Seed-Oil-03.png',
         alt: 'Carrot Seed Essential Oil bottle',
       },
       {
-        url: '/products/Carrot-seed-oil/Corrot-Seed-Oil-04.png',
+        url: '/products/Carrot-seed-oil/Carrot-Seed-Oil-04.png',
         alt: 'Carrot Seed Essential Oil directions',
-      },
-      {
-        url: '/products/Carrot-seed-oil/Corrot-Seed-Oil-05.png',
-        alt: 'Carrot Seed Essential Oil packaging',
       },
     ]),
     videos: [],
@@ -481,21 +481,21 @@ export const PRODUCTS: CatalogProduct[] = [
     ratingCount: 0,
     faqs: [],
     images: primary(
-      '/products/Watermelon/Watermelon-cold-Oil-02.png',
+      '/products/Watermelon/Watermelon-02.png',
       'Watermelon Seed Cold Pressed Oil',
     ),
     gallery: gallery([
       {
-        url: '/products/Watermelon/Watermelon-cold-Oil-01.png',
+        url: '/products/Watermelon/Watermelon-01.png',
         alt: 'Watermelon Seed Oil packaging',
       },
       {
-        url: '/products/Watermelon/Watermelon-cold-Oil-03.png',
+        url: '/products/Watermelon/Watermelon-03.png',
         alt: 'Watermelon Seed Oil bottle',
       },
       {
-        url: '/products/Watermelon/Watermelon-cold-Oil-05.png',
-        alt: 'Watermelon Seed Oil MRP panel',
+        url: '/products/Watermelon/Watermelon-04.png',
+        alt: 'Watermelon Seed Oil label details',
       },
     ]),
     videos: [],
@@ -544,12 +544,12 @@ export const PRODUCTS: CatalogProduct[] = [
     ),
     gallery: gallery([
       {
-        url: '/products/Jojoba-oil/Jojoba-Oil-03.png',
-        alt: 'Jojoba Cold Pressed Oil bottle',
+        url: '/products/Jojoba-oil/Jojoba-Oil-01.png',
+        alt: 'Jojoba Cold Pressed Oil packaging',
       },
       {
-        url: '/products/Jojoba-oil/Jojoba-Oil-04.png',
-        alt: 'Jojoba Cold Pressed Oil MRP panel',
+        url: '/products/Jojoba-oil/Jojoba-Oil-03.png',
+        alt: 'Jojoba Cold Pressed Oil bottle',
       },
     ]),
     videos: [],
@@ -647,16 +647,16 @@ export const PRODUCTS: CatalogProduct[] = [
     ratingCount: 0,
     faqs: [],
     images: primary(
-      '/products/Black-Cumin/Black-Cumin-02.png',
+      '/products/Black-Cumin/Black-Cumin-01.png',
       'Black Cumin Cold Pressed Oil',
     ),
     gallery: gallery([
       {
-        url: '/products/Black-Cumin/Black-Cumin-03.png',
+        url: '/products/Black-Cumin/Black-Cumin-02.png',
         alt: 'Black Cumin Cold Pressed Oil bottle',
       },
       {
-        url: '/products/Black-Cumin/Black-Cumin-05.png',
+        url: '/products/Black-Cumin/Black-Cumin-03.png',
         alt: 'Black Cumin Cold Pressed Oil directions',
       },
     ]),
@@ -702,20 +702,20 @@ export const PRODUCTS: CatalogProduct[] = [
     ratingCount: 0,
     faqs: [],
     images: primary(
-      '/products/Cucumber%20Seed/Cucumber-Seed-01.png',
+      '/products/Cucumber-Seed/Cucumber-Seed-01.png',
       'Cucumber Seed Cold Pressed Oil',
     ),
     gallery: gallery([
       {
-        url: '/products/Cucumber%20Seed/Cucumber-Seed-02.png',
+        url: '/products/Cucumber-Seed/Cucumber-Seed-02.png',
         alt: 'Cucumber Seed Cold Pressed Oil packaging',
       },
       {
-        url: '/products/Cucumber%20Seed/Cucumber-Seed-03.png',
+        url: '/products/Cucumber-Seed/Cucumber-Seed-03.png',
         alt: 'Cucumber Seed Cold Pressed Oil bottle',
       },
       {
-        url: '/products/Cucumber%20Seed/Cucumber-Seed-05.png',
+        url: '/products/Cucumber-Seed/Cucumber-Seed-04.png',
         alt: 'Cucumber Seed Cold Pressed Oil directions',
       },
     ]),
