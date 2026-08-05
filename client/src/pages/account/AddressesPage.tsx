@@ -8,7 +8,7 @@ import {
   Display,
   Eyebrow,
   Input,
-  MagneticButton,
+  Button,
   Badge,
 } from '@components/ui'
 import { AccountShell } from '@components/account/AccountShell'
@@ -125,9 +125,9 @@ export default function AddressesPage() {
                 : 'Saved locally for faster checkout.'}
             </Body>
           </div>
-          <MagneticButton variant="outline" onClick={openCreate}>
+          <Button variant="outline" onClick={openCreate}>
             Add address
-          </MagneticButton>
+          </Button>
         </div>
 
         {showForm && (
@@ -195,10 +195,10 @@ export default function AddressesPage() {
               Set as default
             </label>
             <div className="mt-6 flex flex-wrap gap-3">
-              <MagneticButton type="submit" disabled={isSubmitting}>
+              <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? 'Saving…' : 'Save address'}
-              </MagneticButton>
-              <MagneticButton
+              </Button>
+              <Button
                 type="button"
                 variant="ghost"
                 onClick={() => {
@@ -207,7 +207,7 @@ export default function AddressesPage() {
                 }}
               >
                 Cancel
-              </MagneticButton>
+              </Button>
             </div>
           </form>
         )}
@@ -216,7 +216,7 @@ export default function AddressesPage() {
           <div className="mt-16 text-center">
             <Body muted>No addresses saved yet.</Body>
             <div className="mt-6">
-              <MagneticButton onClick={openCreate}>Add your first</MagneticButton>
+              <Button onClick={openCreate}>Add your first</Button>
             </div>
           </div>
         ) : (

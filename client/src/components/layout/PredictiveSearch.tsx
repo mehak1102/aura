@@ -3,25 +3,19 @@ import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight,
   ChevronRight,
-  CircleDot,
-  Clock,
   Droplet,
   Droplets,
-  Eye,
   Flower2,
   Leaf,
   Search,
-  Snowflake,
   Sparkles,
   Sprout,
   Star,
   Sun,
-  Wind,
   X,
   type LucideIcon,
 } from 'lucide-react'
 import { useCatalog } from '@contexts/CatalogContext'
-import { concernPages } from '@/data/concerns'
 import { botanicals } from '@/data/botanicals'
 import { ROUTES } from '@/routes/paths'
 import { ProductImage } from '@components/ui'
@@ -31,18 +25,6 @@ import { fuzzyRank } from '@utils/fuzzy'
 type PredictiveSearchProps = {
   open: boolean
   onClose: () => void
-}
-
-const concernIcons: Record<string, LucideIcon> = {
-  acne: CircleDot,
-  'oily-skin': Droplet,
-  pigmentation: Sun,
-  hairfall: Wind,
-  dandruff: Snowflake,
-  'dark-circles': Eye,
-  'sensitive-skin': Flower2,
-  dryness: Droplets,
-  dullness: Clock,
 }
 
 const botanicalIcons: Record<string, LucideIcon> = {
@@ -139,7 +121,6 @@ export function PredictiveSearch({ open, onClose }: PredictiveSearchProps) {
     if (!query) {
       return {
         products: products.filter((p) => p.isBestSeller).slice(0, 4),
-        concerns: concernPages.slice(0, 4),
         botanicals: botanicals.slice(0, 4),
       }
     }
@@ -155,12 +136,6 @@ export function PredictiveSearch({ open, onClose }: PredictiveSearchProps) {
           { value: p.category.replace(/-/g, ' '), weight: 0.7 },
         ],
         { limit: 6 },
-      ),
-      concerns: fuzzyRank(
-        query,
-        concernPages,
-        (c) => [{ value: c.title }, { value: c.headline, weight: 0.7 }],
-        { limit: 4 },
       ),
       botanicals: fuzzyRank(
         query,
@@ -181,9 +156,7 @@ export function PredictiveSearch({ open, onClose }: PredictiveSearchProps) {
   }
 
   const empty =
-    results.products.length === 0 &&
-    results.concerns.length === 0 &&
-    results.botanicals.length === 0
+    results.products.length === 0 && results.botanicals.length === 0
 
   return (
     <div className="fixed inset-0 z-[var(--z-overlay)] flex items-start justify-center bg-[#1b261e]/55 px-4 pt-[7vh] backdrop-blur-sm">
@@ -270,23 +243,6 @@ export function PredictiveSearch({ open, onClose }: PredictiveSearchProps) {
                   </li>
                 ))}
               </ul>
-            </section>
-          )}
-
-          {results.concerns.length > 0 && (
-            <section className="mt-3.5 border-t border-forest/8 pt-3.5">
-              <SectionHeader icon={Sprout} label="Concerns" />
-              <div className="mt-2.5 flex flex-wrap gap-2">
-                {results.concerns.map((c) => (
-                  <Chip
-                    key={c.slug}
-                    to={`${ROUTES.concerns}/${c.slug}`}
-                    onClick={onClose}
-                    icon={concernIcons[c.slug] ?? Leaf}
-                    label={c.title}
-                  />
-                ))}
-              </div>
             </section>
           )}
 

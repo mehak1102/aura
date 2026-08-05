@@ -62,6 +62,60 @@ export const getCart = asyncHandler(async (req, res) => {
   })
 })
 
+/** Overwrites the saved cart with the client's current lines */
+export const replaceCart = asyncHandler(async (req, res) => {
+  const userId = getUserId(req)
+  const { items } = req.body
+  if (!Array.isArray(items)) throw new AppError('items must be an array')
+
+  const clean = []
+  for (const item of items) {
+    if (!item?.productId || !item?.variantId) continue
+    const quantity = Math.max(1, Math.min(99, Number(item.quantity) || 1))
+    const existing = clean.find(
+      (i) => i.productId === item.productId && i.variantId === item.variantId,
+    )
+    if (existing) existing.quantity = Math.min(99, existing.quantity + quantity)
+    else
+      clean.push({
+        productId: String(item.productId),
+        variantId: String(item.variantId),
+        quantity,
+      })
+  }
+
+  if (useMemory()) {
+    memoryStore.setCart(userId, clean)
+    const lines = memoryStore.hydrateCartItems(clean)
+    res.json({
+      success: true,
+      data: {
+        items: clean,
+        lines,
+        count: clean.reduce((s, i) => s + i.quantity, 0),
+        subtotal: lines.reduce((s, l) => s + l.lineTotal, 0),
+      },
+    })
+    return
+  }
+
+  let cart = await Cart.findOne({ user: userId })
+  if (!cart) cart = await Cart.create({ user: userId, items: [] })
+  cart.items = clean
+  await cart.save()
+
+  const lines = await hydrateItems(cart.items)
+  res.json({
+    success: true,
+    data: {
+      items: cart.items,
+      lines,
+      count: cart.items.reduce((s, i) => s + i.quantity, 0),
+      subtotal: lines.reduce((s, l) => s + l.lineTotal, 0),
+    },
+  })
+})
+
 export const addCartItem = asyncHandler(async (req, res) => {
   const userId = getUserId(req)
   const { productId, variantId, quantity = 1 } = req.body

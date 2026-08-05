@@ -1,4 +1,5 @@
 export type PolicySection = {
+  id?: string
   heading: string
   paragraphs: string[]
   list?: string[]
@@ -146,6 +147,7 @@ export const shippingPolicy: PolicyDocument = {
     'We ship across India from our studio in Bengaluru. Here is everything you need to know about delivery times and costs.',
   sections: [
     {
+      id: 'delivery-times',
       heading: 'Delivery times',
       paragraphs: ['Estimated delivery times by region:'],
       list: [
@@ -156,24 +158,28 @@ export const shippingPolicy: PolicyDocument = {
       ],
     },
     {
+      id: 'shipping-costs',
       heading: 'Shipping costs',
       paragraphs: [
         'Free standard shipping on orders above ₹999. Orders below ₹999 incur a flat ₹79 shipping fee. Express delivery adds ₹149 to any order.',
       ],
     },
     {
+      id: 'order-processing',
       heading: 'Order processing',
       paragraphs: [
         'Orders placed before 2 PM IST on business days are typically dispatched the same day. Orders placed after 2 PM or on weekends/holidays ship the next business day.',
       ],
     },
     {
+      id: 'tracking',
       heading: 'Tracking',
       paragraphs: [
         'You will receive an email and SMS with tracking details once your order ships. Track your order anytime from your account dashboard.',
       ],
     },
     {
+      id: 'delivery-issues',
       heading: 'Delivery issues',
       paragraphs: [
         'If your package is lost or significantly delayed, contact support@auraofnature.com. We will investigate with our courier partner and arrange a replacement or refund if necessary.',

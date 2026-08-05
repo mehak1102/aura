@@ -15,7 +15,6 @@ const CRAFT_LABELS: Record<ProductCategory, string> = {
   'skin-care': 'Small Batch',
   'body-care': 'Small Batch',
   'hair-care': 'Small Batch',
-  combos: 'Curated Set',
 }
 
 const CONCERN_LABELS: Record<ProductConcern, string> = {

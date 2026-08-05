@@ -46,7 +46,7 @@ export const giftSets: GiftSet[] = [
       'nourishing-peach-lotion-kumkumadi-oil',
       'lavender-essential-oil',
     ],
-    to: ROUTES.combos,
+    to: `${ROUTES.shop}?q=gift`,
   },
   {
     id: 'corporate',
@@ -63,7 +63,7 @@ export const giftSets: GiftSet[] = [
       'tea-tree-essential-oil',
       'eucalyptus-essential-oil',
     ],
-    to: ROUTES.combos,
+    to: `${ROUTES.shop}?q=gift`,
   },
   {
     id: 'luxury',
@@ -81,7 +81,7 @@ export const giftSets: GiftSet[] = [
       'carrot-seed-essential-oil',
       'cucumber-seed-cold-pressed-oil',
     ],
-    to: ROUTES.combos,
+    to: `${ROUTES.shop}?q=gift`,
   },
 ]
 

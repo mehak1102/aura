@@ -22,7 +22,6 @@ export function enrichProduct(product: CatalogProduct): CatalogProduct {
     images: local.images.length ? local.images : product.images.map(normalizeMedia),
     gallery: local.gallery.length ? local.gallery : (product.gallery ?? []).map(normalizeMedia),
     videos: local.videos?.length ? local.videos : product.videos,
-    gender: product.gender ?? local.gender,
     concerns: product.concerns?.length ? product.concerns : local.concerns,
     category: (product.category || local.category) as CatalogProduct['category'],
   }
@@ -141,7 +140,6 @@ function relatedScore(current: CatalogProduct, candidate: CatalogProduct) {
   const sharedTags = candidate.tags.filter((t) => current.tags.includes(t)).length
   score += sharedTags
 
-  if (candidate.gender && current.gender && candidate.gender === current.gender) score += 1
   if (candidate.isBestSeller) score += 1
   if (candidate.ratingAverage >= 4.7) score += 1
 
@@ -171,10 +169,9 @@ function ritualScore(current: CatalogProduct, candidate: CatalogProduct) {
 const RITUAL_COMPANIONS: Record<CatalogProduct['category'], CatalogProduct['category'][]> = {
   'skin-care': ['essential-oils', 'cold-pressed-oils', 'body-care'],
   'body-care': ['skin-care', 'essential-oils', 'cold-pressed-oils'],
-  'hair-care': ['cold-pressed-oils', 'essential-oils', 'combos'],
+  'hair-care': ['cold-pressed-oils', 'essential-oils', 'body-care'],
   'essential-oils': ['skin-care', 'body-care', 'cold-pressed-oils', 'hair-care'],
   'cold-pressed-oils': ['hair-care', 'skin-care', 'essential-oils', 'body-care'],
-  combos: ['skin-care', 'body-care', 'hair-care', 'essential-oils', 'cold-pressed-oils'],
 }
 
 function dedupeProducts(list: CatalogProduct[]) {

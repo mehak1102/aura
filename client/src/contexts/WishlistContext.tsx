@@ -46,6 +46,8 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   const [products, setProducts] = useState<CatalogProduct[]>([])
   const [isSyncing, setIsSyncing] = useState(false)
 
+  // On sign-in, merge the guest list into the saved one instead of letting the
+  // server response wipe hearts added before logging in
   useEffect(() => {
     if (!isAuthenticated) {
       localStorage.setItem(KEY, JSON.stringify(ids))
@@ -57,7 +59,14 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     wishlistApi
       .get()
       .then((data) => {
-        if (cancelled) return
+        if (cancelled) return data
+        const local = loadIds()
+        const missing = local.filter((id) => !data.ids.includes(id))
+        if (!missing.length) return data
+        return wishlistApi.replace([...data.ids, ...missing])
+      })
+      .then((data) => {
+        if (cancelled || !data) return
         setIds(data.ids)
         setProducts(data.products.map((p) => enrichProduct(p)))
         localStorage.setItem(KEY, JSON.stringify(data.ids))
@@ -118,7 +127,10 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     setIds([])
     setProducts([])
     localStorage.removeItem(KEY)
-  }, [])
+    if (isAuthenticated) {
+      void wishlistApi.replace([]).catch(() => undefined)
+    }
+  }, [isAuthenticated])
 
   const displayProducts = useMemo(() => {
     if (products.length) return products

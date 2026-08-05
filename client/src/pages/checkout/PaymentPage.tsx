@@ -82,6 +82,7 @@ export default function PaymentPage() {
       createdAt: new Date().toISOString(),
       shipping: pending.shipping,
       shippingFee: pending.shippingFee,
+      giftWrapFee: pending.giftWrapFee ?? 0,
       subtotal: pending.subtotal,
       mrpTotal: pending.mrpTotal,
       savings: pending.savings,
@@ -318,6 +319,7 @@ export default function PaymentPage() {
               lines={lines}
               subtotal={pending.subtotal}
               savings={pending.savings}
+              giftWrapFee={pending.giftWrapFee ?? 0}
               shippingMethod={pending.shipping.shippingMethod}
               shippingFee={pending.shippingFee}
               total={pending.total}

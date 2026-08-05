@@ -17,6 +17,9 @@ export type CartLine = StoredCartLine & {
 
 const KEY = 'aura_cart'
 
+/** Flat fee added when gift wrapping is selected */
+export const GIFT_WRAP_FEE = 99
+
 export function loadCart(): StoredCartLine[] {
   try {
     const raw = localStorage.getItem(KEY)
@@ -28,6 +31,28 @@ export function loadCart(): StoredCartLine[] {
 
 export function saveCart(items: StoredCartLine[]) {
   localStorage.setItem(KEY, JSON.stringify(items))
+}
+
+/**
+ * Combines a saved cart with the one in this browser. Quantities take the
+ * larger of the two rather than summing, so signing in repeatedly cannot
+ * inflate a line.
+ */
+export function mergeCartLines(
+  saved: StoredCartLine[],
+  local: StoredCartLine[],
+): StoredCartLine[] {
+  const merged = saved.map((line) => ({ ...line }))
+
+  for (const line of local) {
+    const match = merged.find(
+      (i) => i.productId === line.productId && i.variantId === line.variantId,
+    )
+    if (match) match.quantity = Math.max(match.quantity, line.quantity)
+    else merged.push({ ...line })
+  }
+
+  return merged
 }
 
 export function hydrateCart(

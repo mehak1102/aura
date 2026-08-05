@@ -8,6 +8,9 @@ type LogoProps = {
   compact?: boolean
   /** Stacked AURA / OF NATURE lockup matching the portal hero mockup */
   editorial?: boolean
+  /** Lets off-screen containers (e.g. the closed site menu) skip the link */
+  tabIndex?: number
+  onClick?: () => void
 }
 
 /** Leaf mark — muted beige gold from hero floral linework */
@@ -15,7 +18,14 @@ const LEAF_GOLD = '#C2A378'
 /** Logo wordmark — pale warm beige (lighter than the leaf) */
 const WORDMARK = '#D9D2C5'
 
-export function Logo({ className, tone = 'dark', compact, editorial }: LogoProps) {
+export function Logo({
+  className,
+  tone = 'dark',
+  compact,
+  editorial,
+  tabIndex,
+  onClick,
+}: LogoProps) {
   const onHero = tone === 'light' || tone === 'gold'
   const wordColor = onHero ? WORDMARK : '#0c0f0c'
   const leafColor = onHero ? LEAF_GOLD : '#b8975c'
@@ -24,6 +34,8 @@ export function Logo({ className, tone = 'dark', compact, editorial }: LogoProps
     <Link
       to={ROUTES.home}
       aria-label="Aura of Nature home"
+      tabIndex={tabIndex}
+      onClick={onClick}
       className={cn('group inline-flex flex-col items-center gap-0.5 py-1', className)}
     >
       <svg

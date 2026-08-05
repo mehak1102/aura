@@ -14,7 +14,7 @@ import {
   BackButton,
   Body,
   Display,
-  MagneticButton,
+  Button,
   LeafShadows,
 } from '@components/ui'
 import {
@@ -71,9 +71,9 @@ export default function ProductDetailsPage() {
           This ritual may have sold out or the link is outdated.
         </Body>
         <div className="mt-8">
-          <MagneticButton onClick={() => navigate(ROUTES.shop)}>
+          <Button onClick={() => navigate(ROUTES.shop)}>
             Back to shop
-          </MagneticButton>
+          </Button>
         </div>
       </main>
       </>

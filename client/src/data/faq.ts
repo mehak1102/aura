@@ -3,14 +3,30 @@ export type FaqItem = {
   answer: string
 }
 
+export type FaqCategoryId =
+  | 'orders-shipping'
+  | 'products-ingredients'
+  | 'returns-refunds'
+  | 'account-payments'
+
+export type FaqCategoryIcon =
+  | 'truck'
+  | 'leaf'
+  | 'rotate'
+  | 'credit-card'
+
 export type FaqCategory = {
+  id: FaqCategoryId
   title: string
+  icon: FaqCategoryIcon
   items: FaqItem[]
 }
 
 export const faqCategories: FaqCategory[] = [
   {
+    id: 'orders-shipping',
     title: 'Orders & Shipping',
+    icon: 'truck',
     items: [
       {
         question: 'How long does delivery take?',
@@ -35,7 +51,9 @@ export const faqCategories: FaqCategory[] = [
     ],
   },
   {
+    id: 'products-ingredients',
     title: 'Products & Ingredients',
+    icon: 'leaf',
     items: [
       {
         question: 'Are your products cruelty-free?',
@@ -60,7 +78,9 @@ export const faqCategories: FaqCategory[] = [
     ],
   },
   {
+    id: 'returns-refunds',
     title: 'Returns & Refunds',
+    icon: 'rotate',
     items: [
       {
         question: 'What is your return policy?',
@@ -80,7 +100,9 @@ export const faqCategories: FaqCategory[] = [
     ],
   },
   {
+    id: 'account-payments',
     title: 'Account & Payments',
+    icon: 'credit-card',
     items: [
       {
         question: 'Which payment methods do you accept?',

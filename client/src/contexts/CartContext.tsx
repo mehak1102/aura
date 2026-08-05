@@ -4,16 +4,21 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react'
 import { useCatalog } from '@contexts/CatalogContext'
+import { useAuth } from '@contexts/AuthContext'
+import { cartApi } from '@services/api/cart'
 import {
   cartCount,
   cartMrpTotal,
   cartSubtotal,
+  GIFT_WRAP_FEE,
   hydrateCart,
   loadCart,
+  mergeCartLines,
   saveCart,
   type CartLine,
   type StoredCartLine,
@@ -35,7 +40,7 @@ type CartContextValue = {
   savings: number
   /** Coupon discount, clamped to the current subtotal */
   discount: number
-  /** Subtotal after the coupon, before shipping */
+  /** Subtotal after the coupon, before shipping / gift wrap */
   payable: number
   promo: AppliedPromo | null
   promoError: string | null
@@ -44,6 +49,7 @@ type CartContextValue = {
   removePromo: () => void
   justAdded: boolean
   giftWrap: boolean
+  giftWrapFee: number
   setGiftWrap: (value: boolean) => void
   addItem: (productId: string, variantId: string, quantity?: number) => void
   updateQty: (productId: string, variantId: string, quantity: number) => void
@@ -56,6 +62,7 @@ const CartContext = createContext<CartContextValue | null>(null)
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const { products } = useCatalog()
+  const { isAuthenticated } = useAuth()
   const [items, setItems] = useState<StoredCartLine[]>(() =>
     typeof window !== 'undefined' ? loadCart() : [],
   )
@@ -64,10 +71,60 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (typeof window === 'undefined') return false
     return localStorage.getItem('aura_gift_wrap') === '1'
   })
+  /** Blocks the push-to-server effect while we are pulling from it */
+  const hydratingRef = useRef(false)
 
   useEffect(() => {
     saveCart(items)
   }, [items])
+
+  // On sign-in, fold whatever sits in this browser into the saved cart so a
+  // guest bag is never dropped, then treat the merged result as current
+  useEffect(() => {
+    if (!isAuthenticated) return
+
+    let cancelled = false
+    hydratingRef.current = true
+
+    cartApi
+      .get()
+      .then((serverItems) => {
+        if (cancelled) return
+        const local = loadCart()
+        const merged = mergeCartLines(serverItems, local)
+        setItems(merged)
+        const changed =
+          merged.length !== serverItems.length ||
+          merged.some((line) => {
+            const match = serverItems.find(
+              (i) =>
+                i.productId === line.productId && i.variantId === line.variantId,
+            )
+            return !match || match.quantity !== line.quantity
+          })
+        return changed ? cartApi.replace(merged) : undefined
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        hydratingRef.current = false
+      })
+
+    return () => {
+      cancelled = true
+      hydratingRef.current = false
+    }
+  }, [isAuthenticated])
+
+  // Mirror later edits to the server, debounced so steppers don't spam it
+  useEffect(() => {
+    if (!isAuthenticated || hydratingRef.current) return
+
+    const timer = window.setTimeout(() => {
+      void cartApi.replace(items).catch(() => undefined)
+    }, 600)
+
+    return () => window.clearTimeout(timer)
+  }, [items, isAuthenticated])
 
   useEffect(() => {
     localStorage.setItem('aura_gift_wrap', giftWrap ? '1' : '0')
@@ -147,6 +204,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const discount = Math.min(promo?.discount ?? 0, subtotal)
   const payable = Math.max(0, subtotal - discount)
+  const giftWrapFee = giftWrap ? GIFT_WRAP_FEE : 0
 
   const addItem = useCallback(
     (productId: string, variantId: string, quantity = 1) => {
@@ -196,6 +254,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = useCallback(() => {
     setItems([])
+    setGiftWrap(false)
     removePromo()
   }, [removePromo])
   const clearJustAdded = useCallback(() => setJustAdded(false), [])
@@ -217,6 +276,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       removePromo,
       justAdded,
       giftWrap,
+      giftWrapFee,
       setGiftWrap,
       addItem,
       updateQty,
@@ -240,6 +300,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       removePromo,
       justAdded,
       giftWrap,
+      giftWrapFee,
       addItem,
       updateQty,
       removeItem,

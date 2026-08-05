@@ -25,6 +25,8 @@ type ShopViewProps = {
   defaults?: Partial<ShopFilters>
   hideCategoryFilter?: boolean
   seoTitle?: string
+  /** Send the shopper straight to the cart after adding a product. */
+  goToCartOnAdd?: boolean
 }
 
 function LeafDivider() {
@@ -45,6 +47,7 @@ export function ShopView({
   defaults,
   hideCategoryFilter,
   seoTitle,
+  goToCartOnAdd,
 }: ShopViewProps) {
   const meta = CATEGORY_META[metaKey]
   const [filtersOpen, setFiltersOpen] = useState(false)
@@ -141,7 +144,11 @@ export function ShopView({
               ) : (
                 <div className="mt-8 grid gap-6 sm:grid-cols-2 sm:gap-7 xl:grid-cols-3 xl:gap-8">
                   {products.map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      goToCartOnAdd={goToCartOnAdd}
+                    />
                   ))}
                 </div>
               )}

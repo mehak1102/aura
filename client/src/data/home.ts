@@ -226,12 +226,6 @@ export const concerns = [
   },
 ]
 
-export const concernsQuiz = {
-  prompt: 'Not sure? Take our skin quiz and let nature guide you.',
-  cta: 'Take the quiz',
-  to: ROUTES.skinQuiz,
-}
-
 /** Pinned FLIP split journey — after Shop by Concern */
 export const splitJourney = {
   eyebrow: 'The botanical path',

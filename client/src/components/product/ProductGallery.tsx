@@ -6,8 +6,11 @@ import {
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from 'react'
+import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
+  ChevronLeft,
+  ChevronRight,
   Maximize2,
   Minimize2,
   Minus,
@@ -57,6 +60,15 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
   const canSpin = frames.length >= 2
   const isZoomed = zoom > 1.02
 
+  const goPrev = useCallback(
+    () => setActive((i) => (i - 1 + frames.length) % frames.length),
+    [frames.length],
+  )
+  const goNext = useCallback(
+    () => setActive((i) => (i + 1) % frames.length),
+    [frames.length],
+  )
+
   const clampZoom = (value: number) =>
     Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, value))
 
@@ -94,13 +106,12 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
     if (!lightbox) return
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setLightbox(false)
-      if (e.key === 'ArrowRight') setActive((i) => (i + 1) % frames.length)
-      if (e.key === 'ArrowLeft')
-        setActive((i) => (i - 1 + frames.length) % frames.length)
+      if (e.key === 'ArrowRight') goNext()
+      if (e.key === 'ArrowLeft') goPrev()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [lightbox, frames.length])
+  }, [lightbox, goNext, goPrev])
 
   useEffect(() => {
     const el = stageRef.current
@@ -347,72 +358,109 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
         </div>
       )}
 
-      <AnimatePresence>
-        {lightbox && current && (
-          <motion.div
-            className="fixed inset-0 z-[80] flex items-center justify-center bg-[#1a261c]/92 p-4 backdrop-blur-md"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            onClick={() => setLightbox(false)}
-            role="dialog"
-            aria-modal="true"
-            aria-label={`${title} fullscreen gallery`}
-          >
-            <button
-              type="button"
-              className="absolute top-5 right-5 inline-flex h-11 w-11 items-center justify-center rounded-full bg-warm-white/10 text-warm-white transition hover:bg-warm-white/20"
-              aria-label="Close fullscreen"
+      {/* Portalled to <body>: the gallery column is `position: sticky`, which
+          opens a stacking context that would otherwise keep this overlay
+          painted beneath the product info column. */}
+      {createPortal(
+        <AnimatePresence>
+          {lightbox && current && (
+            <motion.div
+              className="fixed inset-0 z-[80] flex items-center justify-center bg-[#1a261c]/92 p-4 backdrop-blur-md"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
               onClick={() => setLightbox(false)}
+              role="dialog"
+              aria-modal="true"
+              aria-label={`${title} fullscreen gallery`}
             >
-              <X className="h-5 w-5" strokeWidth={1.5} />
-            </button>
-            <button
-              type="button"
-              className="absolute top-5 right-[4.25rem] inline-flex h-11 w-11 items-center justify-center rounded-full bg-warm-white/10 text-warm-white transition hover:bg-warm-white/20"
-              aria-label="Exit fullscreen"
-              onClick={() => setLightbox(false)}
-            >
-              <Minimize2 className="h-5 w-5" strokeWidth={1.5} />
-            </button>
-
-            <motion.img
-              key={current.url}
-              src={productImageUrl(current.url, 'full')}
-              alt={current.alt || title}
-              className="max-h-[min(88vh,920px)] max-w-[min(92vw,860px)] object-contain"
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.35, ease: motionEase }}
-              onClick={(e) => e.stopPropagation()}
-            />
-
-            {frames.length > 1 && (
-              <div
-                className="absolute inset-x-0 bottom-6 flex justify-center gap-2"
-                onClick={(e) => e.stopPropagation()}
+              <button
+                type="button"
+                className="absolute top-5 right-5 inline-flex h-11 w-11 items-center justify-center rounded-full bg-warm-white/10 text-warm-white transition hover:bg-warm-white/20"
+                aria-label="Close fullscreen"
+                onClick={() => setLightbox(false)}
               >
-                {frames.map((img, i) => (
-                  <button
-                    key={`lb-${img.url}-${i}`}
-                    type="button"
-                    onClick={() => setActive(i)}
-                    className={cn(
-                      'h-2 w-2 rounded-full transition-all',
-                      i === active
-                        ? 'w-6 bg-soft-gold'
-                        : 'bg-warm-white/35 hover:bg-warm-white/60',
-                    )}
-                    aria-label={`Fullscreen image ${i + 1}`}
-                  />
-                ))}
+                <X className="h-5 w-5" strokeWidth={1.5} />
+              </button>
+              <button
+                type="button"
+                className="absolute top-5 right-[4.25rem] inline-flex h-11 w-11 items-center justify-center rounded-full bg-warm-white/10 text-warm-white transition hover:bg-warm-white/20"
+                aria-label="Exit fullscreen"
+                onClick={() => setLightbox(false)}
+              >
+                <Minimize2 className="h-5 w-5" strokeWidth={1.5} />
+              </button>
+
+              {/* Wrapper shrink-wraps the image so the arrows track its edges
+                  rather than the viewport's. */}
+              <div className="relative">
+                <motion.img
+                  key={current.url}
+                  src={productImageUrl(current.url, 'full')}
+                  alt={current.alt || title}
+                  className="block max-h-[min(88vh,920px)] max-w-[min(92vw,860px)] object-contain"
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.35, ease: motionEase }}
+                  onClick={(e) => e.stopPropagation()}
+                />
+
+                {frames.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      className="absolute top-1/2 left-3 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-[#1a261c]/45 text-warm-white backdrop-blur-sm transition hover:bg-[#1a261c]/70"
+                      aria-label="Previous image"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        goPrev()
+                      }}
+                    >
+                      <ChevronLeft className="h-5 w-5" strokeWidth={1.5} />
+                    </button>
+                    <button
+                      type="button"
+                      className="absolute top-1/2 right-3 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-[#1a261c]/45 text-warm-white backdrop-blur-sm transition hover:bg-[#1a261c]/70"
+                      aria-label="Next image"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        goNext()
+                      }}
+                    >
+                      <ChevronRight className="h-5 w-5" strokeWidth={1.5} />
+                    </button>
+                  </>
+                )}
               </div>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+              {frames.length > 1 && (
+                <div
+                  className="absolute inset-x-0 bottom-6 flex justify-center gap-2"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {frames.map((img, i) => (
+                    <button
+                      key={`lb-${img.url}-${i}`}
+                      type="button"
+                      onClick={() => setActive(i)}
+                      className={cn(
+                        'h-2 w-2 rounded-full transition-all',
+                        i === active
+                          ? 'w-6 bg-soft-gold'
+                          : 'bg-warm-white/35 hover:bg-warm-white/60',
+                      )}
+                      aria-label={`Fullscreen image ${i + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
     </div>
   )
 }

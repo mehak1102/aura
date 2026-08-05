@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { Body, Display, Eyebrow, MagneticButton } from '@components/ui'
+import { Body, Display, Eyebrow, Button } from '@components/ui'
 import { Seo } from '@components/seo/Seo'
 import { ROUTES } from '@/routes/paths'
 
@@ -44,9 +44,9 @@ export function PagePlaceholder({
           {description}
         </Body>
         <div className="mt-10">
-          <MagneticButton variant="outline" onClick={() => navigate(ROUTES.home)}>
+          <Button variant="outline" onClick={() => navigate(ROUTES.home)}>
             Back Home
-          </MagneticButton>
+          </Button>
         </div>
       </main>
     </>

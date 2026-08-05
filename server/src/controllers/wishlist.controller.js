@@ -36,6 +36,40 @@ export const getWishlist = asyncHandler(async (req, res) => {
   res.json({ success: true, data: { ids, products, count: ids.length } })
 })
 
+/** Overwrites the saved wishlist — used to merge a guest list after login */
+export const replaceWishlist = asyncHandler(async (req, res) => {
+  const userId = getUserId(req)
+  const { ids } = req.body
+  if (!Array.isArray(ids)) throw new AppError('ids must be an array')
+
+  const unique = [...new Set(ids.map(String))]
+
+  if (useMemory()) {
+    memoryStore.setWishlist(userId, unique)
+    const products = await resolveProducts(unique)
+    res.json({
+      success: true,
+      data: { ids: unique, products, count: unique.length },
+    })
+    return
+  }
+
+  const user = await User.findById(userId)
+  if (!user) throw new AppError('User not found', 404)
+
+  const docs = await Product.find({ legacyId: { $in: unique } }).select('_id legacyId')
+  const byLegacy = new Map(docs.map((d) => [d.legacyId, d._id]))
+  user.wishlist = unique.filter((id) => byLegacy.has(id)).map((id) => byLegacy.get(id))
+  await user.save()
+
+  const kept = unique.filter((id) => byLegacy.has(id))
+  const products = await resolveProducts(kept)
+  res.json({
+    success: true,
+    data: { ids: kept, products, count: kept.length },
+  })
+})
+
 export const toggleWishlist = asyncHandler(async (req, res) => {
   const userId = getUserId(req)
   const { productId } = req.body

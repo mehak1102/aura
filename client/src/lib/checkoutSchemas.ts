@@ -20,7 +20,7 @@ export const shippingAddressSchema = z.object({
   notes: z.string().optional(),
 })
 
-export const shippingMethodSchema = z.enum(['standard', 'express'])
+export const shippingMethodSchema = z.enum(['standard'])
 
 export const checkoutSchema = shippingAddressSchema.extend({
   shippingMethod: shippingMethodSchema,
@@ -41,11 +41,5 @@ export const SHIPPING_OPTIONS: {
     label: 'Standard',
     detail: '3–5 business days',
     price: 0,
-  },
-  {
-    id: 'express',
-    label: 'Express',
-    detail: '1–2 business days',
-    price: 149,
   },
 ]

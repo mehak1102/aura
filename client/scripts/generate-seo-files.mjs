@@ -14,7 +14,6 @@ const siteUrl = (process.env.VITE_SITE_URL || 'http://localhost:5173').replace(
 
 const staticPaths = [
   '/',
-  '/about',
   '/our-story',
   '/ingredients',
   '/shop',
@@ -23,40 +22,27 @@ const staticPaths = [
   '/shop/hair-care',
   '/shop/essential-oils',
   '/shop/cold-pressed-oils',
-  '/shop/combos',
   '/shop/best-sellers',
   '/shop/new-arrivals',
   '/search',
-  '/blog',
   '/faq',
   '/contact',
-  '/store-locator',
   '/privacy-policy',
   '/return-policy',
   '/shipping-policy',
   '/terms',
 ]
 
-const blogSlugs = [
-  'morning-skincare-ritual',
-  'understanding-ayurvedic-skin-types',
-  'benefits-of-cold-pressed-oils',
-  'seasonal-skincare-winter',
-  'essential-oils-for-sleep',
-  'hair-oil-massage-guide',
-]
-
 const catalog = JSON.parse(fs.readFileSync(catalogPath, 'utf8'))
 const productPaths = catalog.map((p) => `/product/${p.slug}`)
-const blogPaths = blogSlugs.map((s) => `/blog/${s}`)
-const allPaths = [...staticPaths, ...productPaths, ...blogPaths]
+const allPaths = [...staticPaths, ...productPaths]
 
 const urls = allPaths
   .map(
     (loc) => `  <url>
     <loc>${siteUrl}${loc}</loc>
-    <changefreq>${loc.startsWith('/product/') || loc.startsWith('/blog/') ? 'weekly' : 'monthly'}</changefreq>
-    <priority>${loc === '/' ? '1.0' : loc.startsWith('/product/') ? '0.8' : loc.startsWith('/blog/') ? '0.7' : '0.7'}</priority>
+    <changefreq>${loc.startsWith('/product/') ? 'weekly' : 'monthly'}</changefreq>
+    <priority>${loc === '/' ? '1.0' : loc.startsWith('/product/') ? '0.8' : '0.7'}</priority>
   </url>`,
   )
   .join('\n')

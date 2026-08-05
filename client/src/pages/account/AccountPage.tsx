@@ -1,14 +1,18 @@
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
+import { useState, type ComponentType, type ReactNode } from 'react'
 import {
-  Body,
-  Display,
-  Eyebrow,
-  Input,
-  MagneticButton,
-} from '@components/ui'
+  Heart,
+  Leaf,
+  Mail,
+  MapPin,
+  Package,
+  Pencil,
+  Phone,
+  ShoppingBag,
+  UserRound,
+} from 'lucide-react'
 import { AccountShell } from '@components/account/AccountShell'
 import { useAuth } from '@contexts/AuthContext'
 import { useWishlist } from '@contexts/WishlistContext'
@@ -18,14 +22,52 @@ import { loadOrders } from '@utils/orders'
 import { loadAddresses } from '@utils/addresses'
 import { ROUTES } from '@/routes/paths'
 import { Seo } from '@components/seo/Seo'
-import { formatCurrency } from '@utils/index'
+import { cn, formatCurrency } from '@utils/index'
+
+type IconType = ComponentType<{ className?: string; strokeWidth?: number }>
+
+function ProfileRow({
+  icon: Icon,
+  label,
+  action,
+  error,
+  children,
+  last,
+}: {
+  icon: IconType
+  label: string
+  action?: ReactNode
+  error?: string
+  children: ReactNode
+  last?: boolean
+}) {
+  return (
+    <div
+      className={cn(
+        'flex items-center gap-4 px-5 py-4',
+        !last && 'border-b border-[#eee7da]',
+      )}
+    >
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f1ece0] text-forest">
+        <Icon className="h-4 w-4" strokeWidth={1.6} />
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="text-[0.55rem] font-medium tracking-[0.24em] text-charcoal/45 uppercase">
+          {label}
+        </p>
+        <div className="mt-0.5">{children}</div>
+        {error && <p className="mt-1 text-[0.75rem] text-[#a8543f]">{error}</p>}
+      </div>
+      {action}
+    </div>
+  )
+}
 
 export default function AccountPage() {
   const { user, updateProfile } = useAuth()
   const { count: wishCount } = useWishlist()
   const { count: cartCount } = useCart()
   const navigate = useNavigate()
-  const [saved, setSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const orders = loadOrders()
   const addresses = loadAddresses()
@@ -33,6 +75,7 @@ export default function AccountPage() {
   const {
     register,
     handleSubmit,
+    setFocus,
     formState: { errors, isSubmitting },
   } = useForm<ProfileInput>({
     resolver: zodResolver(profileSchema),
@@ -44,10 +87,9 @@ export default function AccountPage() {
 
   const onSubmit = handleSubmit(async (values) => {
     setError(null)
-    setSaved(false)
     try {
       await updateProfile(values)
-      setSaved(true)
+      navigate(ROUTES.home)
     } catch {
       setError('Could not update profile.')
     }
@@ -58,104 +100,145 @@ export default function AccountPage() {
       label: 'Orders',
       value: String(orders.length),
       to: ROUTES.orderHistory,
+      icon: Package as IconType,
     },
     {
       label: 'Wishlist',
       value: String(wishCount),
       to: ROUTES.wishlist,
+      icon: Heart as IconType,
     },
     {
       label: 'Addresses',
       value: String(addresses.length),
       to: ROUTES.addresses,
+      icon: MapPin as IconType,
     },
-    {
-      label: 'Bag',
-      value: String(cartCount),
-      to: ROUTES.cart,
-    },
+    { label: 'Bag', value: String(cartCount), to: ROUTES.cart, icon: ShoppingBag as IconType },
   ]
+
+  const editButton = (field: 'name' | 'phone') => (
+    <button
+      type="button"
+      onClick={() => setFocus(field)}
+      className="inline-flex shrink-0 items-center gap-1.5 text-[0.75rem] text-[#b8975c] transition-colors hover:text-forest"
+    >
+      <Pencil className="h-3 w-3" strokeWidth={1.7} aria-hidden />
+      Edit
+    </button>
+  )
+
+  const fieldClass =
+    'w-full bg-transparent text-[0.95rem] text-forest outline-none placeholder:text-charcoal/30'
 
   return (
     <>
       <Seo title="My Account" noindex />
       <AccountShell>
-        <Eyebrow>Overview</Eyebrow>
-        <Display as="h1" size="md" className="mt-3 text-forest">
+        <p className="text-[0.6rem] font-medium tracking-[0.3em] text-[#b8975c] uppercase">
+          Overview
+        </p>
+        <h1 className="font-display mt-2 flex items-center gap-3 text-[clamp(2.1rem,3.2vw,2.85rem)] leading-tight text-forest">
           Hello, {user?.name?.split(' ')[0] || 'there'}
-        </Display>
-        <Body muted className="mt-3 max-w-lg">
+          <Leaf className="h-6 w-6 shrink-0 text-[#c2a378]" strokeWidth={1.4} aria-hidden />
+        </h1>
+        <p className="mt-2.5 max-w-lg text-[0.95rem] font-light text-charcoal/60">
           Manage profile, addresses, wishlist, and orders from one calm place.
-        </Body>
+        </p>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {cards.map((card) => (
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {cards.map(({ label, value, to, icon: Icon }) => (
             <button
-              key={card.label}
+              key={label}
               type="button"
-              onClick={() => navigate(card.to)}
-              className="border border-charcoal/10 p-5 text-left transition-colors hover:border-forest"
+              onClick={() => navigate(to)}
+              className="rounded-2xl border border-[#e7e0d1] bg-white/85 p-5 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-[#c4a35a]/50 hover:shadow-[0_16px_38px_rgba(35,69,44,0.08)]"
             >
-              <p className="text-micro text-olive">{card.label}</p>
-              <p className="font-display mt-2 text-3xl text-forest">{card.value}</p>
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f1ece0] text-forest">
+                <Icon className="h-4 w-4" strokeWidth={1.6} />
+              </span>
+              <p className="mt-3.5 text-[0.55rem] font-medium tracking-[0.24em] text-charcoal/45 uppercase">
+                {label}
+              </p>
+              <p className="font-display mt-1 text-[2rem] leading-none text-forest">
+                {value}
+              </p>
+              <span className="mt-3 block h-px w-8 bg-[#c4a35a]/70" aria-hidden />
             </button>
           ))}
         </div>
 
         {orders[0] && (
-          <div className="mt-10 border border-charcoal/10 p-5">
-            <Eyebrow tone="gold">Latest order</Eyebrow>
-            <p className="font-display mt-2 text-xl">{orders[0].id}</p>
+          <div className="mt-8 rounded-2xl border border-[#e7e0d1] bg-white/85 p-5">
+            <p className="text-[0.55rem] font-medium tracking-[0.24em] text-[#b8975c] uppercase">
+              Latest order
+            </p>
+            <p className="font-display mt-2 text-xl text-forest">{orders[0].id}</p>
             <p className="mt-1 text-sm text-charcoal-muted">
               {formatCurrency(orders[0].total)} ·{' '}
               {new Date(orders[0].createdAt).toLocaleDateString('en-IN')}
             </p>
             <button
               type="button"
-              className="mt-3 text-micro text-forest"
-              onClick={() =>
-                navigate(`${ROUTES.orderSuccess}?id=${orders[0].id}`)
-              }
+              className="mt-3 text-[0.75rem] text-[#b8975c] transition-colors hover:text-forest"
+              onClick={() => navigate(`${ROUTES.orderSuccess}?id=${orders[0].id}`)}
             >
               View details
             </button>
           </div>
         )}
 
-        <div className="mt-12 max-w-lg">
-          <Eyebrow tone="gold">Profile</Eyebrow>
-          <form onSubmit={onSubmit} className="mt-6 space-y-6" noValidate>
-            <Input
+        <form onSubmit={onSubmit} className="mt-10 max-w-2xl" noValidate>
+          <p className="text-[0.6rem] font-medium tracking-[0.3em] text-[#b8975c] uppercase">
+            Profile
+          </p>
+
+          <div className="mt-4 overflow-hidden rounded-2xl border border-[#e7e0d1] bg-white/85">
+            <ProfileRow
+              icon={UserRound}
               label="Full name"
+              action={editButton('name')}
               error={errors.name?.message}
-              {...register('name')}
-            />
-            <Input
-              label="Email"
-              value={user?.email ?? ''}
-              disabled
-              readOnly
-            />
-            <Input
+            >
+              <input
+                className={fieldClass}
+                aria-label="Full name"
+                {...register('name')}
+              />
+            </ProfileRow>
+
+            <ProfileRow icon={Mail} label="Email">
+              <p className="truncate text-[0.95rem] text-charcoal/55">
+                {user?.email ?? ''}
+              </p>
+            </ProfileRow>
+
+            <ProfileRow
+              icon={Phone}
               label="Phone"
+              action={editButton('phone')}
               error={errors.phone?.message}
-              {...register('phone')}
-            />
-            {saved && (
-              <Body size="sm" className="text-forest">
-                Profile updated.
-              </Body>
-            )}
-            {error && (
-              <Body size="sm" className="text-olive">
-                {error}
-              </Body>
-            )}
-            <MagneticButton type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Saving…' : 'Save changes'}
-            </MagneticButton>
-          </form>
-        </div>
+              last
+            >
+              <input
+                className={fieldClass}
+                aria-label="Phone"
+                {...register('phone')}
+              />
+            </ProfileRow>
+          </div>
+
+          {error && <p className="mt-4 text-[0.85rem] text-[#a8543f]">{error}</p>}
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="mt-6 inline-flex items-center gap-2.5 rounded-full bg-[#23452C] px-7 py-3.5 text-[0.68rem] font-medium tracking-[0.2em] text-warm-white uppercase transition-colors duration-300 hover:bg-[#2a5335] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <Leaf className="h-3.5 w-3.5" strokeWidth={1.6} aria-hidden />
+            {isSubmitting ? 'Saving…' : 'Save changes'}
+          </button>
+        </form>
       </AccountShell>
     </>
   )

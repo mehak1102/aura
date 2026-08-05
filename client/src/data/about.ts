@@ -1,42 +1,3 @@
-import { ROUTES } from '@/routes/paths'
-
-export const aboutHero = {
-  eyebrow: 'About us',
-  title: 'Botanical care, crafted with intention',
-  description:
-    'Aura of Nature is a small-batch skincare and wellness house rooted in Ayurvedic wisdom — transparent formulas, honest ingredients, and rituals that honour your skin.',
-  image:
-    'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=1600&q=80',
-}
-
-export const aboutValues = [
-  {
-    title: 'Handcrafted',
-    body: 'Every batch is prepared by hand in small quantities — never mass-produced, never rushed.',
-  },
-  {
-    title: 'Transparent',
-    body: 'Full ingredient lists on every label. No hidden fillers, no greenwashing.',
-  },
-  {
-    title: 'Ayurvedic',
-    body: 'Ancient plant wisdom guides our formulations — balance over quick fixes.',
-  },
-  {
-    title: 'Sustainable',
-    body: 'Recyclable packaging, responsibly sourced botanicals, minimal waste.',
-  },
-]
-
-export const aboutPillars = {
-  eyebrow: 'What we believe',
-  title: 'Nature knows. We listen.',
-  body: 'We started Aura of Nature because we wanted skincare that felt like care — not chemistry. Products that work with your skin, not against it. Every formula is tested on real people, not animals, and every ingredient earns its place.',
-  image:
-    'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=1400&q=80',
-  cta: { label: 'Explore ingredients', to: ROUTES.ingredients },
-}
-
 export const storyHero = {
   eyebrow: 'Our story',
   title: 'From a kitchen table to your ritual',
@@ -265,36 +226,3 @@ export const sourcingNote = {
   title: 'How we source',
   body: 'We partner with small farms and cooperatives across India. Plants are harvested at peak potency, cold-pressed within hours, and never treated with synthetic preservatives before they reach our studio.',
 }
-
-export const aboutChapters = [
-  {
-    id: 'brand-story',
-    title: 'Brand story',
-    body: 'Aura of Nature began at a kitchen table — oils shared with family that became a promise of transparent, small-batch care.',
-  },
-  {
-    id: 'mission',
-    title: 'Mission',
-    body: 'Make botanical rituals honest and accessible: full labels, Ayurvedic roots, and formulas you can feel good using every day.',
-  },
-  {
-    id: 'farms',
-    title: 'Our farms',
-    body: 'We work with growers who harvest at peak potency — neem, herbs, and seed oils traced from soil to studio.',
-  },
-  {
-    id: 'manufacturing',
-    title: 'Manufacturing',
-    body: 'Every batch is prepared by hand in controlled small runs. No rush lines. No anonymous contract fillers.',
-  },
-  {
-    id: 'quality',
-    title: 'Quality testing',
-    body: 'Each lot is checked for scent, texture, and stability before it leaves our studio — real skin, real feedback.',
-  },
-  {
-    id: 'certifications',
-    title: 'Certifications',
-    body: 'Cruelty-free practice, recyclable-first packaging choices, and ingredient transparency on every label.',
-  },
-]

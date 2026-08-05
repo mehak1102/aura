@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Instagram } from 'lucide-react'
-import { Body, Display, Eyebrow, Input, Logo, MagneticButton } from '@components/ui'
+import { Body, Display, Eyebrow, Input, Logo, Button } from '@components/ui'
 import { footerGroups } from '@/lib/navigation'
 
 export function Footer() {
@@ -38,9 +38,9 @@ export function Footer() {
                   autoComplete="email"
                 />
               </div>
-              <MagneticButton type="submit" variant="gold" size="md">
+              <Button type="submit" variant="gold" size="md">
                 Subscribe
-              </MagneticButton>
+              </Button>
             </form>
           </div>
 

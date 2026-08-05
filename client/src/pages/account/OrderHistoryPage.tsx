@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Seo } from '@components/seo/Seo'
-import { Body, Display, Eyebrow, MagneticButton } from '@components/ui'
+import { Body, Display, Eyebrow, Button } from '@components/ui'
 import { AccountShell } from '@components/account/AccountShell'
 import { loadOrders } from '@utils/orders'
 import { ordersApi } from '@services/api/orders'
@@ -46,9 +46,9 @@ export default function OrderHistoryPage() {
           <div className="mt-16 text-center">
             <Body muted>No orders yet.</Body>
             <div className="mt-6">
-              <MagneticButton onClick={() => navigate(ROUTES.shop)}>
+              <Button onClick={() => navigate(ROUTES.shop)}>
                 Start shopping
-              </MagneticButton>
+              </Button>
             </div>
           </div>
         ) : (

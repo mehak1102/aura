@@ -25,6 +25,7 @@ export type Order = {
   paymentId?: string
   shipping: CheckoutInput
   shippingFee: number
+  giftWrapFee?: number
   subtotal: number
   mrpTotal: number
   savings: number
@@ -38,6 +39,7 @@ export type PendingCheckout = {
   subtotal: number
   mrpTotal: number
   savings: number
+  giftWrapFee?: number
   shippingFee: number
   total: number
 }

@@ -5,7 +5,6 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
-  ChevronRight,
   Gift,
   Info,
   Leaf,
@@ -33,6 +32,8 @@ import {
   revealCommerceBlocks,
 } from '@animations/gsap'
 import { formatCurrency } from '@utils/index'
+import { GIFT_WRAP_FEE } from '@utils/cart'
+import { PROMO_SUGGESTIONS } from '@/data/promos'
 import { ROUTES } from '@/routes/paths'
 import { CartLineItem } from '@components/cart'
 import { Seo } from '@components/seo/Seo'
@@ -60,11 +61,17 @@ export default function CartPage() {
     removePromo,
     clearCart,
     giftWrap,
+    giftWrapFee,
     setGiftWrap,
   } = useCart()
 
-  const [promoOpen, setPromoOpen] = useState(false)
   const [promoInput, setPromoInput] = useState('')
+  const total = payable + giftWrapFee
+
+  const applyPromoCode = async (code: string) => {
+    const ok = await applyPromo(code)
+    if (ok) setPromoInput('')
+  }
 
   const scope = useGsap(() => {
     if (!scope.current) return
@@ -221,6 +228,15 @@ export default function CartPage() {
                   </div>
                 )}
 
+                {giftWrapFee > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-charcoal-muted">Gift wrapping</span>
+                    <span className="text-charcoal">
+                      {formatCurrency(giftWrapFee)}
+                    </span>
+                  </div>
+                )}
+
                 <div>
                   <div className="flex justify-between">
                     <span className="inline-flex items-center gap-1.5 text-charcoal-muted">
@@ -235,20 +251,8 @@ export default function CartPage() {
                 </div>
               </div>
 
-              <div className="mt-5 flex items-end justify-between border-t border-soft-gold/25 pt-5">
-                <div>
-                  <p className="text-forest">Total</p>
-                  <p className="mt-0.5 text-[0.72rem] text-charcoal/50">
-                    Inclusive of all taxes
-                  </p>
-                </div>
-                <p className="font-display text-2xl text-forest">
-                  {formatCurrency(payable)}
-                </p>
-              </div>
-
               {promo ? (
-                <div className="mt-6 flex items-center gap-3 rounded-[var(--radius-md)] border border-olive/25 bg-olive/8 px-4 py-3">
+                <div className="mt-5 flex items-center gap-3 rounded-[var(--radius-md)] border border-olive/25 bg-olive/8 px-4 py-3">
                   <Check className="h-4 w-4 shrink-0 text-olive" strokeWidth={2} />
                   <span className="min-w-0 flex-1">
                     <span className="block text-body-sm text-forest">
@@ -256,6 +260,7 @@ export default function CartPage() {
                     </span>
                     <span className="mt-0.5 block text-[0.72rem] text-charcoal/55">
                       {promo.description ?? 'Discount applied to your bag'}
+                      {discount > 0 ? ` · −${formatCurrency(discount)}` : ''}
                     </span>
                   </span>
                   <button
@@ -268,64 +273,62 @@ export default function CartPage() {
                   </button>
                 </div>
               ) : (
-                <div className="mt-6">
-                  {promoOpen ? (
-                    <form
-                      onSubmit={async (e) => {
-                        e.preventDefault()
-                        const ok = await applyPromo(promoInput)
-                        if (ok) setPromoInput('')
-                      }}
-                      className="flex items-center gap-2"
-                    >
-                      <div className="relative min-w-0 flex-1">
-                        <Tag
-                          className="pointer-events-none absolute top-1/2 left-3.5 h-3.5 w-3.5 -translate-y-1/2 text-soft-gold"
-                          strokeWidth={1.5}
-                          aria-hidden
-                        />
-                        <input
-                          autoFocus
-                          value={promoInput}
-                          onChange={(e) => setPromoInput(e.target.value)}
-                          placeholder="Promo code"
-                          aria-label="Promo code"
-                          style={{ outline: 'none' }}
-                          className="h-10 w-full rounded-full border border-charcoal/12 bg-white/70 pr-4 pl-9.5 text-[0.8rem] tracking-[0.08em] text-forest uppercase transition-colors placeholder:tracking-normal placeholder:normal-case placeholder:text-charcoal/40 focus:border-soft-gold/70"
-                        />
-                      </div>
-                      <button
-                        type="submit"
-                        disabled={promoPending}
-                        className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full bg-forest px-5 text-[0.65rem] font-medium tracking-[0.16em] text-warm-white uppercase transition-colors hover:bg-forest-deep disabled:opacity-50"
-                      >
-                        {promoPending && (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                        )}
-                        Apply
-                      </button>
-                    </form>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => setPromoOpen(true)}
-                      className="flex w-full items-center gap-3 rounded-[var(--radius-md)] bg-cream/70 px-4 py-3 text-left transition-colors hover:bg-cream"
-                    >
+                <div className="mt-5">
+                  <form
+                    onSubmit={async (e) => {
+                      e.preventDefault()
+                      await applyPromoCode(promoInput)
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <div className="relative min-w-0 flex-1">
                       <Tag
-                        className="h-4 w-4 shrink-0 text-soft-gold"
+                        className="pointer-events-none absolute top-1/2 left-3.5 h-3.5 w-3.5 -translate-y-1/2 text-soft-gold"
                         strokeWidth={1.5}
+                        aria-hidden
                       />
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-body-sm text-forest">
-                          Have a promo code?
-                        </span>
-                        <span className="mt-0.5 block text-[0.72rem] text-charcoal/55">
-                          Tap to enter your code
-                        </span>
-                      </span>
-                      <ChevronRight className="h-4 w-4 shrink-0 text-charcoal/40" />
+                      <input
+                        value={promoInput}
+                        onChange={(e) => setPromoInput(e.target.value)}
+                        placeholder="Promo code"
+                        aria-label="Promo code"
+                        style={{ outline: 'none' }}
+                        className="h-10 w-full rounded-full border border-charcoal/12 bg-white/70 pr-4 pl-9.5 text-[0.8rem] tracking-[0.08em] text-forest uppercase transition-colors placeholder:tracking-normal placeholder:normal-case placeholder:text-charcoal/40 focus:border-soft-gold/70"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={promoPending || !promoInput.trim()}
+                      className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full bg-forest px-5 text-[0.65rem] font-medium tracking-[0.16em] text-warm-white uppercase transition-colors hover:bg-forest-deep disabled:opacity-50"
+                    >
+                      {promoPending && (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      )}
+                      Apply
                     </button>
-                  )}
+                  </form>
+
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {PROMO_SUGGESTIONS.map((suggestion) => (
+                      <button
+                        key={suggestion.code}
+                        type="button"
+                        disabled={promoPending}
+                        onClick={() => {
+                          setPromoInput(suggestion.code)
+                          void applyPromoCode(suggestion.code)
+                        }}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-soft-gold/50 bg-cream/60 px-3 py-1.5 text-left transition-colors hover:border-soft-gold hover:bg-cream disabled:opacity-50"
+                      >
+                        <span className="text-[0.68rem] font-medium tracking-[0.12em] text-forest uppercase">
+                          {suggestion.code}
+                        </span>
+                        <span className="text-[0.68rem] text-charcoal/50">
+                          {suggestion.label}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
 
                   {promoError && (
                     <p className="mt-2 text-[0.72rem] text-[#b4534b]">
@@ -352,9 +355,21 @@ export default function CartPage() {
                 </span>
                 <span className="inline-flex shrink-0 items-center gap-1.5 text-[0.72rem] text-charcoal/60">
                   <Gift className="h-4 w-4 text-soft-gold" strokeWidth={1.5} />
-                  ₹99
+                  {formatCurrency(GIFT_WRAP_FEE)}
                 </span>
               </label>
+
+              <div className="mt-5 flex items-end justify-between border-t border-soft-gold/25 pt-5">
+                <div>
+                  <p className="text-forest">Total</p>
+                  <p className="mt-0.5 text-[0.72rem] text-charcoal/50">
+                    Inclusive of all taxes
+                  </p>
+                </div>
+                <p className="font-display text-2xl text-forest">
+                  {formatCurrency(total)}
+                </p>
+              </div>
 
               <div className="mt-6 space-y-3">
                 <Button

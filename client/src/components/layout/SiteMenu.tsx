@@ -4,14 +4,13 @@ import {
   ArrowRight,
   Compass,
   Leaf,
-  MessageCircle,
   ShoppingBag,
   UserRound,
 } from 'lucide-react'
+import { Logo } from '@components/ui/Logo'
 import { gsap } from '@animations/gsap'
 import { menuGroups } from '@/lib/navigation'
 import { ROUTES } from '@/routes/paths'
-import { contactInfo } from '@/data/stores'
 import { cn } from '@utils/index'
 
 type SiteMenuProps = {
@@ -96,11 +95,6 @@ export function SiteMenu({ open, onClose }: SiteMenuProps) {
   const contentRef = useRef<HTMLDivElement>(null)
   const tlRef = useRef<gsap.core.Timeline | null>(null)
   const [mounted, setMounted] = useState(open)
-
-  const whatsappDigits = contactInfo.whatsapp.replace(/\D/g, '')
-  const whatsappHref = `https://wa.me/${whatsappDigits}?text=${encodeURIComponent(
-    'Hi Aura of Nature — I’d like help choosing a ritual.',
-  )}`
 
   useEffect(() => {
     if (open) setMounted(true)
@@ -287,29 +281,18 @@ export function SiteMenu({ open, onClose }: SiteMenuProps) {
           <div className="mt-10 border-t border-[#d4b87a]/28 pt-7">
             <div className="flex flex-col gap-6">
               <div className="flex items-start gap-4">
-                <a
-                  href={whatsappHref}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="Chat on WhatsApp"
+                <Logo
+                  compact
+                  tone="light"
                   tabIndex={open ? 0 : -1}
-                  className="relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#d4b87a]/45 bg-[#f3ede2] text-[#1e2a20] transition hover:scale-105 hover:border-[#d4b87a]"
-                >
-                  <MessageCircle className="h-5 w-5" strokeWidth={1.6} />
-                </a>
+                  onClick={onClose}
+                  className="shrink-0 py-0"
+                />
 
-                <div className="flex min-w-0 items-start gap-3">
-                  <span
-                    className="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#d4b87a]/55 text-[#d4b87a]"
-                    aria-hidden
-                  >
-                    <Leaf className="h-4 w-4" strokeWidth={1.35} />
-                  </span>
-                  <p className="font-display text-[0.92rem] leading-snug text-[#e8e0d2]">
-                    Handcrafted botanicals. Transparent ingredients. Rituals rooted in
-                    nature.
-                  </p>
-                </div>
+                <p className="font-display min-w-0 text-[0.92rem] leading-snug text-[#e8e0d2]">
+                  Handcrafted botanicals. Transparent ingredients. Rituals rooted in
+                  nature.
+                </p>
               </div>
 
               <button

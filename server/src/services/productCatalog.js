@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import catalog from '../data/catalog.json' with { type: 'json' }
 import { Product } from '../models/Product.model.js'
 import { isDbReady } from '../config/db.js'
@@ -147,8 +148,12 @@ export const productCatalog = {
 
   async getByLegacyId(id) {
     if (isDbReady()) {
+      // Legacy ids ("1", "2", …) would throw a CastError on the _id clause
+      const or = [{ legacyId: id }]
+      if (mongoose.isValidObjectId(id)) or.push({ _id: id })
+
       const doc = await Product.findOne({
-        $or: [{ legacyId: id }, { _id: id }],
+        $or: or,
         isActive: { $ne: false },
       })
       if (doc) return toClientProduct(doc)

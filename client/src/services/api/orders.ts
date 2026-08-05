@@ -27,6 +27,7 @@ export const ordersApi = {
     mrpTotal: number
     savings: number
     shippingFee: number
+    giftWrapFee?: number
     total: number
     paymentMethod: 'razorpay' | 'cod'
     status?: Order['status']

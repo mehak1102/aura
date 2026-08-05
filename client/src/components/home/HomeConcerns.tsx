@@ -9,7 +9,7 @@ import {
   Wind,
   type LucideIcon,
 } from 'lucide-react'
-import { concerns, concernsQuiz } from '@/data/home'
+import { concerns } from '@/data/home'
 import { gsap, ScrollTrigger, splitText, useGsap } from '@animations/gsap'
 
 const concernIcons: Record<(typeof concerns)[number]['icon'], LucideIcon> = {
@@ -38,20 +38,15 @@ export function HomeConcerns() {
     const titleWordsEls = scope.current.querySelectorAll('[data-title-word]')
     const subtitleEl = scope.current.querySelector<HTMLElement>('[data-word-split="subtitle"]')
     const cards = scope.current.querySelectorAll('[data-reveal-card]')
-    const quizBar = scope.current.querySelector('[data-reveal-quiz]')
-    const quizPromptEl = scope.current.querySelector<HTMLElement>('[data-word-split="quiz"]')
-    const quizCta = scope.current.querySelector('[data-reveal-quiz-cta]')
 
     const subtitleWords = subtitleEl ? splitText(subtitleEl, 'words') : []
-    const quizWords = quizPromptEl ? splitText(quizPromptEl, 'words') : []
 
     gsap.set(
-      [eyebrow, ...Array.from(titleWordsEls), ...subtitleWords, ...Array.from(cards), quizBar, quizCta].filter(
+      [eyebrow, ...Array.from(titleWordsEls), ...subtitleWords, ...Array.from(cards)].filter(
         Boolean,
       ),
       { y: 28, opacity: 0 },
     )
-    if (quizWords.length) gsap.set(quizWords, { y: 16, opacity: 0 })
 
     const tl = gsap.timeline({ paused: true })
 
@@ -87,33 +82,6 @@ export function HomeConcerns() {
         { y: 40, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.7, stagger: 0.14, ease: 'power3.out' },
         '-=0.05',
-      )
-    }
-
-    if (quizBar) {
-      tl.fromTo(
-        quizBar,
-        { y: 28, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.55, ease: 'power3.out' },
-        '-=0.1',
-      )
-    }
-
-    if (quizWords.length) {
-      tl.fromTo(
-        quizWords,
-        { y: 16, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.35, stagger: 0.04, ease: 'power3.out' },
-        '-=0.25',
-      )
-    }
-
-    if (quizCta) {
-      tl.fromTo(
-        quizCta,
-        { y: 12, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.45, ease: 'power3.out' },
-        '-=0.15',
       )
     }
 
@@ -272,45 +240,6 @@ export function HomeConcerns() {
             )
           })}
         </div>
-
-        {/* Quiz CTA bar */}
-        <Link
-          data-reveal-quiz=""
-          to={concernsQuiz.to}
-          className="group relative mt-12 flex flex-col items-start gap-4 overflow-hidden rounded-full bg-[#f0e9dc] px-6 py-4 ring-1 ring-[#243528]/12 transition-colors duration-400 hover:bg-[#ebe3d4] sm:mt-14 sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:px-8 sm:py-5"
-        >
-          <div className="relative z-10 flex items-start gap-3 sm:items-center">
-            <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#b8975c]/15 text-[#b8975c] sm:mt-0">
-              <Leaf className="h-3.5 w-3.5" strokeWidth={1.5} />
-            </span>
-            <p
-              data-word-split="quiz"
-              className="max-w-md text-[0.95rem] font-light leading-snug text-[#3d3a34]"
-            >
-              {concernsQuiz.prompt}
-            </p>
-          </div>
-
-          <div
-            data-reveal-quiz-cta=""
-            className="relative z-10 flex items-center gap-6 sm:pl-6"
-          >
-            <span
-              aria-hidden
-              className="hidden h-8 w-px bg-[#243528]/15 sm:block"
-            />
-            <span className="inline-flex items-center gap-2 text-[0.62rem] font-medium tracking-[0.22em] uppercase text-forest transition-transform duration-400 group-hover:translate-x-0.5">
-              {concernsQuiz.cta}
-              <span aria-hidden>→</span>
-            </span>
-          </div>
-
-          <Leaf
-            aria-hidden
-            className="pointer-events-none absolute -right-2 bottom-[-0.5rem] h-24 w-24 text-[#243528]/[0.04] sm:right-4 sm:h-28 sm:w-28"
-            strokeWidth={0.8}
-          />
-        </Link>
       </div>
     </section>
   )

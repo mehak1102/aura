@@ -10,6 +10,7 @@ type OrderSummaryProps = {
   savings: number
   discount?: number
   promoCode?: string
+  giftWrapFee?: number
   shippingMethod: ShippingMethod
   shippingFee: number
   total: number
@@ -21,6 +22,7 @@ export function OrderSummaryCard({
   savings,
   discount = 0,
   promoCode,
+  giftWrapFee = 0,
   shippingMethod,
   shippingFee,
   total,
@@ -80,6 +82,12 @@ export function OrderSummaryCard({
           <div className="flex justify-between text-olive">
             <span>Promo {promoCode ? `(${promoCode})` : ''}</span>
             <span>−{formatCurrency(discount)}</span>
+          </div>
+        )}
+        {giftWrapFee > 0 && (
+          <div className="flex justify-between">
+            <span className="text-charcoal-muted">Gift wrapping</span>
+            <span className="text-charcoal">{formatCurrency(giftWrapFee)}</span>
           </div>
         )}
         <div className="flex justify-between">

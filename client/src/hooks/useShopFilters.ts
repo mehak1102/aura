@@ -4,7 +4,6 @@ import type { HairType, SkinType } from '@/types'
 import type {
   ProductCategory,
   ProductConcern,
-  ProductGender,
   ShopFilters,
   ShopSort,
 } from '@/types/shop'
@@ -26,7 +25,6 @@ const CATEGORIES: Array<ProductCategory | 'all'> = [
   'hair-care',
   'essential-oils',
   'cold-pressed-oils',
-  'combos',
 ]
 
 function asEnum<T extends string>(value: string | null, allowed: T[]): T | undefined {
@@ -46,7 +44,6 @@ export function useShopFilters(defaults: Partial<ShopFilters> = {}) {
       concern: (params.get('concern') as ProductConcern | null) || defaults.concern,
       skinType: (params.get('skin') as SkinType | null) || undefined,
       hairType: (params.get('hair') as HairType | null) || undefined,
-      gender: (params.get('gender') as ProductGender | null) || undefined,
       ingredient: params.get('ingredient') || undefined,
       query: params.get('q') || defaults.query || undefined,
       minPrice: params.get('min') ? Number(params.get('min')) : undefined,

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Search } from 'lucide-react'
 import { ShopView } from '@components/shop'
-import { MagneticButton } from '@components/ui'
+import { Button } from '@components/ui'
 
 export default function SearchPage() {
   const [params, setParams] = useSearchParams()
@@ -32,7 +32,7 @@ export default function SearchPage() {
               />
             </div>
           </label>
-          <MagneticButton type="submit">Search</MagneticButton>
+          <Button type="submit">Search</Button>
         </form>
       </div>
 

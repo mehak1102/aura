@@ -2,8 +2,6 @@ import { useMemo, useState, type ReactNode } from 'react'
 import { ChevronDown, SlidersHorizontal, X } from 'lucide-react'
 import { useCatalog } from '@contexts/CatalogContext'
 import {
-  CONCERN_OPTIONS,
-  GENDER_OPTIONS,
   type ProductCategory,
   type ShopFilters as ShopFiltersType,
 } from '@/types/shop'
@@ -26,7 +24,6 @@ const categories: { value: ProductCategory | 'all'; label: string }[] = [
   { value: 'hair-care', label: 'Hair Care' },
   { value: 'essential-oils', label: 'Essential Oils' },
   { value: 'cold-pressed-oils', label: 'Cold Pressed Oils' },
-  { value: 'combos', label: 'Combos' },
 ]
 
 const PRICE_MAX = 2000
@@ -97,21 +94,13 @@ export function ShopFiltersPanel({
 }: ShopFiltersPanelProps) {
   const { products: catalog } = useCatalog()
   const ingredients = getUniqueIngredients(catalog)
-  const [ingredientOpen, setIngredientOpen] = useState(false)
+  const [ingredientOpen, setIngredientOpen] = useState(true)
 
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = { all: catalog.length }
     for (const cat of categories) {
       if (cat.value === 'all') continue
       counts[cat.value] = catalog.filter((p) => p.category === cat.value).length
-    }
-    return counts
-  }, [catalog])
-
-  const concernCounts = useMemo(() => {
-    const counts: Record<string, number> = {}
-    for (const c of CONCERN_OPTIONS) {
-      counts[c.value] = catalog.filter((p) => p.concerns.includes(c.value)).length
     }
     return counts
   }, [catalog])
@@ -172,42 +161,6 @@ export function ShopFiltersPanel({
           </ul>
         </FilterSection>
       )}
-
-      <FilterSection title="Gender">
-        <div className="flex flex-wrap gap-2">
-          {GENDER_OPTIONS.map((g) => (
-            <Chip
-              key={g.value}
-              active={filters.gender === g.value}
-              onClick={() =>
-                setFilter('gender', filters.gender === g.value ? null : g.value)
-              }
-            >
-              {g.label}
-            </Chip>
-          ))}
-        </div>
-      </FilterSection>
-
-      <FilterSection title="Concern">
-        <div className="flex flex-wrap gap-2">
-          {CONCERN_OPTIONS.map((c) => (
-            <Chip
-              key={c.value}
-              active={filters.concern === c.value}
-              count={concernCounts[c.value]}
-              onClick={() =>
-                setFilter(
-                  'concern',
-                  filters.concern === c.value ? null : c.value,
-                )
-              }
-            >
-              {c.label}
-            </Chip>
-          ))}
-        </div>
-      </FilterSection>
 
       <div className="border-b border-charcoal/8 py-2">
         <button

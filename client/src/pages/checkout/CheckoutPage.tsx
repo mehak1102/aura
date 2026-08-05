@@ -17,7 +17,6 @@ import {
   Phone,
   Sparkles,
   Truck,
-  Zap,
 } from 'lucide-react'
 import { Seo } from '@components/seo/Seo'
 import {
@@ -64,7 +63,6 @@ const FIELD_ORDER: (keyof CheckoutInput)[] = [
 
 const SHIPPING_ICONS: Record<ShippingMethod, typeof Truck> = {
   standard: Truck,
-  express: Zap,
 }
 
 function defaultCheckoutValues(
@@ -113,6 +111,7 @@ export default function CheckoutPage() {
     payable,
     promo,
     items,
+    giftWrapFee,
   } = useCart()
   const { user, isAuthenticated } = useAuth()
 
@@ -131,7 +130,7 @@ export default function CheckoutPage() {
 
   const shippingMethod = watch('shippingMethod')
   const shippingFee = getShippingFee(shippingMethod)
-  const total = payable + shippingFee
+  const total = payable + giftWrapFee + shippingFee
   const errorCount = Object.keys(errors).length
 
   useEffect(() => {
@@ -176,8 +175,9 @@ export default function CheckoutPage() {
         subtotal,
         mrpTotal,
         savings: savings + discount,
+        giftWrapFee,
         shippingFee: getShippingFee(values.shippingMethod),
-        total: payable + getShippingFee(values.shippingMethod),
+        total: payable + giftWrapFee + getShippingFee(values.shippingMethod),
       })
       navigate(ROUTES.payment)
     },
@@ -477,6 +477,7 @@ export default function CheckoutPage() {
                 savings={savings}
                 discount={discount}
                 promoCode={promo?.code}
+                giftWrapFee={giftWrapFee}
                 shippingMethod={shippingMethod}
                 shippingFee={shippingFee}
                 total={total}

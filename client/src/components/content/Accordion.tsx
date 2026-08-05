@@ -2,11 +2,14 @@ import { useState, type ReactNode } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@utils/index'
 
+type AccordionVariant = 'default' | 'faq'
+
 type AccordionItemProps = {
   title: string
   open: boolean
   onToggle: () => void
   children: ReactNode
+  variant?: AccordionVariant
 }
 
 export function AccordionItem({
@@ -14,21 +17,41 @@ export function AccordionItem({
   open,
   onToggle,
   children,
+  variant = 'default',
 }: AccordionItemProps) {
+  const isFaq = variant === 'faq'
+
   return (
-    <div className="border-b border-charcoal/10">
+    <div
+      className={cn(
+        'border-b',
+        isFaq ? 'border-charcoal/8' : 'border-charcoal/10',
+      )}
+    >
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-center justify-between py-5 text-left"
+        className={cn(
+          'flex w-full items-center justify-between text-left transition-colors',
+          isFaq ? 'gap-4 py-4 hover:text-forest md:py-5' : 'py-5',
+        )}
         aria-expanded={open}
       >
-        <span className="font-display text-xl text-forest">{title}</span>
+        <span
+          className={cn(
+            isFaq
+              ? 'text-[0.95rem] leading-snug font-medium text-forest md:text-[1.02rem]'
+              : 'font-display text-xl text-forest',
+          )}
+        >
+          {title}
+        </span>
         <ChevronDown
           className={cn(
-            'h-4 w-4 shrink-0 transition-transform duration-300',
+            'h-4 w-4 shrink-0 text-forest/55 transition-transform duration-300',
             open && 'rotate-180',
           )}
+          strokeWidth={1.75}
         />
       </button>
       <div
@@ -38,7 +61,7 @@ export function AccordionItem({
         )}
       >
         <div className="overflow-hidden">
-          <div className="pb-6">{children}</div>
+          <div className={cn(isFaq ? 'pb-5' : 'pb-6')}>{children}</div>
         </div>
       </div>
     </div>
@@ -47,10 +70,15 @@ export function AccordionItem({
 
 type AccordionProps = {
   items: { title: string; content: ReactNode }[]
-  defaultOpen?: number
+  defaultOpen?: number | null
+  variant?: AccordionVariant
 }
 
-export function Accordion({ items, defaultOpen = 0 }: AccordionProps) {
+export function Accordion({
+  items,
+  defaultOpen = 0,
+  variant = 'default',
+}: AccordionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(defaultOpen)
 
   return (
@@ -63,6 +91,7 @@ export function Accordion({ items, defaultOpen = 0 }: AccordionProps) {
           onToggle={() =>
             setOpenIndex((prev) => (prev === index ? null : index))
           }
+          variant={variant}
         >
           {item.content}
         </AccordionItem>

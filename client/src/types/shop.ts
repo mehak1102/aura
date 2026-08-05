@@ -6,7 +6,6 @@ export type ProductCategory =
   | 'hair-care'
   | 'essential-oils'
   | 'cold-pressed-oils'
-  | 'combos'
 
 export type ProductConcern =
   | 'acne'
@@ -16,12 +15,9 @@ export type ProductConcern =
   | 'pigmentation'
   | 'sensitivity'
 
-export type ProductGender = 'men' | 'women' | 'unisex'
-
 export type CatalogProduct = Product & {
   concerns: ProductConcern[]
   category: ProductCategory
-  gender?: ProductGender
 }
 
 export type ShopSort =
@@ -36,7 +32,6 @@ export type ShopFilters = {
   concern?: ProductConcern | 'all'
   skinType?: SkinType | 'all'
   hairType?: HairType | 'all'
-  gender?: ProductGender | 'all'
   ingredient?: string
   query?: string
   minPrice?: number
@@ -81,11 +76,6 @@ export const CATEGORY_META: Record<
     eyebrow: 'Raw · Potent · Pure',
     description: 'Nutrient-rich oils pressed without heat.',
   },
-  combos: {
-    title: 'Combos',
-    eyebrow: 'Curated sets',
-    description: 'Thoughtful pairings for complete rituals at a quieter price.',
-  },
   'best-sellers': {
     title: 'Best Sellers',
     eyebrow: 'Loved rituals',
@@ -105,12 +95,6 @@ export const CONCERN_OPTIONS: { value: ProductConcern; label: string }[] = [
   { value: 'hairfall', label: 'Hair Fall' },
   { value: 'pigmentation', label: 'Pigmentation' },
   { value: 'sensitivity', label: 'Sensitivity' },
-]
-
-export const GENDER_OPTIONS: { value: ProductGender; label: string }[] = [
-  { value: 'women', label: 'Women' },
-  { value: 'men', label: 'Men' },
-  { value: 'unisex', label: 'Unisex' },
 ]
 
 export const SKIN_OPTIONS: { value: SkinType; label: string }[] = [

@@ -19,12 +19,14 @@ export const API_ENDPOINTS = {
   },
   cart: {
     get: '/cart',
+    replace: '/cart',
     add: '/cart/items',
     update: (id: string) => `/cart/items/${id}`,
     remove: (id: string) => `/cart/items/${id}`,
   },
   wishlist: {
     get: '/wishlist',
+    replace: '/wishlist',
     toggle: '/wishlist/toggle',
   },
   orders: {
@@ -46,10 +48,6 @@ export const API_ENDPOINTS = {
   reviews: {
     list: (productId: string) => `/products/${productId}/reviews`,
     create: (productId: string) => `/products/${productId}/reviews`,
-  },
-  blogs: {
-    list: '/blogs',
-    detail: (slug: string) => `/blogs/${slug}`,
   },
   instagram: {
     profile: '/instagram/profile',

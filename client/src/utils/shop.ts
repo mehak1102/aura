@@ -54,13 +54,6 @@ export function filterProducts(
     )
   }
 
-  if (filters.gender && filters.gender !== 'all') {
-    const gender = filters.gender
-    list = list.filter(
-      (p) => (p.gender ?? 'unisex') === gender || (p.gender ?? 'unisex') === 'unisex',
-    )
-  }
-
   if (filters.ingredient) {
     const q = filters.ingredient.toLowerCase()
     list = list.filter((p) =>

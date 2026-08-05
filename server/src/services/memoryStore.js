@@ -52,6 +52,11 @@ export const memoryStore = {
     return wishlists.get(userKey(userId)) || []
   },
 
+  setWishlist(userId, ids) {
+    wishlists.set(userKey(userId), ids)
+    return ids
+  },
+
   toggleWishlist(userId, productId) {
     const key = userKey(userId)
     const current = wishlists.get(key) || []
@@ -93,6 +98,7 @@ export const memoryStore = {
       razorpayOrderId: payload.razorpayOrderId,
       shipping: payload.shipping,
       shippingFee: payload.shippingFee,
+      giftWrapFee: payload.giftWrapFee ?? 0,
       subtotal: payload.subtotal,
       mrpTotal: payload.mrpTotal,
       savings: payload.savings,

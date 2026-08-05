@@ -7,7 +7,7 @@ import {
   Display,
   Eyebrow,
   LeafShadows,
-  MagneticButton,
+  Button,
 } from '@components/ui'
 import { ProductCard } from '@components/shop/ProductCard'
 import { useCatalog } from '@contexts/CatalogContext'
@@ -35,7 +35,6 @@ const CATEGORY_LABEL: Record<string, string> = {
   'hair-care': 'Hair Care',
   'essential-oils': 'Essential Oils',
   'cold-pressed-oils': 'Cold Pressed Oils',
-  combos: 'Rituals',
 }
 
 const DEFAULT_FEATURES = [
@@ -293,12 +292,12 @@ export default function IngredientDetailPage() {
         <Display as="h1" size="md" className="text-forest">
           Ingredient not found
         </Display>
-        <MagneticButton
+        <Button
           className="mt-8"
           onClick={() => navigate(ROUTES.ingredients)}
         >
           All ingredients
-        </MagneticButton>
+        </Button>
       </main>
     )
   }

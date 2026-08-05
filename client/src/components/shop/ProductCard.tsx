@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Heart, Leaf, Star, Trash2 } from 'lucide-react'
 import type { CatalogProduct } from '@/types/shop'
 import { formatCurrency, cn } from '@utils/index'
@@ -9,13 +9,18 @@ import { useWishlist } from '@contexts/WishlistContext'
 import { useCart } from '@contexts/CartContext'
 import { useQuickView } from '@components/shop/QuickView'
 import { gsap, prefersReducedMotion } from '@animations/gsap'
+import { ROUTES } from '@/routes/paths'
 
 type ProductCardProps = {
   product: CatalogProduct
   className?: string
   /** Shows a remove action beside the cart control (used on the wishlist). */
   onRemove?: () => void
+  /** Navigate to the cart once the product is added (shop listing behaviour). */
+  goToCartOnAdd?: boolean
 }
+
+const CART_NAV_DELAY_MS = 1100
 
 function getBurstTheme(slug: string) {
   if (slug.includes('coffee')) return 'coffee' as const
@@ -24,7 +29,13 @@ function getBurstTheme(slug: string) {
   return 'botanical' as const
 }
 
-export function ProductCard({ product, className, onRemove }: ProductCardProps) {
+export function ProductCard({
+  product,
+  className,
+  onRemove,
+  goToCartOnAdd,
+}: ProductCardProps) {
+  const navigate = useNavigate()
   const price = getSalePrice(product)
   const image = product.images[0]
   const { has, toggle } = useWishlist()
@@ -35,10 +46,12 @@ export function ProductCard({ product, className, onRemove }: ProductCardProps) 
   const [savedFlash, setSavedFlash] = useState(false)
   const heartRef = useRef<HTMLSpanElement>(null)
   const flashTimer = useRef<number | null>(null)
+  const cartNavTimer = useRef<number | null>(null)
 
   useEffect(() => {
     return () => {
       if (flashTimer.current) window.clearTimeout(flashTimer.current)
+      if (cartNavTimer.current) window.clearTimeout(cartNavTimer.current)
     }
   }, [])
 
@@ -230,6 +243,14 @@ export function ProductCard({ product, className, onRemove }: ProductCardProps) 
               onAdd={() => {
                 if (!variant) return
                 addItem(product.id, variant.id, 1)
+                if (!goToCartOnAdd) return
+                // Let the burst + "Added!" confirmation finish before leaving.
+                if (cartNavTimer.current)
+                  window.clearTimeout(cartNavTimer.current)
+                cartNavTimer.current = window.setTimeout(
+                  () => navigate(ROUTES.cart),
+                  CART_NAV_DELAY_MS,
+                )
               }}
               onIncrement={() => {
                 if (!variant) return

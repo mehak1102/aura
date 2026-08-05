@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { CheckCircle2 } from 'lucide-react'
 import { Seo } from '@components/seo/Seo'
-import { Body, Display, Eyebrow, MagneticButton } from '@components/ui'
+import { Body, Display, Eyebrow, Button } from '@components/ui'
 import {
   getLastOrderId,
   getOrderById,
@@ -26,9 +26,9 @@ export default function OrderSuccessPage() {
           Your confirmation may have expired from this browser.
         </Body>
         <div className="mt-8">
-          <MagneticButton onClick={() => navigate(ROUTES.shop)}>
+          <Button onClick={() => navigate(ROUTES.shop)}>
             Continue shopping
-          </MagneticButton>
+          </Button>
         </div>
       </main>
     )
@@ -86,6 +86,12 @@ export default function OrderSuccessPage() {
                 <span>Subtotal</span>
                 <span>{formatCurrency(order.subtotal)}</span>
               </div>
+              {(order.giftWrapFee ?? 0) > 0 && (
+                <div className="flex justify-between text-charcoal-muted">
+                  <span>Gift wrapping</span>
+                  <span>{formatCurrency(order.giftWrapFee ?? 0)}</span>
+                </div>
+              )}
               <div className="flex justify-between text-charcoal-muted">
                 <span>Shipping</span>
                 <span>
@@ -122,9 +128,9 @@ export default function OrderSuccessPage() {
           </div>
 
           <div className="mt-10 flex flex-wrap justify-center gap-4">
-            <MagneticButton onClick={() => navigate(ROUTES.shop)}>
+            <Button onClick={() => navigate(ROUTES.shop)}>
               Continue shopping
-            </MagneticButton>
+            </Button>
             <Link
               to={ROUTES.orderHistory}
               className="inline-flex h-12 items-center px-6 text-micro tracking-[0.22em] uppercase text-forest"

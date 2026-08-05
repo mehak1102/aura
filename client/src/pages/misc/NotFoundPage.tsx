@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { Seo } from '@components/seo/Seo'
-import { Body, Display, Eyebrow, MagneticButton } from '@components/ui'
+import { Body, Display, Eyebrow, Button } from '@components/ui'
 import { ROUTES } from '@/routes/paths'
 
 export default function NotFoundPage() {
@@ -26,15 +26,15 @@ export default function NotFoundPage() {
           link is outdated.
         </Body>
         <div className="mt-10 flex flex-wrap justify-center gap-4">
-          <MagneticButton onClick={() => navigate(ROUTES.home)}>
+          <Button onClick={() => navigate(ROUTES.home)}>
             Back home
-          </MagneticButton>
-          <MagneticButton
+          </Button>
+          <Button
             variant="outline"
             onClick={() => navigate(ROUTES.shop)}
           >
             Browse shop
-          </MagneticButton>
+          </Button>
         </div>
       </main>
     </>

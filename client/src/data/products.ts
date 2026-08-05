@@ -731,24 +731,3 @@ export const PRODUCTS: CatalogProduct[] = [
     updatedAt: '2026-07-20',
   },
 ]
-
-/** Gender tags for shop / audience filtering */
-const GENDER_BY_ID: Record<string, NonNullable<CatalogProduct['gender']>> = {
-  '1': 'men',
-  '2': 'women',
-  '3': 'unisex',
-  '4': 'women',
-  '5': 'men',
-  '6': 'women',
-  '7': 'men',
-  '8': 'women',
-  '9': 'unisex',
-  '10': 'unisex',
-  '11': 'unisex',
-  '12': 'men',
-  '13': 'women',
-}
-
-for (const product of PRODUCTS) {
-  product.gender = GENDER_BY_ID[product.id] ?? 'unisex'
-}

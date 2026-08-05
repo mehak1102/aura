@@ -194,6 +194,16 @@ a {
   outline-offset: 3px;
 }
 
+/*
+ * Text fields highlight their own border (or their wrapper's) on focus, so the
+ * global ring lands inside the field and reads as a second border.
+ */
+input:not([type='checkbox']):not([type='radio']):focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+}
+
 /* Chrome/Safari paint autofilled fields pale blue — keep the brand cream instead */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
