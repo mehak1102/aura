@@ -105,7 +105,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             aria-describedby={errorId}
             className={cn(
               boxed ? boxedBase : fieldBase,
-              boxed && icon && 'pl-11',
+              boxed && Boolean(icon) && 'pl-11',
               error && (boxed ? 'border-[#b4534b]/55' : 'border-olive'),
               props.disabled && 'opacity-60 cursor-not-allowed',
               className,
@@ -161,7 +161,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             className={cn(
               boxed ? boxedBase : fieldBase,
               boxed ? 'min-h-24 resize-y' : 'min-h-32 resize-y',
-              boxed && icon && 'pl-11',
+              boxed && Boolean(icon) && 'pl-11',
               error && (boxed ? 'border-[#b4534b]/55' : 'border-olive'),
               className,
             )}

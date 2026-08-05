@@ -21,7 +21,6 @@ import {
 } from 'lucide-react'
 import { Seo } from '@components/seo/Seo'
 import {
-  Body,
   Button,
   Display,
   Eyebrow,
