@@ -18,6 +18,13 @@ import {
   type CartLine,
   type StoredCartLine,
 } from '@utils/cart'
+import {
+  couponsApi,
+  promoErrorMessage,
+  type AppliedPromo,
+} from '@services/api/coupons'
+
+const PROMO_KEY = 'aura_promo_code'
 
 type CartContextValue = {
   items: StoredCartLine[]
@@ -26,6 +33,15 @@ type CartContextValue = {
   subtotal: number
   mrpTotal: number
   savings: number
+  /** Coupon discount, clamped to the current subtotal */
+  discount: number
+  /** Subtotal after the coupon, before shipping */
+  payable: number
+  promo: AppliedPromo | null
+  promoError: string | null
+  promoPending: boolean
+  applyPromo: (code: string) => Promise<boolean>
+  removePromo: () => void
   justAdded: boolean
   giftWrap: boolean
   setGiftWrap: (value: boolean) => void
@@ -62,6 +78,75 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const subtotal = useMemo(() => cartSubtotal(lines), [lines])
   const mrpTotal = useMemo(() => cartMrpTotal(lines), [lines])
   const savings = Math.max(0, mrpTotal - subtotal)
+
+  const [promo, setPromo] = useState<AppliedPromo | null>(null)
+  const [promoError, setPromoError] = useState<string | null>(null)
+  const [promoPending, setPromoPending] = useState(false)
+
+  const applyPromo = useCallback(
+    async (code: string) => {
+      const trimmed = code.trim()
+      if (!trimmed) {
+        setPromoError('Enter a code first')
+        return false
+      }
+
+      setPromoPending(true)
+      setPromoError(null)
+      try {
+        const applied = await couponsApi.validate(trimmed, subtotal)
+        setPromo(applied)
+        localStorage.setItem(PROMO_KEY, applied.code)
+        return true
+      } catch (error) {
+        setPromo(null)
+        localStorage.removeItem(PROMO_KEY)
+        setPromoError(promoErrorMessage(error))
+        return false
+      } finally {
+        setPromoPending(false)
+      }
+    },
+    [subtotal],
+  )
+
+  const removePromo = useCallback(() => {
+    setPromo(null)
+    setPromoError(null)
+    localStorage.removeItem(PROMO_KEY)
+  }, [])
+
+  // Re-check the saved code whenever the bag total changes, since discounts
+  // depend on the subtotal (percentage caps, minimum order)
+  useEffect(() => {
+    const saved = promo?.code ?? localStorage.getItem(PROMO_KEY)
+    if (!saved) return
+    if (!subtotal) {
+      removePromo()
+      return
+    }
+
+    let active = true
+    couponsApi
+      .validate(saved, subtotal)
+      .then((applied) => {
+        if (active) setPromo(applied)
+      })
+      .catch(() => {
+        if (!active) return
+        setPromo(null)
+        localStorage.removeItem(PROMO_KEY)
+      })
+
+    return () => {
+      active = false
+    }
+    // Intentionally keyed on the amount, not the promo object it updates
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subtotal, removePromo])
+
+  const discount = Math.min(promo?.discount ?? 0, subtotal)
+  const payable = Math.max(0, subtotal - discount)
 
   const addItem = useCallback(
     (productId: string, variantId: string, quantity = 1) => {
@@ -109,7 +194,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     )
   }, [])
 
-  const clearCart = useCallback(() => setItems([]), [])
+  const clearCart = useCallback(() => {
+    setItems([])
+    removePromo()
+  }, [removePromo])
   const clearJustAdded = useCallback(() => setJustAdded(false), [])
 
   const value = useMemo(
@@ -120,6 +208,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       subtotal,
       mrpTotal,
       savings,
+      discount,
+      payable,
+      promo,
+      promoError,
+      promoPending,
+      applyPromo,
+      removePromo,
       justAdded,
       giftWrap,
       setGiftWrap,
@@ -136,6 +231,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       subtotal,
       mrpTotal,
       savings,
+      discount,
+      payable,
+      promo,
+      promoError,
+      promoPending,
+      applyPromo,
+      removePromo,
       justAdded,
       giftWrap,
       addItem,

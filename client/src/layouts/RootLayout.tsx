@@ -6,6 +6,7 @@ import {
   SmoothScroll,
   ScrollTriggerRefresh,
   ScrollToTop,
+  BackToTop,
   ScrollProgress,
   WhatsAppFloat,
   PageTransition,
@@ -28,6 +29,7 @@ export function RootLayout() {
 
   return (
     <SmoothScroll>
+      <ScrollToTop />
       <ScrollTriggerRefresh />
       <QuickViewProvider>
         <div className="relative flex min-h-screen flex-col text-charcoal">
@@ -40,7 +42,7 @@ export function RootLayout() {
           {!isAuthPage && <SiteInstagram />}
           {!isAuthPage && <Footer />}
           {!isAuthPage && <CartToast />}
-          {!isAuthPage && <ScrollToTop />}
+          {!isAuthPage && <BackToTop />}
           {!isAuthPage && <WhatsAppFloat />}
         </div>
       </QuickViewProvider>

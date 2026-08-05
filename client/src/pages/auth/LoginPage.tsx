@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { ArrowRight, Leaf, Lock, Mail } from 'lucide-react'
 import { AuthShell } from '@components/auth/AuthShell'
-import { Input, MagneticButton, TextLink, Body } from '@components/ui'
+import { AuthField } from '@components/auth/AuthField'
 import { useAuth } from '@contexts/AuthContext'
 import { loginSchema, type LoginInput } from '@/lib/authSchemas'
 import { ROUTES } from '@/routes/paths'
@@ -48,43 +49,67 @@ export default function LoginPage() {
         title="Sign in"
         description="Access your orders, wishlist, and saved rituals."
       >
-        <form onSubmit={onSubmit} className="space-y-6" noValidate>
-          <Input
+        <form onSubmit={onSubmit} className="space-y-5" noValidate>
+          <AuthField
             label="Email"
+            icon={Mail}
             type="email"
             autoComplete="email"
+            placeholder="you@example.com"
             error={errors.email?.message}
             {...register('email')}
           />
-          <Input
+          <AuthField
             label="Password"
+            icon={Lock}
             type="password"
             autoComplete="current-password"
+            placeholder="••••••••"
             error={errors.password?.message}
             {...register('password')}
           />
 
           <div className="flex justify-end">
-            <TextLink to={ROUTES.forgotPassword}>Forgot password</TextLink>
+            <Link
+              to={ROUTES.forgotPassword}
+              className="text-[0.78rem] font-light text-[#b8975c] underline-offset-4 transition-colors hover:text-[#96763f] hover:underline"
+            >
+              Forgot password?
+            </Link>
           </div>
 
           {formError && (
-            <Body size="sm" className="text-olive">
+            <p className="rounded-lg border border-[#a8543f]/30 bg-[#a8543f]/5 px-3.5 py-2.5 text-[0.8rem] font-light text-[#a8543f]">
               {formError}
-            </Body>
+            </p>
           )}
 
-          <MagneticButton type="submit" fullWidth disabled={isSubmitting}>
-            {isSubmitting ? 'Signing in…' : 'Sign In'}
-          </MagneticButton>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="group relative flex h-14 w-full items-center justify-center gap-2.5 rounded-full bg-forest text-[0.72rem] font-medium tracking-[0.24em] text-warm-white uppercase transition-colors duration-300 hover:bg-forest-deep disabled:pointer-events-none disabled:opacity-50"
+          >
+            <Leaf className="h-4 w-4 text-[#c2a378]" strokeWidth={1.6} aria-hidden />
+            {isSubmitting ? 'Signing in…' : 'Sign in'}
+            <ArrowRight
+              className="absolute right-6 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+              strokeWidth={1.75}
+              aria-hidden
+            />
+          </button>
         </form>
 
-        <p className="mt-8 text-center text-sm text-charcoal-muted">
-          New here?{' '}
-          <Link to={ROUTES.register} className="text-forest underline-offset-4 hover:underline">
-            Create an account
-          </Link>
-        </p>
+        <div className="mt-8 border-t border-[#c4a35a]/25 pt-6 text-center">
+          <p className="text-[0.86rem] font-light text-charcoal/60">
+            New here?{' '}
+            <Link
+              to={ROUTES.register}
+              className="font-medium text-forest underline underline-offset-4 transition-colors hover:text-[#96763f]"
+            >
+              Create an account
+            </Link>
+          </p>
+        </div>
       </AuthShell>
     </>
   )

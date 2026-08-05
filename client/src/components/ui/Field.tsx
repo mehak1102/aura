@@ -1,48 +1,119 @@
-import { forwardRef, type InputHTMLAttributes, type TextareaHTMLAttributes } from 'react'
+import {
+  forwardRef,
+  type InputHTMLAttributes,
+  type ReactNode,
+  type TextareaHTMLAttributes,
+} from 'react'
 import { cn } from '@utils/index'
 
 const fieldBase =
   'w-full bg-transparent border-0 border-b border-charcoal/20 px-0 py-3 text-body font-light text-charcoal placeholder:text-charcoal-muted/60 transition-colors duration-300 focus:border-forest focus:outline-none'
 
+const boxedBase =
+  'w-full rounded-[var(--radius-md)] border border-charcoal/12 bg-warm-white/70 px-4 py-3 text-body-sm font-light text-charcoal placeholder:text-charcoal-muted/60 transition-colors duration-300 focus:border-soft-gold/70 focus:outline-none'
+
+/** `boxed` adds a bordered field with room for a leading icon (checkout, forms) */
+type FieldVariant = 'underline' | 'boxed'
+
 type FieldLabelProps = {
   label: string
   htmlFor?: string
   error?: string
+  variant?: FieldVariant
+  required?: boolean
 }
 
-function FieldMeta({ label, htmlFor, error }: FieldLabelProps) {
+function FieldMeta({
+  label,
+  htmlFor,
+  error,
+  variant,
+  required,
+}: FieldLabelProps) {
+  const boxed = variant === 'boxed'
   return (
     <div className="mb-2 flex items-end justify-between gap-4">
-      <label htmlFor={htmlFor} className="text-micro text-charcoal-muted">
+      <label
+        htmlFor={htmlFor}
+        className={cn(
+          boxed
+            ? 'text-[0.72rem] text-charcoal/55'
+            : 'text-micro text-charcoal-muted',
+        )}
+      >
         {label}
+        {required && (
+          <span className="ml-0.5 text-soft-gold" aria-hidden>
+            *
+          </span>
+        )}
       </label>
-      {error && <span className="text-micro text-olive">{error}</span>}
+      {/* Boxed fields show the error under the field instead */}
+      {error && !boxed && (
+        <span className="text-micro text-olive">{error}</span>
+      )}
     </div>
+  )
+}
+
+function FieldError({ id, message }: { id?: string; message: string }) {
+  return (
+    <p id={id} className="mt-1.5 text-[0.72rem] text-[#b4534b]">
+      {message}
+    </p>
   )
 }
 
 type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string
   error?: string
+  variant?: FieldVariant
+  icon?: ReactNode
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  function Input({ label, error, className, id, ...props }, ref) {
+  function Input(
+    { label, error, className, id, variant = 'underline', icon, ...props },
+    ref,
+  ) {
     const inputId = id ?? props.name
+    const boxed = variant === 'boxed'
+    const errorId = error && inputId ? `${inputId}-error` : undefined
+
     return (
       <div className="w-full">
-        <FieldMeta label={label} htmlFor={inputId} error={error} />
-        <input
-          ref={ref}
-          id={inputId}
-          className={cn(
-            fieldBase,
-            error && 'border-olive',
-            props.disabled && 'opacity-60 cursor-not-allowed',
-            className,
-          )}
-          {...props}
+        <FieldMeta
+          label={label}
+          htmlFor={inputId}
+          error={error}
+          variant={variant}
+          required={props.required}
         />
+        <div className={cn(boxed && 'relative')}>
+          {boxed && icon && (
+            <span
+              aria-hidden
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-charcoal/35"
+            >
+              {icon}
+            </span>
+          )}
+          <input
+            ref={ref}
+            id={inputId}
+            aria-invalid={error ? true : undefined}
+            aria-describedby={errorId}
+            className={cn(
+              boxed ? boxedBase : fieldBase,
+              boxed && icon && 'pl-11',
+              error && (boxed ? 'border-[#b4534b]/55' : 'border-olive'),
+              props.disabled && 'opacity-60 cursor-not-allowed',
+              className,
+            )}
+            {...props}
+          />
+        </div>
+        {error && boxed && <FieldError id={errorId} message={error} />}
       </div>
     )
   },
@@ -51,20 +122,53 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   label: string
   error?: string
+  variant?: FieldVariant
+  icon?: ReactNode
 }
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  function Textarea({ label, error, className, id, ...props }, ref) {
+  function Textarea(
+    { label, error, className, id, variant = 'underline', icon, ...props },
+    ref,
+  ) {
     const inputId = id ?? props.name
+    const boxed = variant === 'boxed'
+    const errorId = error && inputId ? `${inputId}-error` : undefined
+
     return (
       <div className="w-full">
-        <FieldMeta label={label} htmlFor={inputId} error={error} />
-        <textarea
-          ref={ref}
-          id={inputId}
-          className={cn(fieldBase, 'min-h-32 resize-y', error && 'border-olive', className)}
-          {...props}
+        <FieldMeta
+          label={label}
+          htmlFor={inputId}
+          error={error}
+          variant={variant}
+          required={props.required}
         />
+        <div className={cn(boxed && 'relative')}>
+          {boxed && icon && (
+            <span
+              aria-hidden
+              className="pointer-events-none absolute left-3.5 top-4 text-charcoal/35"
+            >
+              {icon}
+            </span>
+          )}
+          <textarea
+            ref={ref}
+            id={inputId}
+            aria-invalid={error ? true : undefined}
+            aria-describedby={errorId}
+            className={cn(
+              boxed ? boxedBase : fieldBase,
+              boxed ? 'min-h-24 resize-y' : 'min-h-32 resize-y',
+              boxed && icon && 'pl-11',
+              error && (boxed ? 'border-[#b4534b]/55' : 'border-olive'),
+              className,
+            )}
+            {...props}
+          />
+        </div>
+        {error && boxed && <FieldError id={errorId} message={error} />}
       </div>
     )
   },

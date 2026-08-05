@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { ArrowLeft, KeyRound, Lock, Mail, ShieldCheck } from 'lucide-react'
 import { AuthShell } from '@components/auth/AuthShell'
-import { Input, MagneticButton, Body } from '@components/ui'
+import { AuthField } from '@components/auth/AuthField'
 import {
   forgotPasswordSchema,
   resetPasswordSchema,
@@ -14,7 +15,9 @@ import { authApi } from '@services/api/auth'
 import { useAuth } from '@contexts/AuthContext'
 import { ROUTES } from '@/routes/paths'
 import { Seo } from '@components/seo/Seo'
-import { useNavigate } from 'react-router-dom'
+
+const submitButton =
+  'h-12 w-full rounded-full bg-forest text-[0.7rem] font-medium tracking-[0.22em] text-warm-white uppercase transition-colors duration-300 hover:bg-forest-deep disabled:pointer-events-none disabled:opacity-50'
 
 export default function ForgotPasswordPage() {
   const [step, setStep] = useState<'request' | 'reset'>('request')
@@ -66,6 +69,12 @@ export default function ForgotPasswordPage() {
     }
   })
 
+  const errorNote = formError && (
+    <p className="rounded-lg border border-[#a8543f]/30 bg-[#a8543f]/5 px-3.5 py-2.5 text-[0.8rem] font-light text-[#a8543f]">
+      {formError}
+    </p>
+  )
+
   return (
     <>
       <Seo title="Forgot Password" noindex />
@@ -79,78 +88,91 @@ export default function ForgotPasswordPage() {
         }
       >
         {step === 'request' ? (
-          <form onSubmit={onRequest} className="space-y-6" noValidate>
-            <Input
+          <form onSubmit={onRequest} className="space-y-5" noValidate>
+            <AuthField
               label="Email"
+              icon={Mail}
               type="email"
               autoComplete="email"
+              placeholder="you@example.com"
               error={requestForm.formState.errors.email?.message}
               {...requestForm.register('email')}
             />
+
             {message && (
-              <Body size="sm" className="text-forest">
+              <p className="rounded-lg border border-[#c4a35a]/40 bg-white/50 px-3.5 py-2.5 text-[0.8rem] font-light text-forest">
                 {message}
-              </Body>
+              </p>
             )}
             {devToken && (
-              <Body size="sm" muted>
+              <p className="text-[0.78rem] font-light text-charcoal/55">
                 Dev token ready — continue to set a new password.
-              </Body>
+              </p>
             )}
-            {formError && (
-              <Body size="sm" className="text-olive">
-                {formError}
-              </Body>
-            )}
-            <MagneticButton
+            {errorNote}
+
+            <button
               type="submit"
-              fullWidth
               disabled={requestForm.formState.isSubmitting}
+              className={submitButton}
             >
-              {requestForm.formState.isSubmitting ? 'Sending…' : 'Send Reset Link'}
-            </MagneticButton>
+              {requestForm.formState.isSubmitting ? 'Sending…' : 'Send reset link'}
+            </button>
           </form>
         ) : (
-          <form onSubmit={onReset} className="space-y-6" noValidate>
-            <Input
+          <form onSubmit={onReset} className="space-y-5" noValidate>
+            <AuthField
               label="Reset token"
+              icon={KeyRound}
+              placeholder="Paste your token"
               error={resetForm.formState.errors.token?.message}
               {...resetForm.register('token')}
             />
-            <Input
+            <AuthField
               label="New password"
+              icon={Lock}
               type="password"
               autoComplete="new-password"
+              placeholder="••••••••"
               error={resetForm.formState.errors.password?.message}
               {...resetForm.register('password')}
             />
-            <Input
+            <AuthField
               label="Confirm password"
+              icon={ShieldCheck}
               type="password"
               autoComplete="new-password"
+              placeholder="••••••••"
               error={resetForm.formState.errors.confirmPassword?.message}
               {...resetForm.register('confirmPassword')}
             />
-            {formError && (
-              <Body size="sm" className="text-olive">
-                {formError}
-              </Body>
-            )}
-            <MagneticButton
+            {errorNote}
+
+            <button
               type="submit"
-              fullWidth
               disabled={resetForm.formState.isSubmitting}
+              className={submitButton}
             >
-              {resetForm.formState.isSubmitting ? 'Saving…' : 'Update Password'}
-            </MagneticButton>
+              {resetForm.formState.isSubmitting ? 'Saving…' : 'Update password'}
+            </button>
           </form>
         )}
 
-        <p className="mt-8 text-center text-sm text-charcoal-muted">
-          <Link to={ROUTES.login} className="text-forest underline-offset-4 hover:underline">
-            Back to sign in
-          </Link>
-        </p>
+        <div className="my-6 flex items-center gap-4" aria-hidden>
+          <span className="h-px flex-1 bg-[#c4a35a]/30" />
+          <span className="text-[0.6rem] tracking-[0.24em] text-charcoal/40 uppercase">
+            or
+          </span>
+          <span className="h-px flex-1 bg-[#c4a35a]/30" />
+        </div>
+
+        <Link
+          to={ROUTES.login}
+          className="inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-full border border-[#c4a35a]/60 bg-white/40 text-[0.7rem] font-medium tracking-[0.2em] text-forest uppercase transition-colors duration-300 hover:border-[#b8975c] hover:bg-white"
+        >
+          <ArrowLeft className="h-4 w-4" strokeWidth={1.6} aria-hidden />
+          Back to sign in
+        </Link>
       </AuthShell>
     </>
   )

@@ -11,6 +11,10 @@ const router = Router()
 router.get('/profile', async (_req, res) => {
   try {
     const feed = await getInstagramProfile()
+    res.setHeader(
+      'Cache-Control',
+      'public, max-age=900, stale-while-revalidate=86400',
+    )
     res.json({
       success: true,
       data: {
@@ -32,6 +36,10 @@ router.get('/profile', async (_req, res) => {
 router.get('/feed', async (_req, res) => {
   try {
     const feed = await getInstagramProfile()
+    res.setHeader(
+      'Cache-Control',
+      'public, max-age=900, stale-while-revalidate=86400',
+    )
     res.json({
       success: true,
       data: {

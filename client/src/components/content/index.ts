@@ -1,4 +1,5 @@
 export { EditorialHero } from './EditorialHero'
+export { BentoHero } from './BentoHero'
 export { Accordion, AccordionItem } from './Accordion'
 export { ContactForm } from './ContactForm'
 export { PolicyLayout } from './PolicyLayout'

@@ -194,6 +194,27 @@ a {
   outline-offset: 3px;
 }
 
+/* Chrome/Safari paint autofilled fields pale blue — keep the brand cream instead */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: var(--color-forest);
+  caret-color: var(--color-forest);
+  /* The delay parks the UA background off-screen in time so it never paints */
+  transition: background-color 600000s 0s ease-in-out;
+}
+
+input:autofill,
+textarea:autofill,
+select:autofill {
+  -webkit-text-fill-color: var(--color-forest);
+  caret-color: var(--color-forest);
+  transition: background-color 600000s 0s ease-in-out;
+}
+
 .font-display {
   font-family: var(--font-display);
   font-weight: 500;
@@ -280,6 +301,29 @@ a {
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+/* Pulses a form field the user is being sent back to fix */
+@keyframes field-flash {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(180, 83, 75, 0);
+  }
+  35% {
+    box-shadow: 0 0 0 4px rgba(180, 83, 75, 0.16);
+    border-color: rgba(180, 83, 75, 0.85);
+  }
+}
+
+.field-flash {
+  animation: field-flash 0.85s ease-out 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field-flash {
+    animation: none;
+    border-color: rgba(180, 83, 75, 0.85);
   }
 }
 
@@ -393,29 +437,58 @@ html.aura-custom-cursor * {
 
 .shop-range {
   pointer-events: none;
+  height: 1.75rem;
 }
 
 .shop-range::-webkit-slider-thumb {
   pointer-events: auto;
   appearance: none;
-  width: 1.05rem;
-  height: 1.05rem;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: -0.4rem; /* center thumb on 0.35rem track */
   border-radius: 999px;
-  background: var(--color-forest);
-  border: 2px solid #faf8f4;
-  box-shadow: 0 2px 8px rgba(36, 53, 40, 0.28);
+  background: #faf8f4;
+  border: 2px solid #243528;
+  box-shadow:
+    0 0 0 1px rgba(36, 53, 40, 0.12),
+    0 2px 8px rgba(36, 53, 40, 0.14);
   cursor: grab;
+  position: relative;
+  z-index: 2;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.shop-range::-webkit-slider-thumb:hover {
+  border-color: #1a261c;
+  box-shadow:
+    0 0 0 3px rgba(36, 53, 40, 0.16),
+    0 3px 10px rgba(36, 53, 40, 0.16);
+}
+
+.shop-range::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.06);
 }
 
 .shop-range::-moz-range-thumb {
   pointer-events: auto;
-  width: 1.05rem;
-  height: 1.05rem;
+  width: 1.15rem;
+  height: 1.15rem;
   border-radius: 999px;
-  background: var(--color-forest);
-  border: 2px solid #faf8f4;
-  box-shadow: 0 2px 8px rgba(36, 53, 40, 0.28);
+  background: #faf8f4;
+  border: 2px solid #243528;
+  box-shadow:
+    0 0 0 1px rgba(36, 53, 40, 0.12),
+    0 2px 8px rgba(36, 53, 40, 0.14);
   cursor: grab;
+}
+
+.shop-range::-moz-range-thumb:hover {
+  border-color: #1a261c;
+}
+
+.shop-range::-moz-range-thumb:active {
+  cursor: grabbing;
 }
 
 .shop-range::-webkit-slider-runnable-track {
@@ -426,6 +499,137 @@ html.aura-custom-cursor * {
 .shop-range::-moz-range-track {
   background: transparent;
   height: 0.35rem;
+}
+
+.shop-range:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid #243528;
+  outline-offset: 2px;
+}
+
+.shop-range:focus-visible::-moz-range-thumb {
+  outline: 2px solid #243528;
+  outline-offset: 2px;
+}
+
+/* ─────────────────────────────────────────────
+   About hero — bento gallery that zooms open
+───────────────────────────────────────────── */
+.bento-hero {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--color-cream);
+}
+
+.bento-grid {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 34vw;
+}
+
+.bento-grid__item {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-beige);
+  will-change: transform;
+}
+
+.bento-grid__item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bento-hero__veil {
+  display: none;
+}
+
+.bento-hero__copy {
+  padding: 7rem var(--spacing-gutter) 2.5rem;
+}
+
+@media (min-width: 1024px) {
+  .bento-hero {
+    display: flex;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bento-grid {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    flex: none;
+    align-content: center;
+    justify-content: center;
+    gap: 0.6vh;
+    /* Fills the viewport exactly, gaps included — same units as the final
+       state so Flip scales both axes cleanly */
+    grid-template-columns: repeat(3, calc((100vw - 1.2vh) / 3));
+    grid-template-rows: repeat(4, calc((100vh - 1.8vh) / 4));
+    grid-auto-rows: auto;
+  }
+
+  /* Measured by Flip, never painted */
+  .bento-grid--final {
+    grid-template-columns: repeat(3, 100vw);
+    grid-template-rows: repeat(4, 49.5vh);
+  }
+
+  .bento-grid__item:nth-child(1) {
+    grid-area: 1 / 1 / 3 / 2;
+  }
+  .bento-grid__item:nth-child(2) {
+    grid-area: 1 / 2 / 2 / 3;
+  }
+  .bento-grid__item:nth-child(3) {
+    grid-area: 2 / 2 / 4 / 3;
+  }
+  .bento-grid__item:nth-child(4) {
+    grid-area: 1 / 3 / 3 / 4;
+  }
+  .bento-grid__item:nth-child(5) {
+    grid-area: 3 / 1 / 4 / 2;
+  }
+  .bento-grid__item:nth-child(6) {
+    grid-area: 3 / 3 / 5 / 4;
+  }
+  .bento-grid__item:nth-child(7) {
+    grid-area: 4 / 1 / 5 / 2;
+  }
+  .bento-grid__item:nth-child(8) {
+    grid-area: 4 / 2 / 5 / 3;
+  }
+
+  .bento-hero__veil {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse 46% 42% at 50% 50%,
+      rgba(244, 239, 230, 0.94),
+      rgba(244, 239, 230, 0.7) 55%,
+      rgba(244, 239, 230, 0) 78%
+    );
+  }
+
+  .bento-hero__copy {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 var(--spacing-gutter);
+    text-align: center;
+    pointer-events: none;
+  }
 }
 
 .product-pdp-shell {

@@ -1,6 +1,7 @@
 import type { CatalogProduct, ShopFilters, ShopSort } from '@/types/shop'
 import { PRODUCTS } from '@/data/products'
 import { calculateSalePrice } from '@utils/index'
+import { fuzzyRank } from '@utils/fuzzy'
 
 export function getProductBySlug(slug: string) {
   return PRODUCTS.find((p) => p.slug === slug)
@@ -67,15 +68,16 @@ export function filterProducts(
     )
   }
 
+  let rankedByQuery = false
   if (filters.query?.trim()) {
-    const q = filters.query.trim().toLowerCase()
-    list = list.filter(
-      (p) =>
-        p.title.toLowerCase().includes(q) ||
-        p.description.toLowerCase().includes(q) ||
-        p.tags.some((t) => t.toLowerCase().includes(q)) ||
-        p.ingredients.some((i) => i.toLowerCase().includes(q)),
-    )
+    list = fuzzyRank(filters.query.trim(), list, (p) => [
+      { value: p.title },
+      { value: p.ingredients.join(' '), weight: 0.9 },
+      { value: p.tags.join(' '), weight: 0.8 },
+      { value: p.category.replace(/-/g, ' '), weight: 0.7 },
+      { value: p.description, weight: 0.5 },
+    ])
+    rankedByQuery = true
   }
 
   if (typeof filters.minPrice === 'number') {
@@ -86,7 +88,11 @@ export function filterProducts(
     list = list.filter((p) => getSalePrice(p) <= filters.maxPrice!)
   }
 
-  return sortProducts(list, filters.sort ?? 'featured')
+  const sort = filters.sort ?? 'featured'
+  // Relevance beats the default ordering when the shopper typed a query.
+  if (rankedByQuery && sort === 'featured') return list
+
+  return sortProducts(list, sort)
 }
 
 function sortProducts(list: CatalogProduct[], sort: ShopSort) {

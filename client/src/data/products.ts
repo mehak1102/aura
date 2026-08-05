@@ -167,11 +167,11 @@ export const PRODUCTS: CatalogProduct[] = [
     ),
     gallery: gallery([
       {
-        url: '/products/fresh-coffee-face-wash/02-bottle-front.png',
+        url: '/products/fresh-coffee-face-wash/02-bottle-front-card.png',
         alt: 'Fresh Coffee Face Wash bottle',
       },
       {
-        url: '/products/fresh-coffee-face-wash/01-box-front.png',
+        url: '/products/fresh-coffee-face-wash/01-box-front-card.png',
         alt: 'Fresh Coffee Face Wash packaging',
       },
       {

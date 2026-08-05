@@ -27,6 +27,43 @@ const DEFAULT_IMAGES: Record<string, { src: string; alt: string }> = {
   },
 }
 
+const ROUTINE_LEAF =
+  'M60 8 C92 28 112 70 98 118 C84 148 60 156 60 156 C60 156 36 148 22 118 C8 70 28 28 60 8Z'
+
+const ROUTINE_LEAVES: { className: string; rotate?: number }[] = [
+  { className: 'absolute -left-8 top-6 h-40 w-32 opacity-[0.1] blur-[11px]', rotate: -18 },
+  { className: 'absolute left-14 top-20 h-28 w-24 opacity-[0.07] blur-[10px]', rotate: 28 },
+  { className: 'absolute -right-6 top-8 h-44 w-36 opacity-[0.1] blur-[12px]', rotate: 22 },
+  { className: 'absolute right-12 top-24 h-32 w-28 opacity-[0.07] blur-[10px]', rotate: -30 },
+  { className: 'absolute -left-4 bottom-8 h-36 w-28 opacity-[0.09] blur-[11px]', rotate: 14 },
+  { className: 'absolute -right-2 bottom-6 h-40 w-32 opacity-[0.09] blur-[11px]', rotate: -16 },
+]
+
+function RoutineLeafShadows() {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+    >
+      {ROUTINE_LEAVES.map((leaf, i) => (
+        <svg
+          key={i}
+          className={leaf.className}
+          viewBox="0 0 120 160"
+          fill="#243528"
+          style={
+            leaf.rotate != null
+              ? { transform: `rotate(${leaf.rotate}deg)` }
+              : undefined
+          }
+        >
+          <path d={ROUTINE_LEAF} />
+        </svg>
+      ))}
+    </div>
+  )
+}
+
 export function ProductRoutineTimeline({ steps }: ProductRoutineTimelineProps) {
   const scope = useGsap(() => {
     if (!scope.current || prefersReducedMotion()) return
@@ -99,7 +136,8 @@ export function ProductRoutineTimeline({ steps }: ProductRoutineTimelineProps) {
       ref={scope}
       className="section-aura relative overflow-hidden border-y border-charcoal/10 bg-[#f3efe6]/55"
     >
-      <div className="container-aura">
+      <RoutineLeafShadows />
+      <div className="container-aura relative z-[1]">
         <p className="text-micro tracking-[0.16em] uppercase text-[#b8975c]">
           Routine
         </p>

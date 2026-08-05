@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { Heart, Leaf, Star } from 'lucide-react'
+import { Heart, Leaf, Star, Trash2 } from 'lucide-react'
 import type { CatalogProduct } from '@/types/shop'
 import { formatCurrency, cn } from '@utils/index'
 import { getSalePrice } from '@utils/shop'
@@ -13,6 +13,8 @@ import { gsap, prefersReducedMotion } from '@animations/gsap'
 type ProductCardProps = {
   product: CatalogProduct
   className?: string
+  /** Shows a remove action beside the cart control (used on the wishlist). */
+  onRemove?: () => void
 }
 
 function getBurstTheme(slug: string) {
@@ -22,7 +24,7 @@ function getBurstTheme(slug: string) {
   return 'botanical' as const
 }
 
-export function ProductCard({ product, className }: ProductCardProps) {
+export function ProductCard({ product, className, onRemove }: ProductCardProps) {
   const price = getSalePrice(product)
   const image = product.images[0]
   const { has, toggle } = useWishlist()
@@ -216,7 +218,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
             {formatCurrency(price)}
           </span>
 
-          <div className="min-w-0 max-w-[10.5rem] flex-1">
+          <div className={cn('min-w-0 flex-1', !onRemove && 'max-w-[10.5rem]')}>
             <AddToCartButton
               size="sm"
               fullWidth
@@ -239,6 +241,17 @@ export function ProductCard({ product, className }: ProductCardProps) {
               }}
             />
           </div>
+
+          {onRemove && (
+            <button
+              type="button"
+              onClick={onRemove}
+              aria-label={`Remove ${product.title}`}
+              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#1a1a18]/12 bg-[#f7f3eb] text-[#6b6b66] transition-colors hover:border-[#c43c3c]/40 hover:bg-white hover:text-[#c43c3c]"
+            >
+              <Trash2 className="h-[0.85rem] w-[0.85rem]" strokeWidth={1.6} />
+            </button>
+          )}
         </div>
       </div>
     </article>

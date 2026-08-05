@@ -168,12 +168,12 @@ export function QuickViewProvider({ children }: { children: ReactNode }) {
             >
               <X className="h-4 w-4" />
             </button>
-            <div className="aspect-[4/5] bg-[#f3efe6] md:aspect-auto md:min-h-[28rem]">
+            <div className="relative aspect-[4/5] overflow-hidden bg-[#ebe4d6] md:aspect-auto md:min-h-[28rem]">
               <ProductImage
                 src={product.images[0]?.url ?? ''}
-                alt={product.title}
-                size="card"
-                className="h-full w-full object-contain p-8"
+                alt={product.images[0]?.alt || product.title}
+                size="full"
+                className="!bg-transparent absolute inset-0 h-full w-full object-cover"
               />
             </div>
             <div className="flex flex-col overflow-visible p-8">

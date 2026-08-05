@@ -249,13 +249,13 @@ export function ShopFiltersPanel({
 
       <FilterSection title="Price range" className="border-b-0">
         <div className="space-y-4">
-          <div className="relative h-6">
-            <div className="absolute top-1/2 right-0 left-0 h-1.5 -translate-y-1/2 rounded-full bg-charcoal/10" />
+          <div className="relative h-7">
+            <div className="absolute top-1/2 right-0 left-0 z-0 h-[0.35rem] -translate-y-1/2 rounded-full bg-forest/15" />
             <div
-              className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-forest"
+              className="absolute top-1/2 z-[1] h-[0.35rem] -translate-y-1/2 bg-forest"
               style={{
-                left: `${(minPrice / PRICE_MAX) * 100}%`,
-                right: `${100 - (maxPrice / PRICE_MAX) * 100}%`,
+                left: `calc(${(minPrice / PRICE_MAX) * 100}% + 0.55rem)`,
+                right: `calc(${100 - (maxPrice / PRICE_MAX) * 100}% + 0.55rem)`,
               }}
             />
             <input
@@ -285,9 +285,14 @@ export function ShopFiltersPanel({
               className="shop-range absolute inset-0 z-30 w-full appearance-none bg-transparent"
             />
           </div>
-          <div className="flex items-center justify-between text-[0.78rem] text-charcoal/70">
-            <span>₹{minPrice}</span>
-            <span>{maxPrice >= PRICE_MAX ? '₹2000+' : `₹${maxPrice}`}</span>
+          <div className="flex items-center justify-between gap-3">
+            <span className="inline-flex min-w-[3.75rem] items-center justify-center rounded-full border border-forest/25 bg-[#faf8f4] px-2.5 py-1 text-[0.78rem] font-medium text-forest">
+              ₹{minPrice}
+            </span>
+            <span className="h-px flex-1 bg-forest/20" aria-hidden />
+            <span className="inline-flex min-w-[3.75rem] items-center justify-center rounded-full border border-forest/25 bg-[#faf8f4] px-2.5 py-1 text-[0.78rem] font-medium text-forest">
+              {maxPrice >= PRICE_MAX ? '₹2000+' : `₹${maxPrice}`}
+            </span>
           </div>
         </div>
       </FilterSection>

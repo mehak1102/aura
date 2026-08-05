@@ -1,16 +1,18 @@
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Observer } from 'gsap/Observer'
+import { Flip } from 'gsap/Flip'
+import { ExpoScaleEase } from 'gsap/EasePack'
 
 let registered = false
 
 export function registerGsap() {
   if (registered || typeof window === 'undefined') return
-  gsap.registerPlugin(ScrollTrigger, Observer)
+  gsap.registerPlugin(ScrollTrigger, Observer, Flip, ExpoScaleEase)
   registered = true
 }
 
-export { gsap, ScrollTrigger, Observer }
+export { gsap, ScrollTrigger, Observer, Flip }
 
 /** Split text into word/char spans for reveal animations (SplitText alternative) */
 export function splitText(

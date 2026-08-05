@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Seo } from '@components/seo/Seo'
-import { Body, Display, Eyebrow, MagneticButton } from '@components/ui'
+import { BackButton, Body, Display, Eyebrow, MagneticButton } from '@components/ui'
 import { ProductCard } from '@components/shop/ProductCard'
 import { useCatalog } from '@contexts/CatalogContext'
 import { getConcernBySlug } from '@/data/concerns'
@@ -71,6 +71,12 @@ export default function ConcernDetailPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#1b261e] via-[#1b261e]/70 to-transparent" />
           <div className="container-aura relative z-10 flex min-h-[42vh] flex-col justify-end pb-14">
+            <BackButton
+              to={ROUTES.concerns}
+              label="Back to concerns"
+              tone="dark"
+              className="mb-6 self-start"
+            />
             <Eyebrow className="text-[#b8975c]">{concern.eyebrow}</Eyebrow>
             <Display as="h1" size="xl" className="mt-3 text-[#F8F5EE]">
               {concern.title}

@@ -278,14 +278,14 @@ function Frame({
       <img
         src={src}
         alt={alt}
-        className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/frame:scale-110"
+        className="h-full w-full object-contain p-[5%] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/frame:scale-110"
         loading="lazy"
         draggable={false}
       />
     </>
   )
 
-  const frameClass = `group/frame block overflow-hidden border border-warm-white/90 bg-[#f3ebe3]/20 shadow-[0_28px_60px_rgba(0,0,0,0.28)] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:z-30 hover:scale-[1.04] ${className ?? ''}`
+  const frameClass = `group/frame block overflow-hidden border border-warm-white/90 bg-[#f3ebe3]/25 shadow-[0_28px_60px_rgba(0,0,0,0.28)] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:z-30 hover:scale-[1.04] ${className ?? ''}`
 
   if (to) {
     return (

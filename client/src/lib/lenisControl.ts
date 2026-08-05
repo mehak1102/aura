@@ -56,6 +56,15 @@ export function scrollToSection(target: string | HTMLElement, offset = 0) {
   el.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
+/**
+ * Jump straight to the top with no animation — used on route changes.
+ * Lenis keeps its own scroll position, so it has to be reset alongside the window.
+ */
+export function jumpToTop() {
+  lenisRef?.scrollTo(0, { immediate: true, duration: 0 })
+  window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior })
+}
+
 /** Scroll to an absolute window Y position (used by pinned horizontal sections). */
 export function scrollToY(y: number, duration = 1.15) {
   if (lenisRef) {

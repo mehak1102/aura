@@ -10,7 +10,13 @@ import {
   ProductRail,
   ProductRoutineTimeline,
 } from '@components/product'
-import { Body, Display, MagneticButton, LeafShadows } from '@components/ui'
+import {
+  BackButton,
+  Body,
+  Display,
+  MagneticButton,
+  LeafShadows,
+} from '@components/ui'
 import {
   getRecommendedProducts,
   getRelatedProducts,
@@ -101,6 +107,11 @@ export default function ProductDetailsPage() {
       <main ref={scope} className="product-pdp-shell relative pb-24 pt-28">
         <LeafShadows />
         <section className="container-aura" data-block-reveal="">
+          <BackButton
+            to={`/shop/${resolved.category}`}
+            label="Back to shop"
+            className="mb-5"
+          />
           <ProductBreadcrumb product={resolved} />
 
           <div className="mt-8 grid gap-12 lg:grid-cols-2 lg:gap-16 lg:items-start">

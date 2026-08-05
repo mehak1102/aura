@@ -1,7 +1,7 @@
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Seo } from '@components/seo/Seo'
 import { BlogCard } from '@components/content'
-import { Body, Display, Eyebrow, MagneticButton } from '@components/ui'
+import { BackButton, Body, Display, Eyebrow, MagneticButton } from '@components/ui'
 import { blogArticles, getArticleBySlug } from '@/data/blog'
 import { ROUTES } from '@/routes/paths'
 
@@ -67,6 +67,7 @@ export default function ArticlePage() {
       />
       <main className="pb-24 pt-28 md:pt-32">
         <article className="container-aura max-w-3xl">
+          <BackButton to={ROUTES.blog} label="Back to journal" className="mb-6" />
           <Eyebrow>{article.category}</Eyebrow>
           <Display as="h1" size="lg" className="mt-3 text-forest">
             {article.title}

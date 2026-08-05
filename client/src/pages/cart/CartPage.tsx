@@ -1,6 +1,30 @@
-import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
-import { Body, Display, Eyebrow, MagneticButton } from '@components/ui'
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  ChevronRight,
+  Gift,
+  Info,
+  Leaf,
+  Loader2,
+  Lock,
+  ShieldCheck,
+  Tag,
+  Trash2,
+  Truck,
+  X,
+} from 'lucide-react'
+import {
+  Body,
+  BotanicalBackdrop,
+  Button,
+  Display,
+  Eyebrow,
+  LeafShadows,
+} from '@components/ui'
 import { MotionReveal } from '@animations/framer'
 import { useCart } from '@contexts/CartContext'
 import {
@@ -13,10 +37,34 @@ import { ROUTES } from '@/routes/paths'
 import { CartLineItem } from '@components/cart'
 import { Seo } from '@components/seo/Seo'
 
+const TRUST_BADGES = [
+  { icon: ShieldCheck, label: 'Secure Payments' },
+  { icon: Truck, label: 'Free Shipping' },
+  { icon: Leaf, label: '100% Natural' },
+]
+
 export default function CartPage() {
   const navigate = useNavigate()
-  const { lines, count, subtotal, mrpTotal, savings, clearCart, giftWrap, setGiftWrap } =
-    useCart()
+  const {
+    lines,
+    count,
+    subtotal,
+    mrpTotal,
+    savings,
+    discount,
+    payable,
+    promo,
+    promoError,
+    promoPending,
+    applyPromo,
+    removePromo,
+    clearCart,
+    giftWrap,
+    setGiftWrap,
+  } = useCart()
+
+  const [promoOpen, setPromoOpen] = useState(false)
+  const [promoInput, setPromoInput] = useState('')
 
   const scope = useGsap(() => {
     if (!scope.current) return
@@ -28,7 +76,8 @@ export default function CartPage() {
     return (
       <>
         <Seo title="Cart" description="Your Aura of Nature shopping bag." noindex />
-        <main className="flex min-h-[70vh] flex-col items-center justify-center px-[var(--spacing-gutter)] pt-32 text-center">
+        <main className="relative isolate flex min-h-[70vh] flex-col items-center justify-center overflow-hidden px-[var(--spacing-gutter)] pt-32 text-center">
+          <BotanicalBackdrop />
           <MotionReveal>
             <Eyebrow>Bag</Eyebrow>
             <Display as="h1" size="md" className="mt-4 text-forest">
@@ -37,10 +86,10 @@ export default function CartPage() {
             <Body muted className="mt-4 max-w-md">
               Discover botanicals for skin, body, and hair — then return here to complete your ritual.
             </Body>
-            <div className="mt-10">
-              <MagneticButton onClick={() => navigate(ROUTES.shop)}>
+            <div className="mt-10 flex justify-center">
+              <Button onClick={() => navigate(ROUTES.shop)}>
                 Continue shopping
-              </MagneticButton>
+              </Button>
             </div>
           </MotionReveal>
         </main>
@@ -51,106 +100,300 @@ export default function CartPage() {
   return (
     <>
       <Seo title="Cart" description="Review your Aura of Nature bag." noindex />
-      <section ref={scope} className="pt-28 md:pt-32">
+      <main
+        ref={scope}
+        className="relative isolate overflow-hidden bg-cream pt-28 md:pt-32"
+      >
+        <LeafShadows className="pointer-events-none absolute inset-0 -z-10 overflow-hidden" />
+
         <div className="container-aura pb-[var(--spacing-section)]">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <Eyebrow data-page-reveal="">Bag</Eyebrow>
-              <Display data-page-reveal="" as="h1" size="md" className="mt-3 text-forest">
+              <Eyebrow tone="gold" data-page-reveal="">
+                Your cart
+              </Eyebrow>
+              <Display
+                data-page-reveal=""
+                as="h1"
+                size="lg"
+                className="mt-2 text-forest"
+              >
                 Your bag
               </Display>
-              <Body data-page-reveal="" muted className="mt-2">
-                {count} {count === 1 ? 'item' : 'items'}
+              <Body data-page-reveal="" muted size="sm" className="mt-2">
+                {count} {count === 1 ? 'item' : 'items'} in your cart
               </Body>
             </div>
-            <button
-              type="button"
-              onClick={clearCart}
-              className="text-micro text-olive hover:text-forest"
+
+            <div
+              data-page-reveal=""
+              className="flex flex-wrap items-center gap-6"
             >
-              Clear bag
-            </button>
+              <Link
+                to={ROUTES.shop}
+                className="inline-flex items-center gap-2 text-body-sm text-charcoal/70 transition-colors hover:text-forest"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Continue shopping
+              </Link>
+              <button
+                type="button"
+                onClick={clearCart}
+                className="inline-flex items-center gap-2 text-body-sm text-charcoal/60 transition-colors hover:text-forest"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Clear bag
+              </button>
+            </div>
           </div>
 
-          <div className="mt-12 grid gap-12 lg:grid-cols-[1fr_320px] lg:gap-16">
+          <div className="mt-10 grid items-start gap-8 lg:grid-cols-[1fr_380px] lg:gap-10">
             <div>
-              <AnimatePresence initial={false}>
-                {lines.map((line) => (
-                  <CartLineItem
-                    key={`${line.productId}-${line.variantId}`}
-                    line={line}
-                  />
-                ))}
-              </AnimatePresence>
+              <div className="space-y-4">
+                <AnimatePresence initial={false}>
+                  {lines.map((line) => (
+                    <CartLineItem
+                      key={`${line.productId}-${line.variantId}`}
+                      line={line}
+                    />
+                  ))}
+                </AnimatePresence>
+              </div>
+
+              <div
+                data-block-reveal=""
+                className="relative mt-6 overflow-hidden rounded-[var(--radius-lg)] border border-charcoal/8 bg-warm-white/70 px-6 py-5"
+              >
+                <div className="relative z-[1] flex items-center gap-5">
+                  <Leaf className="h-6 w-6 shrink-0 text-olive" strokeWidth={1.4} />
+                  <span className="h-10 w-px bg-soft-gold/30" />
+                  <div>
+                    <p className="font-display text-lg text-forest">
+                      Pure by Nature
+                    </p>
+                    <Body muted size="sm" className="mt-0.5">
+                      No toxins. No shortcuts. Just honest, natural care.
+                    </Body>
+                  </div>
+                </div>
+                <Leaf
+                  aria-hidden
+                  className="pointer-events-none absolute -bottom-6 right-4 h-28 w-28 rotate-12 text-olive/10"
+                  strokeWidth={1}
+                />
+              </div>
             </div>
 
             <aside
               data-block-reveal=""
-              className="h-fit border border-charcoal/10 bg-warm-white/70 p-6 backdrop-blur-sm lg:sticky lg:top-28"
+              className="h-fit rounded-[var(--radius-lg)] border border-charcoal/8 bg-warm-white/85 p-6 shadow-[var(--shadow-soft)] backdrop-blur-sm lg:sticky lg:top-28 lg:p-7"
             >
-              <Eyebrow tone="gold">Summary</Eyebrow>
-              <div className="mt-6 space-y-3 text-sm">
+              <Display as="h2" size="sm" className="text-forest">
+                Order summary
+              </Display>
+
+              <div className="mt-6 space-y-3 text-body-sm">
                 <div className="flex justify-between">
-                  <span className="text-charcoal-muted">Subtotal</span>
-                  <span>{formatCurrency(subtotal)}</span>
+                  <span className="text-charcoal-muted">
+                    Subtotal ({count} {count === 1 ? 'item' : 'items'})
+                  </span>
+                  <span className="text-charcoal">
+                    {formatCurrency(subtotal)}
+                  </span>
                 </div>
+
                 {savings > 0 && (
                   <div className="flex justify-between text-olive">
                     <span>You save</span>
                     <span>{formatCurrency(savings)}</span>
                   </div>
                 )}
+
                 <div className="flex justify-between text-charcoal-muted">
-                  <span>MRP total</span>
+                  <span className="line-through">MRP total</span>
                   <span className="line-through">{formatCurrency(mrpTotal)}</span>
                 </div>
-                <div className="flex justify-between border-t border-charcoal/10 pt-4 text-base">
-                  <span className="font-medium">Total</span>
-                  <span className="font-display text-2xl">
-                    {formatCurrency(subtotal)}
-                  </span>
+
+                {discount > 0 && (
+                  <div className="flex justify-between text-olive">
+                    <span>Promo {promo ? `(${promo.code})` : ''}</span>
+                    <span>−{formatCurrency(discount)}</span>
+                  </div>
+                )}
+
+                <div>
+                  <div className="flex justify-between">
+                    <span className="inline-flex items-center gap-1.5 text-charcoal-muted">
+                      Shipping
+                      <Info className="h-3.5 w-3.5 text-charcoal/35" />
+                    </span>
+                    <span className="text-charcoal">{formatCurrency(0)}</span>
+                  </div>
+                  <p className="mt-1 text-[0.72rem] text-olive">
+                    Free shipping on all orders
+                  </p>
                 </div>
               </div>
 
-              <p className="mt-4 text-sm text-charcoal-muted">
-                Shipping calculated at checkout.
-              </p>
+              <div className="mt-5 flex items-end justify-between border-t border-soft-gold/25 pt-5">
+                <div>
+                  <p className="text-forest">Total</p>
+                  <p className="mt-0.5 text-[0.72rem] text-charcoal/50">
+                    Inclusive of all taxes
+                  </p>
+                </div>
+                <p className="font-display text-2xl text-forest">
+                  {formatCurrency(payable)}
+                </p>
+              </div>
 
-              <label className="mt-5 flex cursor-pointer items-start gap-3 border border-charcoal/10 bg-cream/80 p-4">
+              {promo ? (
+                <div className="mt-6 flex items-center gap-3 rounded-[var(--radius-md)] border border-olive/25 bg-olive/8 px-4 py-3">
+                  <Check className="h-4 w-4 shrink-0 text-olive" strokeWidth={2} />
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-body-sm text-forest">
+                      {promo.code} applied
+                    </span>
+                    <span className="mt-0.5 block text-[0.72rem] text-charcoal/55">
+                      {promo.description ?? 'Discount applied to your bag'}
+                    </span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={removePromo}
+                    aria-label={`Remove promo code ${promo.code}`}
+                    className="shrink-0 rounded-full p-1 text-charcoal/45 transition-colors hover:text-forest"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="mt-6">
+                  {promoOpen ? (
+                    <form
+                      onSubmit={async (e) => {
+                        e.preventDefault()
+                        const ok = await applyPromo(promoInput)
+                        if (ok) setPromoInput('')
+                      }}
+                      className="flex items-center gap-2"
+                    >
+                      <div className="relative min-w-0 flex-1">
+                        <Tag
+                          className="pointer-events-none absolute top-1/2 left-3.5 h-3.5 w-3.5 -translate-y-1/2 text-soft-gold"
+                          strokeWidth={1.5}
+                          aria-hidden
+                        />
+                        <input
+                          autoFocus
+                          value={promoInput}
+                          onChange={(e) => setPromoInput(e.target.value)}
+                          placeholder="Promo code"
+                          aria-label="Promo code"
+                          style={{ outline: 'none' }}
+                          className="h-10 w-full rounded-full border border-charcoal/12 bg-white/70 pr-4 pl-9.5 text-[0.8rem] tracking-[0.08em] text-forest uppercase transition-colors placeholder:tracking-normal placeholder:normal-case placeholder:text-charcoal/40 focus:border-soft-gold/70"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={promoPending}
+                        className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full bg-forest px-5 text-[0.65rem] font-medium tracking-[0.16em] text-warm-white uppercase transition-colors hover:bg-forest-deep disabled:opacity-50"
+                      >
+                        {promoPending && (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        )}
+                        Apply
+                      </button>
+                    </form>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setPromoOpen(true)}
+                      className="flex w-full items-center gap-3 rounded-[var(--radius-md)] bg-cream/70 px-4 py-3 text-left transition-colors hover:bg-cream"
+                    >
+                      <Tag
+                        className="h-4 w-4 shrink-0 text-soft-gold"
+                        strokeWidth={1.5}
+                      />
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-body-sm text-forest">
+                          Have a promo code?
+                        </span>
+                        <span className="mt-0.5 block text-[0.72rem] text-charcoal/55">
+                          Tap to enter your code
+                        </span>
+                      </span>
+                      <ChevronRight className="h-4 w-4 shrink-0 text-charcoal/40" />
+                    </button>
+                  )}
+
+                  {promoError && (
+                    <p className="mt-2 text-[0.72rem] text-[#b4534b]">
+                      {promoError}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              <label className="mt-3 flex cursor-pointer items-center gap-3 rounded-[var(--radius-md)] border border-charcoal/8 px-4 py-3">
                 <input
                   type="checkbox"
                   checked={giftWrap}
                   onChange={(e) => setGiftWrap(e.target.checked)}
-                  className="mt-1"
+                  className="h-4 w-4 shrink-0 accent-forest"
                 />
-                <span>
-                  <span className="block text-sm text-forest">Gift wrapping</span>
-                  <span className="mt-1 block text-xs font-light text-charcoal/60">
-                    Botanical tissue + handwritten note (+₹99 at checkout)
+                <span className="min-w-0 flex-1">
+                  <span className="block text-body-sm text-forest">
+                    Add gift wrapping
                   </span>
+                  <span className="mt-0.5 block text-[0.72rem] text-charcoal/55">
+                    Make it extra special for someone you love.
+                  </span>
+                </span>
+                <span className="inline-flex shrink-0 items-center gap-1.5 text-[0.72rem] text-charcoal/60">
+                  <Gift className="h-4 w-4 text-soft-gold" strokeWidth={1.5} />
+                  ₹99
                 </span>
               </label>
 
-              <div className="mt-8 space-y-3">
-                <MagneticButton
+              <div className="mt-6 space-y-3">
+                <Button
                   fullWidth
                   size="lg"
                   onClick={() => navigate(ROUTES.checkout)}
                 >
+                  <Lock className="h-3.5 w-3.5" strokeWidth={2} />
                   Checkout
-                </MagneticButton>
-                <MagneticButton
+                  <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
+                </Button>
+                <Button
                   fullWidth
                   variant="outline"
                   onClick={() => navigate(ROUTES.shop)}
                 >
                   Continue shopping
-                </MagneticButton>
+                </Button>
               </div>
+
+              <ul className="mt-7 grid grid-cols-3 gap-3 border-t border-charcoal/8 pt-6">
+                {TRUST_BADGES.map(({ icon: Icon, label }) => (
+                  <li
+                    key={label}
+                    className="flex flex-col items-center gap-2 text-center"
+                  >
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full border border-soft-gold/35 bg-cream/70 text-soft-gold">
+                      <Icon className="h-4 w-4" strokeWidth={1.5} />
+                    </span>
+                    <span className="text-[0.68rem] leading-tight text-charcoal/60">
+                      {label}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </aside>
           </div>
         </div>
-      </section>
+      </main>
     </>
   )
 }

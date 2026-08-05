@@ -9,6 +9,10 @@ const CACHE_TTL_MS = 60 * 60 * 1000 // 1 hour
 const IMAGE_CACHE_TTL_MS = 24 * 60 * 60 * 1000
 const IMAGE_CACHE_DIR = path.resolve(__dirname, '../../.cache/instagram-images')
 const MAX_POSTS = 12
+const UPSTREAM_TIMEOUT_MS = 8000
+// Instagram blocks scrapers for long stretches; back off instead of retrying per request
+const RETRY_BASE_MS = 5 * 60 * 1000
+const RETRY_MAX_MS = 6 * 60 * 60 * 1000
 
 const USERNAME = () =>
   (env.instagram.username || 'auraofnatureofficial').replace(/^@/, '').trim()
@@ -117,9 +121,18 @@ const FALLBACK = {
 
 /** @type {{ at: number, payload: object } | null} */
 let memoryCache = null
+/** Shared promise so concurrent requests trigger at most one upstream refresh */
+let refreshInFlight = null
+let consecutiveFailures = 0
+let nextRetryAt = 0
+let lastWarning = null
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true })
+}
+
+function timeoutSignal() {
+  return AbortSignal.timeout(UPSTREAM_TIMEOUT_MS)
 }
 
 function decodeHtml(str = '') {
@@ -269,6 +282,7 @@ async function fetchWebProfile() {
       Referer: `https://www.instagram.com/${username}/`,
       Origin: 'https://www.instagram.com',
     },
+    signal: timeoutSignal(),
   })
 
   if (!res.ok) {
@@ -295,6 +309,7 @@ async function fetchImginnProfile() {
       'Accept-Language': 'en-US,en;q=0.9',
       Referer: 'https://imginn.com/',
     },
+    signal: timeoutSignal(),
   })
 
   if (!res.ok) {
@@ -376,7 +391,7 @@ async function fetchFromGraphApi() {
   url.searchParams.set('limit', String(MAX_POSTS))
   url.searchParams.set('access_token', accessToken)
 
-  const res = await fetch(url)
+  const res = await fetch(url, { signal: timeoutSignal() })
   if (!res.ok) {
     const text = await res.text()
     throw new Error(`Graph API ${res.status}: ${text.slice(0, 160)}`)
@@ -430,63 +445,66 @@ function withMeta(payload, { cached = false, stale = false, warning } = {}) {
   }
 }
 
-/**
- * Load Instagram profile + posts.
- * Priority: fresh cache → Graph (optional) → IG web API → public mirror → stale cache → static
- */
-export async function getInstagramProfile() {
-  const now = Date.now()
+/** Try every upstream in order; returns the payload or null when all fail */
+async function refreshFeed() {
+  const errors = []
 
-  if (memoryCache?.payload?.posts?.length && now - memoryCache.at < CACHE_TTL_MS) {
-    return withMeta(memoryCache.payload, { cached: true })
-  }
+  const sources = [
+    ['graph', fetchFromGraphApi],
+    ['web', fetchWebProfile],
+    ['mirror', fetchImginnProfile],
+  ]
 
-  const fileCache = memoryCache || readFileCache()
-  if (fileCache?.payload?.posts?.length && now - fileCache.at < CACHE_TTL_MS) {
-    memoryCache = fileCache
-    return withMeta(fileCache.payload, { cached: true })
-  }
-
-  let warning = null
-
-  try {
-    const graph = await fetchFromGraphApi()
-    if (graph?.posts?.length) {
-      memoryCache = { at: now, payload: graph }
-      writeFileCache(graph)
-      return withMeta(graph, { cached: false })
+  for (const [name, fetcher] of sources) {
+    try {
+      const payload = await fetcher()
+      if (payload?.posts?.length) {
+        memoryCache = { at: Date.now(), payload }
+        writeFileCache(payload)
+        consecutiveFailures = 0
+        nextRetryAt = 0
+        lastWarning = null
+        return payload
+      }
+    } catch (err) {
+      errors.push(err instanceof Error ? err.message : `${name} fetch failed`)
     }
-  } catch (err) {
-    warning = err instanceof Error ? err.message : 'Graph fetch failed'
-    console.warn('[instagram]', warning)
   }
 
-  try {
-    const web = await fetchWebProfile()
-    memoryCache = { at: now, payload: web }
-    writeFileCache(web)
-    return withMeta(web, { cached: false, warning: warning || undefined })
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : 'Web fetch failed'
-    warning = warning ? `${warning}; ${msg}` : msg
-    console.warn('[instagram]', msg)
-  }
+  consecutiveFailures += 1
+  const backoff = Math.min(
+    RETRY_BASE_MS * 2 ** (consecutiveFailures - 1),
+    RETRY_MAX_MS,
+  )
+  nextRetryAt = Date.now() + backoff
+  lastWarning = errors.join('; ') || 'All Instagram sources failed'
+  console.warn(
+    `[instagram] refresh failed (${consecutiveFailures}x), serving cache for ${Math.round(backoff / 60000)}m: ${lastWarning}`,
+  )
+  return null
+}
 
-  try {
-    const mirror = await fetchImginnProfile()
-    memoryCache = { at: now, payload: mirror }
-    writeFileCache(mirror)
-    return withMeta(mirror, { cached: false, warning: warning || undefined })
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : 'Mirror fetch failed'
-    warning = warning ? `${warning}; ${msg}` : msg
-    console.warn('[instagram]', msg)
+function scheduleRefresh() {
+  if (!refreshInFlight) {
+    refreshInFlight = refreshFeed()
+      .catch((err) => {
+        console.warn('[instagram] refresh crashed:', err?.message)
+        return null
+      })
+      .finally(() => {
+        refreshInFlight = null
+      })
   }
+  return refreshInFlight
+}
 
-  const stale = fileCache || memoryCache || readFileCache()
-  if (stale?.payload?.posts?.length && stale.payload.source !== 'fallback') {
-    memoryCache = stale
-    return withMeta(stale.payload, { cached: true, stale: true, warning })
+function serveCached(cache) {
+  if (cache?.payload?.posts?.length && cache.payload.source !== 'fallback') {
+    return withMeta(cache.payload, {
+      cached: true,
+      stale: Date.now() - cache.at >= CACHE_TTL_MS,
+      warning: lastWarning || undefined,
+    })
   }
 
   return withMeta(
@@ -495,8 +513,34 @@ export async function getInstagramProfile() {
       posts: FALLBACK.posts.slice(0, MAX_POSTS),
       source: 'fallback',
     },
-    { cached: false, warning },
+    { cached: false, warning: lastWarning || undefined },
   )
+}
+
+/**
+ * Load Instagram profile + posts.
+ * Fresh cache is served directly; a stale cache is served immediately while a
+ * single background refresh runs. Failed refreshes back off so a blocked
+ * upstream can't be re-hit on every request.
+ */
+export async function getInstagramProfile() {
+  const cache = memoryCache || readFileCache()
+  if (cache?.payload?.posts?.length) memoryCache = cache
+
+  const isFresh = cache?.payload?.posts?.length && Date.now() - cache.at < CACHE_TTL_MS
+  if (isFresh) return withMeta(cache.payload, { cached: true })
+
+  if (Date.now() < nextRetryAt) return serveCached(cache)
+
+  // Usable cache: refresh in the background so the response stays fast
+  if (cache?.payload?.posts?.length && cache.payload.source !== 'fallback') {
+    void scheduleRefresh()
+    return serveCached(cache)
+  }
+
+  const payload = await scheduleRefresh()
+  if (payload) return withMeta(payload, { cached: false })
+  return serveCached(memoryCache || cache)
 }
 
 export function warmInstagramCache() {
