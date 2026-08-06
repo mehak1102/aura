@@ -10,6 +10,8 @@ type OpenRazorpayArgs = {
   email: string
   phone: string
   description: string
+  /** Prefer the keyId returned by POST /payments/create-order */
+  key?: string
   orderId?: string
   onSuccess: (payload: RazorpaySuccess) => void
   onDismiss?: () => void
@@ -39,17 +41,21 @@ function loadScript(): Promise<boolean> {
 }
 
 /**
- * Opens Razorpay when VITE_RAZORPAY_KEY_ID is set.
- * Otherwise runs a simulated payment (dev / demo mode).
- * Server-side signature verify lands in Phase 10.
+ * Opens Razorpay Checkout.
+ * Uses server-provided keyId when available so test/live keys stay in sync.
+ * Falls back to a simulated success only when no key is configured at all.
  */
 export async function openRazorpayCheckout(args: OpenRazorpayArgs) {
-  const key = import.meta.env.VITE_RAZORPAY_KEY_ID as string | undefined
+  const key =
+    args.key ||
+    (import.meta.env.VITE_RAZORPAY_KEY_ID as string | undefined) ||
+    ''
 
   if (!key) {
     await new Promise((r) => setTimeout(r, 900))
     args.onSuccess({
       razorpay_payment_id: `pay_demo_${Date.now()}`,
+      razorpay_order_id: args.orderId,
     })
     return { mode: 'demo' as const }
   }
@@ -59,25 +65,47 @@ export async function openRazorpayCheckout(args: OpenRazorpayArgs) {
     throw new Error('Unable to load Razorpay. Try again.')
   }
 
-  const rzp = new window.Razorpay({
-    key,
-    amount: args.amountInPaise,
-    currency: 'INR',
-    order_id: args.orderId,
-    name: 'Aura of Nature',
-    description: args.description,
-    prefill: {
-      name: args.name,
-      email: args.email,
-      contact: args.phone,
-    },
-    theme: { color: '#243528' },
-    handler: (response: RazorpaySuccess) => args.onSuccess(response),
-    modal: {
-      ondismiss: () => args.onDismiss?.(),
-    },
-  })
+  return new Promise<{ mode: 'live' }>((resolve, reject) => {
+    try {
+      const rzp = new window.Razorpay!({
+        key,
+        amount: args.amountInPaise,
+        currency: 'INR',
+        order_id: args.orderId,
+        name: 'Aura of Nature',
+        description: args.description,
+        prefill: {
+          name: args.name,
+          email: args.email,
+          contact: args.phone,
+        },
+        theme: { color: '#243528' },
+        handler: (response: RazorpaySuccess) => {
+          args.onSuccess(response)
+          resolve({ mode: 'live' })
+        },
+        modal: {
+          ondismiss: () => {
+            args.onDismiss?.()
+            resolve({ mode: 'live' })
+          },
+        },
+      })
 
-  rzp.open()
-  return { mode: 'live' as const }
+      rzp.on('payment.failed', () => {
+        args.onDismiss?.()
+        reject(
+          new Error(
+            'Payment was not completed. You can retry with another method or COD.',
+          ),
+        )
+      })
+
+      rzp.open()
+    } catch (err) {
+      reject(
+        err instanceof Error ? err : new Error('Could not open Razorpay checkout'),
+      )
+    }
+  })
 }

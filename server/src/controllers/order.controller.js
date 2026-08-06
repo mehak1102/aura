@@ -189,6 +189,8 @@ export const createOrder = asyncHandler(async (req, res) => {
         to: guestEmail,
         orderId: orderNumber,
         total: totals.total,
+      }).catch((err) => {
+        console.error('[mail] order confirmation failed', err?.message || err)
       })
 
       res.status(201).json({

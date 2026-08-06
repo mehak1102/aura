@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { CheckCircle2, Download } from 'lucide-react'
 import { Seo } from '@components/seo/Seo'
 import { Body, Display, Eyebrow, Button, LeafWatermarks } from '@components/ui'
@@ -17,16 +17,26 @@ import { ROUTES } from '@/routes/paths'
 
 export default function OrderSuccessPage() {
   const [params] = useSearchParams()
+  const location = useLocation()
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth()
   const id = params.get('id') || getLastOrderId()
+  const stateOrder = (location.state as { order?: Order } | null)?.order
 
-  const [order, setOrder] = useState<Order | undefined>(() =>
-    id ? getOrderById(id) : undefined,
-  )
+  const [order, setOrder] = useState<Order | undefined>(() => {
+    if (stateOrder?.id) return stateOrder
+    return id ? getOrderById(id) : undefined
+  })
   const [loading, setLoading] = useState(!order && Boolean(id))
 
   useEffect(() => {
+    if (stateOrder?.id) {
+      saveOrder(stateOrder)
+      setOrder(stateOrder)
+      setLoading(false)
+      return
+    }
+
     if (!id || order) {
       setLoading(false)
       return
@@ -63,7 +73,7 @@ export default function OrderSuccessPage() {
     return () => {
       cancelled = true
     }
-  }, [id, isAuthenticated, order])
+  }, [id, isAuthenticated, order, stateOrder])
 
   if (loading) {
     return (

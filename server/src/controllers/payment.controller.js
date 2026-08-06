@@ -112,8 +112,15 @@ export const createPaymentOrder = asyncHandler(async (req, res) => {
   const rzOrder = await razorpay.orders.create({
     amount: amountPaise,
     currency,
-    receipt: receipt || orderNumber,
-    notes: { ...(notes || {}), orderNumber },
+    receipt: String(receipt || orderNumber).slice(0, 40),
+    notes: { ...(notes || {}), orderNumber: String(orderNumber) },
+  }).catch((err) => {
+    const msg =
+      err?.error?.description ||
+      err?.message ||
+      'Could not create Razorpay order'
+    console.error('[razorpay] orders.create failed', err?.error || err)
+    throw new AppError(msg, 502)
   })
 
   await Order.findOneAndUpdate(

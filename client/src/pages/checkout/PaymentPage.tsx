@@ -105,14 +105,23 @@ export default function PaymentPage() {
     try {
       if (method === 'cod') {
         const order = await createServerOrder('cod')
+        if (!order?.id) {
+          throw new Error('Order was created but no order number was returned.')
+        }
         clearPendingCheckout()
         clearCart()
-        navigate(`${ROUTES.orderSuccess}?id=${order.id}`, { replace: true })
+        navigate(`${ROUTES.orderSuccess}?id=${encodeURIComponent(order.id)}`, {
+          replace: true,
+          state: { order },
+        })
         return
       }
 
       const pendingServer = await createServerOrder('razorpay')
       const orderNumber = pendingServer.id
+      if (!orderNumber) {
+        throw new Error('Order was created but no order number was returned.')
+      }
 
       const paymentOrder = await paymentsApi.createOrder({
         orderNumber,
@@ -125,7 +134,9 @@ export default function PaymentPage() {
         email: pending.shipping.email,
         phone: pending.shipping.phone,
         description: `Aura of Nature · ${orderNumber}`,
-        orderId: paymentOrder.mode === 'live' ? paymentOrder.orderId : undefined,
+        key: paymentOrder.keyId,
+        orderId:
+          paymentOrder.mode === 'live' ? paymentOrder.orderId : undefined,
         onSuccess: async (payload) => {
           try {
             await paymentsApi.verify({
@@ -135,17 +146,19 @@ export default function PaymentPage() {
               orderNumber,
             })
 
-            saveOrder({
+            const paid = {
               ...pendingServer,
-              status: 'paid',
-              paymentMethod: 'razorpay',
+              status: 'paid' as const,
+              paymentMethod: 'razorpay' as const,
               paymentId: payload.razorpay_payment_id,
-            })
+            }
+            saveOrder(paid)
             clearPendingCheckout()
             clearCart()
-            navigate(`${ROUTES.orderSuccess}?id=${orderNumber}`, {
-              replace: true,
-            })
+            navigate(
+              `${ROUTES.orderSuccess}?id=${encodeURIComponent(orderNumber)}`,
+              { replace: true, state: { order: paid } },
+            )
           } catch (err) {
             setError(
               err instanceof Error
@@ -221,9 +234,7 @@ export default function PaymentPage() {
                           </span>
                           <span className="mt-0.5 block text-body-sm text-charcoal-muted">
                             {option.detail}
-                            {option.id === 'razorpay' &&
-                              !import.meta.env.VITE_RAZORPAY_KEY_ID &&
-                              ' · demo mode'}
+                            {option.id === 'razorpay' && ' · test mode'}
                           </span>
                         </span>
 

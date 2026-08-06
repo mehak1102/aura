@@ -66,7 +66,7 @@ function RitualsCta({ to, children }: { to: string; children: string }) {
 
 function RitualTitle({
   lines,
-  className = 'absolute left-[3.5%] top-[5.5%] z-20 max-w-[8.6ch] font-display text-[clamp(3.75rem,7.2vw,6.75rem)] leading-[0.88] tracking-tight uppercase',
+  className = 'absolute left-[3.5%] top-[5.5%] z-20 max-w-[8.6ch] font-display text-[clamp(3.75rem,7.2vw,6.75rem)] leading-[0.88] tracking-tight',
 }: {
   lines: readonly string[]
   className?: string
@@ -638,7 +638,7 @@ export function HomeEditorialScroll() {
       {/* Mobile / tablet — larger stacked collage */}
       <div className="space-y-16 overflow-hidden px-[var(--spacing-gutter)] py-[var(--spacing-section)] sm:space-y-20 lg:hidden">
         <div>
-          <h2 className="font-display text-4xl leading-[0.9] uppercase sm:text-5xl md:text-6xl">
+          <h2 className="font-display text-4xl leading-[0.9] sm:text-5xl md:text-6xl">
             <span className="block">{groups.title[0]}</span>
             <span className="block">{groups.title[1]}</span>
           </h2>
