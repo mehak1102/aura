@@ -80,17 +80,20 @@ export function ContactForm() {
       setSent(true)
       reset()
     } catch (err: unknown) {
-      const axiosMsg =
+      let message = 'Could not send your message. Please try again.'
+      if (
         err &&
         typeof err === 'object' &&
         'response' in err &&
-        (err as { response?: { data?: { message?: string } } }).response?.data
-          ?.message
-      setSubmitError(
-        axiosMsg ||
-          (err instanceof Error ? err.message : null) ||
-          'Could not send your message. Please try again.',
-      )
+        typeof (err as { response?: { data?: { message?: unknown } } }).response
+          ?.data?.message === 'string'
+      ) {
+        message = (err as { response: { data: { message: string } } }).response
+          .data.message
+      } else if (err instanceof Error && err.message) {
+        message = err.message
+      }
+      setSubmitError(message)
     }
   })
 
