@@ -17,7 +17,6 @@ import {
 } from '../models/Settings.model.js'
 import { isDbReady } from '../config/db.js'
 import { markOrderPaidAndFulfill } from '../services/orderFulfillment.js'
-import blogs from '../data/blogs.json' with { type: 'json' }
 
 function startOfDay(d = new Date()) {
   const x = new Date(d)
@@ -34,8 +33,15 @@ function lastNDays(n) {
 }
 
 function aggregateOrders(orders) {
+  const paidLike = new Set([
+    'paid',
+    'cod_placed',
+    'processing',
+    'shipped',
+    'delivered',
+  ])
   const revenue = orders
-    .filter((o) => o.status === 'paid' || o.status === 'cod_placed')
+    .filter((o) => paidLike.has(o.status))
     .reduce((s, o) => s + (o.total || 0), 0)
 
   const days = lastNDays(7)
@@ -131,7 +137,16 @@ export const listAdminOrders = asyncHandler(async (_req, res) => {
 
 export const updateOrderStatus = asyncHandler(async (req, res) => {
   const { status } = req.body
-  const allowed = ['pending', 'paid', 'cod_placed', 'failed', 'cancelled']
+  const allowed = [
+    'pending',
+    'paid',
+    'cod_placed',
+    'processing',
+    'shipped',
+    'delivered',
+    'failed',
+    'cancelled',
+  ]
   if (!allowed.includes(status)) throw new AppError('Invalid status')
 
   if (useMemory()) {
@@ -225,7 +240,15 @@ export const updateAdminProduct = asyncHandler(async (req, res) => {
   }
 
   const doc = await Product.findOneAndUpdate(
-    { $or: [{ legacyId: req.params.id }, { slug: req.params.id }] },
+    {
+      $or: [
+        { legacyId: req.params.id },
+        { slug: req.params.id },
+        ...(req.params.id.match(/^[a-f\d]{24}$/i)
+          ? [{ _id: req.params.id }]
+          : []),
+      ],
+    },
     {
       ...(stock !== undefined && { stock }),
       ...(isActive !== undefined && { isActive }),
@@ -265,14 +288,6 @@ const DEMO_COUPONS = [
   },
 ]
 
-const SAMPLE_REVIEW_COMMENTS = [
-  'Absolutely love this — my skin feels calm and nourished.',
-  'Gentle formula, noticeable results within two weeks.',
-  'The aroma is subtle and the texture melts in beautifully.',
-  'Repurchasing for the third time. A staple in my ritual.',
-  'Works well for my sensitive skin without any irritation.',
-]
-
 let memoryAdminSettings = { ...DEFAULT_SETTINGS }
 
 function mapProductRow(p) {
@@ -289,42 +304,6 @@ function mapProductRow(p) {
     isNewArrival: p.isNewArrival,
     isActive: p.isActive !== false,
   }
-}
-
-function buildDemoReviews(products) {
-  return products
-    .filter((p) => p.ratingCount > 0)
-    .slice(0, 12)
-    .map((p, i) => ({
-      id: `rev-${p.id}`,
-      productId: p.id,
-      productTitle: p.title,
-      userName: ['Ananya R.', 'Priya M.', 'Rahul K.', 'Sneha D.'][i % 4],
-      rating: Math.min(5, Math.max(4, Math.round(p.ratingAverage))),
-      comment: SAMPLE_REVIEW_COMMENTS[i % SAMPLE_REVIEW_COMMENTS.length],
-      createdAt: new Date(Date.now() - i * 86400000 * 3).toISOString(),
-      verified: true,
-      status: 'published',
-    }))
-}
-
-function collectMediaAssets(products) {
-  const seen = new Set()
-  const assets = []
-  for (const p of products) {
-    for (const img of [...(p.images || []), ...(p.gallery || [])]) {
-      if (!img.url || seen.has(img.url)) continue
-      seen.add(img.url)
-      assets.push({
-        id: `media-${assets.length + 1}`,
-        url: img.url,
-        alt: img.alt || p.title,
-        productTitle: p.title,
-        type: img.type || 'image',
-      })
-    }
-  }
-  return assets.slice(0, 48)
 }
 
 function buildNotifications(orders, products, threshold = 20) {
@@ -410,26 +389,45 @@ export const listAdminCoupons = asyncHandler(async (_req, res) => {
 
 export const listAdminReviews = asyncHandler(async (_req, res) => {
   const products = await productCatalog.list()
+  const byId = new Map(products.map((p) => [p.id, p]))
 
   if (useMemory()) {
-    res.json({ success: true, data: { reviews: buildDemoReviews(products) } })
+    const { listAllMemoryReviews } = await import('../services/reviewStore.js')
+    const reviews = listAllMemoryReviews().map((r) => ({
+      ...r,
+      productTitle: byId.get(r.productId)?.title || 'Unknown product',
+    }))
+    res.json({ success: true, data: { reviews } })
     return
   }
 
-  const docs = await Review.find().sort({ createdAt: -1 }).limit(50)
-  if (docs.length) {
-    res.json({
-      success: true,
-      data: { reviews: docs.map((d) => d.toClientJSON()) },
-    })
-    return
-  }
-
-  res.json({ success: true, data: { reviews: buildDemoReviews(products) } })
+  const docs = await Review.find().sort({ createdAt: -1 }).limit(100)
+  res.json({
+    success: true,
+    data: {
+      reviews: docs.map((d) => {
+        const json = d.toClientJSON()
+        const product =
+          byId.get(json.productId) ||
+          byId.get(d.productLegacyId) ||
+          (d.product && byId.get(d.product.toString()))
+        return {
+          ...json,
+          productTitle: product?.title || 'Unknown product',
+        }
+      }),
+    },
+  })
 })
 
-export const listAdminBlogs = asyncHandler(async (_req, res) => {
-  res.json({ success: true, data: { blogs } })
+export const listAdminBlogs = asyncHandler(async (req, res, next) => {
+  const { listBlogsEnsured } = await import('./adminCrud.controller.js')
+  return listBlogsEnsured(req, res, next)
+})
+
+export const listAdminMedia = asyncHandler(async (req, res, next) => {
+  const { listMediaAssets } = await import('./adminCrud.controller.js')
+  return listMediaAssets(req, res, next)
 })
 
 export const listAdminInventory = asyncHandler(async (_req, res) => {
@@ -455,14 +453,6 @@ export const listAdminInventory = asyncHandler(async (_req, res) => {
         threshold,
       },
     },
-  })
-})
-
-export const listAdminMedia = asyncHandler(async (_req, res) => {
-  const products = await productCatalog.list()
-  res.json({
-    success: true,
-    data: { assets: collectMediaAssets(products) },
   })
 })
 

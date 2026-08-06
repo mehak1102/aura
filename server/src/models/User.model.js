@@ -76,6 +76,7 @@ userSchema.methods.toSafeJSON = function toSafeJSON() {
     role: this.role,
     avatar: this.avatar,
     mustChangePassword: Boolean(this.mustChangePassword),
+    isActive: this.isActive !== false,
     addresses: (this.addresses || []).map((a) => ({
       id: a._id.toString(),
       label: a.label,

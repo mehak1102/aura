@@ -20,6 +20,7 @@ const AUTH_ROUTES = new Set<string>([
   ROUTES.login,
   ROUTES.register,
   ROUTES.forgotPassword,
+  ROUTES.resetPassword,
 ])
 
 export function RootLayout() {

@@ -19,7 +19,7 @@ async function hydrateItems(items) {
     if (!variant) continue
     hydrated.push({
       id: item._id?.toString?.() || item.id,
-      productId: item.productId,
+      productId: product.id,
       variantId: variant.id,
       quantity: item.quantity,
       product,
@@ -51,12 +51,17 @@ export const getCart = asyncHandler(async (req, res) => {
   let cart = await Cart.findOne({ user: userId })
   if (!cart) cart = await Cart.create({ user: userId, items: [] })
   const lines = await hydrateItems(cart.items)
+  const items = lines.map(({ productId, variantId, quantity }) => ({
+    productId,
+    variantId,
+    quantity,
+  }))
   res.json({
     success: true,
     data: {
-      items: cart.items,
+      items,
       lines,
-      count: cart.items.reduce((s, i) => s + i.quantity, 0),
+      count: items.reduce((s, i) => s + i.quantity, 0),
       subtotal: lines.reduce((s, l) => s + l.lineTotal, 0),
     },
   })
@@ -68,20 +73,24 @@ export const replaceCart = asyncHandler(async (req, res) => {
   const { items } = req.body
   if (!Array.isArray(items)) throw new AppError('items must be an array')
 
+  // Normalize incoming ids to stable catalog ids before saving
   const clean = []
   for (const item of items) {
     if (!item?.productId || !item?.variantId) continue
+    const product = await productCatalog.getByLegacyId(item.productId)
+    if (!product) continue
+    const variant =
+      product.variants.find((v) => v.id === item.variantId) ||
+      product.variants[0]
+    if (!variant) continue
     const quantity = Math.max(1, Math.min(99, Number(item.quantity) || 1))
+    const productId = product.id
+    const variantId = variant.id
     const existing = clean.find(
-      (i) => i.productId === item.productId && i.variantId === item.variantId,
+      (i) => i.productId === productId && i.variantId === variantId,
     )
     if (existing) existing.quantity = Math.min(99, existing.quantity + quantity)
-    else
-      clean.push({
-        productId: String(item.productId),
-        variantId: String(item.variantId),
-        quantity,
-      })
+    else clean.push({ productId, variantId, quantity })
   }
 
   if (useMemory()) {
@@ -105,12 +114,17 @@ export const replaceCart = asyncHandler(async (req, res) => {
   await cart.save()
 
   const lines = await hydrateItems(cart.items)
+  const normalizedItems = lines.map(({ productId, variantId, quantity }) => ({
+    productId,
+    variantId,
+    quantity,
+  }))
   res.json({
     success: true,
     data: {
-      items: cart.items,
+      items: normalizedItems,
       lines,
-      count: cart.items.reduce((s, i) => s + i.quantity, 0),
+      count: normalizedItems.reduce((s, i) => s + i.quantity, 0),
       subtotal: lines.reduce((s, l) => s + l.lineTotal, 0),
     },
   })

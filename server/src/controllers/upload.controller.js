@@ -2,6 +2,8 @@
 import { AppError, asyncHandler } from '../utils/asyncHandler.js'
 import { getCloudinary } from '../config/cloudinary.js'
 import { cloudinaryConfigured } from '../utils/secrets.js'
+import { MediaAsset } from '../models/MediaAsset.model.js'
+import { isDbReady } from '../config/db.js'
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -25,6 +27,7 @@ export const uploadImage = asyncHandler(async (req, res) => {
 
   const cloudinary = getCloudinary()
   const folder = req.body.folder || 'aura-of-nature'
+  const alt = req.body.alt || req.file.originalname || ''
 
   const result = await new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
@@ -41,6 +44,20 @@ export const uploadImage = asyncHandler(async (req, res) => {
     stream.end(req.file.buffer)
   })
 
+  let asset = null
+  if (isDbReady()) {
+    asset = await MediaAsset.create({
+      url: result.secure_url,
+      publicId: result.public_id,
+      alt,
+      folder,
+      width: result.width,
+      height: result.height,
+      bytes: result.bytes,
+      format: result.format,
+    })
+  }
+
   res.status(201).json({
     success: true,
     data: {
@@ -50,6 +67,8 @@ export const uploadImage = asyncHandler(async (req, res) => {
       height: result.height,
       format: result.format,
       bytes: result.bytes,
+      alt,
+      id: asset?._id?.toString(),
     },
   })
 })
@@ -58,11 +77,26 @@ export const deleteImage = asyncHandler(async (req, res) => {
   if (!cloudinaryConfigured()) {
     throw new AppError('Image uploads are not configured (Cloudinary)', 503)
   }
-  const { publicId } = req.body
-  if (!publicId) throw new AppError('publicId is required')
+  const { publicId, id } = req.body
+  if (!publicId && !id) throw new AppError('publicId or id is required')
 
-  const cloudinary = getCloudinary()
-  await cloudinary.uploader.destroy(publicId)
+  let resolvedPublicId = publicId
+  if (!resolvedPublicId && id && isDbReady()) {
+    const asset = await MediaAsset.findById(id)
+    resolvedPublicId = asset?.publicId
+  }
+
+  if (resolvedPublicId) {
+    const cloudinary = getCloudinary()
+    await cloudinary.uploader.destroy(resolvedPublicId)
+  }
+
+  if (isDbReady()) {
+    if (id) await MediaAsset.findByIdAndDelete(id)
+    else if (resolvedPublicId) {
+      await MediaAsset.deleteOne({ publicId: resolvedPublicId })
+    }
+  }
 
   res.json({ success: true, message: 'Image deleted' })
 })

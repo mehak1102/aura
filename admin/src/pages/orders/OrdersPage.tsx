@@ -1,10 +1,21 @@
+import { Link } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { PageHeader, DataTable, Badge } from '@components/ui'
 import { adminApi } from '@services/api/admin'
 import { formatCurrency, formatDate } from '@utils/index'
+import { ADMIN_ROUTES } from '@/routes/paths'
 import type { AdminOrder } from '@/types'
 
-const STATUSES = ['pending', 'paid', 'cod_placed', 'failed', 'cancelled']
+const STATUSES = [
+  'pending',
+  'paid',
+  'cod_placed',
+  'processing',
+  'shipped',
+  'delivered',
+  'failed',
+  'cancelled',
+]
 
 export default function OrdersPage() {
   const queryClient = useQueryClient()
@@ -19,6 +30,7 @@ export default function OrdersPage() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['admin-orders'] })
       void queryClient.invalidateQueries({ queryKey: ['admin-dashboard'] })
+      void queryClient.invalidateQueries({ queryKey: ['admin-notifications'] })
     },
   })
 
@@ -28,14 +40,25 @@ export default function OrdersPage() {
     <div>
       <PageHeader
         title="Orders"
-        description="Review and update order fulfillment status."
+        description="Review payment and fulfillment status."
       />
 
       <DataTable<AdminOrder>
         rows={orders}
         getRowKey={(row) => row.id}
         columns={[
-          { key: 'id', header: 'Order' },
+          {
+            key: 'id',
+            header: 'Order',
+            render: (row) => (
+              <Link
+                to={ADMIN_ROUTES.orderDetail.replace(':id', row.id)}
+                className="text-forest underline-offset-2 hover:underline"
+              >
+                {row.id}
+              </Link>
+            ),
+          },
           {
             key: 'customer',
             header: 'Customer',
@@ -79,7 +102,13 @@ export default function OrdersPage() {
             key: 'payment',
             header: 'Payment',
             render: (row) => (
-              <Badge tone={row.status === 'paid' ? 'success' : 'default'}>
+              <Badge
+                tone={
+                  row.status === 'paid' || row.status === 'delivered'
+                    ? 'success'
+                    : 'default'
+                }
+              >
                 {row.paymentMethod || '—'}
               </Badge>
             ),

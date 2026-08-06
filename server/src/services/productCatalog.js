@@ -18,7 +18,8 @@ function toClientProduct(doc) {
 
   return {
     ...p,
-    id: p.id || p._id?.toString?.() || p.legacyId,
+    // Prefer stable catalog id (legacyId) so cart/wishlist match the shop list.
+    id: p.legacyId || p._id?.toString?.() || p.id,
     concerns: p.concerns || [],
     reviews: p.reviews || [],
     faqs: p.faqs || [],

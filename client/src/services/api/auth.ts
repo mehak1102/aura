@@ -78,6 +78,8 @@ export const authApi = {
       success: boolean
       message?: string
       resetToken?: string
+      resetUrl?: string
+      devHint?: string
     }>(API_ENDPOINTS.auth.forgotPassword, input)
     return data
   },

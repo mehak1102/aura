@@ -14,6 +14,11 @@ const reviewSchema = new mongoose.Schema(
     title: String,
     comment: { type: String, required: true },
     verified: { type: Boolean, default: false },
+    status: {
+      type: String,
+      enum: ['pending', 'published', 'hidden'],
+      default: 'pending',
+    },
   },
   { timestamps: true },
 )
@@ -21,12 +26,14 @@ const reviewSchema = new mongoose.Schema(
 reviewSchema.methods.toClientJSON = function toClientJSON() {
   return {
     id: this._id.toString(),
+    productId: this.productLegacyId || this.product?.toString?.() || '',
     userName: this.userName,
     rating: this.rating,
     title: this.title,
     comment: this.comment,
     createdAt: this.createdAt.toISOString(),
     verified: this.verified,
+    status: this.status || 'published',
   }
 }
 

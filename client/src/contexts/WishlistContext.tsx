@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react'
@@ -24,6 +25,10 @@ function loadIds(): string[] {
   }
 }
 
+function persistIds(ids: string[]) {
+  localStorage.setItem(KEY, JSON.stringify(ids))
+}
+
 type WishlistContextValue = {
   ids: string[]
   products: CatalogProduct[]
@@ -39,29 +44,49 @@ const WishlistContext = createContext<WishlistContextValue | null>(null)
 
 export function WishlistProvider({ children }: { children: ReactNode }) {
   const { getById } = useCatalog()
-  const { isAuthenticated } = useAuth()
+  const { user, isAuthenticated } = useAuth()
+  const userId = user?.id ?? null
   const [ids, setIds] = useState<string[]>(() =>
     typeof window !== 'undefined' ? loadIds() : [],
   )
   const [products, setProducts] = useState<CatalogProduct[]>([])
   const [isSyncing, setIsSyncing] = useState(false)
+  const prevUserIdRef = useRef<string | null | undefined>(undefined)
 
-  // On sign-in, merge the guest list into the saved one instead of letting the
-  // server response wipe hearts added before logging in
+  // Isolate wishlist per account: clear on logout; load server list on login.
+  // Guest hearts are only merged when going from logged-out → logged-in.
   useEffect(() => {
-    if (!isAuthenticated) {
-      localStorage.setItem(KEY, JSON.stringify(ids))
+    const prev = prevUserIdRef.current
+    prevUserIdRef.current = userId
+
+    // First mount while auth is still resolving — keep local guest list
+    if (prev === undefined && userId === null && !isAuthenticated) {
+      return
+    }
+
+    // Logged out (or switched away from a user)
+    if (!userId) {
+      if (prev) {
+        setIds([])
+        setProducts([])
+        localStorage.removeItem(KEY)
+      } else {
+        persistIds(ids)
+      }
       return
     }
 
     let cancelled = false
     setIsSyncing(true)
+
+    const guestIds = prev == null ? loadIds() : []
+
     wishlistApi
       .get()
       .then((data) => {
         if (cancelled) return data
-        const local = loadIds()
-        const missing = local.filter((id) => !data.ids.includes(id))
+        if (!guestIds.length) return data
+        const missing = guestIds.filter((id) => !data.ids.includes(id))
         if (!missing.length) return data
         return wishlistApi.replace([...data.ids, ...missing])
       })
@@ -69,10 +94,14 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         if (cancelled || !data) return
         setIds(data.ids)
         setProducts(data.products.map((p) => enrichProduct(p)))
-        localStorage.setItem(KEY, JSON.stringify(data.ids))
+        persistIds(data.ids)
       })
       .catch(() => {
-        localStorage.setItem(KEY, JSON.stringify(ids))
+        if (!cancelled) {
+          setIds([])
+          setProducts([])
+          localStorage.removeItem(KEY)
+        }
       })
       .finally(() => {
         if (!cancelled) setIsSyncing(false)
@@ -81,7 +110,15 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true
     }
-  }, [isAuthenticated])
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only re-run on account change
+  }, [userId, isAuthenticated])
+
+  // Persist guest (logged-out) wishlist only
+  useEffect(() => {
+    if (userId) return
+    if (prevUserIdRef.current === undefined) return
+    persistIds(ids)
+  }, [ids, userId])
 
   const has = useCallback((productId: string) => ids.includes(productId), [ids])
 
@@ -93,7 +130,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
           .then((data) => {
             setIds(data.ids)
             setProducts(data.products.map((p) => enrichProduct(p)))
-            localStorage.setItem(KEY, JSON.stringify(data.ids))
+            persistIds(data.ids)
           })
           .catch(() => {
             setIds((prev) =>
@@ -109,7 +146,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         const next = prev.includes(productId)
           ? prev.filter((id) => id !== productId)
           : [...prev, productId]
-        localStorage.setItem(KEY, JSON.stringify(next))
+        persistIds(next)
         return next
       })
     },

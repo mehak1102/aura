@@ -104,9 +104,10 @@ productSchema.methods.toClientJSON = function toClientJSON() {
     discountPercent: this.discountPercent,
     category: this.category,
     subcategory: this.subcategory,
-    relatedProductIds: this.relatedProductIds.map((id) => id.toString()),
+    relatedProductIds: (this.relatedProductIds || []).map((id) => id.toString()),
     isBestSeller: this.isBestSeller,
     isNewArrival: this.isNewArrival,
+    isActive: this.isActive !== false,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,
   }

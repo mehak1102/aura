@@ -9,8 +9,6 @@ import {
   Ticket,
   Boxes,
   Star,
-  FileText,
-  Image,
   Settings,
   Bell,
   LogOut,
@@ -29,8 +27,6 @@ const NAV = [
   { to: ADMIN_ROUTES.coupons, label: 'Coupons', icon: Ticket },
   { to: ADMIN_ROUTES.inventory, label: 'Inventory', icon: Boxes },
   { to: ADMIN_ROUTES.reviews, label: 'Reviews', icon: Star },
-  { to: ADMIN_ROUTES.blogs, label: 'Blogs', icon: FileText },
-  { to: ADMIN_ROUTES.media, label: 'Media', icon: Image },
   { to: ADMIN_ROUTES.settings, label: 'Settings', icon: Settings },
   { to: ADMIN_ROUTES.notifications, label: 'Notifications', icon: Bell },
 ]

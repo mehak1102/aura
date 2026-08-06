@@ -5,6 +5,7 @@ export type User = {
   phone?: string
   role: 'customer' | 'admin'
   mustChangePassword?: boolean
+  isActive?: boolean
   createdAt?: string
 }
 
@@ -18,14 +19,29 @@ export type AdminProduct = {
   id: string
   title: string
   slug: string
+  description?: string
   category: string
   mrp: number
   discountPercent: number
   stock: number
   ratingAverage: number
+  ratingCount?: number
   isBestSeller?: boolean
   isNewArrival?: boolean
   isActive: boolean
+  images?: { url: string; alt?: string; type?: string; isPrimary?: boolean }[]
+  variants?: {
+    id: string
+    name: string
+    sku?: string
+    mrp: number
+    price: number
+    discountPercent?: number
+    stock: number
+  }[]
+  benefits?: string[]
+  ingredients?: string[]
+  howToUse?: string[]
 }
 
 export type AdminOrder = {
@@ -33,9 +49,34 @@ export type AdminOrder = {
   createdAt: string
   status: string
   paymentMethod?: string
+  paymentId?: string
+  couponCode?: string
   total: number
-  shipping?: { fullName?: string; city?: string }
-  items?: { title?: string; quantity?: number }[]
+  subtotal?: number
+  shippingFee?: number
+  giftWrapFee?: number
+  discount?: number
+  savings?: number
+  shipping?: {
+    fullName?: string
+    email?: string
+    phone?: string
+    line1?: string
+    line2?: string
+    city?: string
+    state?: string
+    postalCode?: string
+    country?: string
+    notes?: string
+  }
+  items?: {
+    title?: string
+    variantName?: string
+    quantity?: number
+    unitPrice?: number
+    lineTotal?: number
+    image?: string
+  }[]
 }
 
 export type DashboardStats = {
@@ -56,6 +97,8 @@ export type AdminCategory = {
   slug: string
   description: string
   productCount: number
+  isActive?: boolean
+  sortOrder?: number
 }
 
 export type AdminCoupon = {
@@ -69,6 +112,7 @@ export type AdminCoupon = {
   isActive: boolean
   usedCount: number
   usageLimit?: number | null
+  expiresAt?: string | null
 }
 
 export type AdminReview = {
@@ -89,6 +133,9 @@ export type AdminBlog = {
   title: string
   category: string
   author: string
+  excerpt?: string
+  content?: string
+  coverImage?: string
   status: 'published' | 'draft'
   publishedAt: string | null
 }
@@ -106,6 +153,8 @@ export type AdminMedia = {
   alt: string
   productTitle: string
   type: string
+  publicId?: string
+  source?: string
 }
 
 export type AdminNotification = {

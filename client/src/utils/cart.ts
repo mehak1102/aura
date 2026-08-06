@@ -60,7 +60,9 @@ export function hydrateCart(
 ): CartLine[] {
   return items
     .map((line) => {
-      const base = source.find((p) => p.id === line.productId)
+      const base =
+        source.find((p) => p.id === line.productId) ||
+        source.find((p) => (p as CatalogProduct & { legacyId?: string }).legacyId === line.productId)
       if (!base) return null
       const product = enrichProduct(base)
       const variant =
@@ -69,12 +71,30 @@ export function hydrateCart(
       if (!variant) return null
       return {
         ...line,
+        // Normalize to catalog id so later lookups stay consistent
+        productId: product.id,
         product,
         variant,
         lineTotal: variant.price * line.quantity,
       }
     })
     .filter(Boolean) as CartLine[]
+}
+
+/** Drop lines that no longer resolve in the catalog (stale / foreign ids). */
+export function pruneCartLines(
+  items: StoredCartLine[],
+  source: CatalogProduct[],
+): StoredCartLine[] {
+  if (!source.length) return items
+  return items.filter((line) =>
+    source.some(
+      (p) =>
+        p.id === line.productId ||
+        (p as CatalogProduct & { legacyId?: string }).legacyId ===
+          line.productId,
+    ),
+  )
 }
 
 export function cartCount(items: StoredCartLine[]) {

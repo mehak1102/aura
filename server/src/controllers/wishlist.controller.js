@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import { User } from '../models/User.model.js'
 import { Product } from '../models/Product.model.js'
 import { AppError, asyncHandler } from '../utils/asyncHandler.js'
@@ -18,6 +19,22 @@ async function resolveProducts(ids) {
   return products
 }
 
+/** Resolve client product ids (legacy or ObjectId) to Mongo docs. */
+async function findProductsByClientIds(ids) {
+  const unique = [...new Set(ids.map(String))]
+  if (!unique.length) return []
+
+  const objectIds = unique.filter((id) => mongoose.isValidObjectId(id))
+  const docs = await Product.find({
+    $or: [
+      { legacyId: { $in: unique } },
+      ...(objectIds.length ? [{ _id: { $in: objectIds } }] : []),
+    ],
+  }).select('_id legacyId')
+
+  return docs
+}
+
 export const getWishlist = asyncHandler(async (req, res) => {
   const userId = getUserId(req)
 
@@ -29,9 +46,9 @@ export const getWishlist = asyncHandler(async (req, res) => {
   }
 
   const user = await User.findById(userId).populate('wishlist')
-  const ids = (user?.wishlist || []).map((p) =>
-    p.legacyId || p._id?.toString(),
-  )
+  const ids = (user?.wishlist || [])
+    .map((p) => p.legacyId || p._id?.toString())
+    .filter(Boolean)
   const products = await resolveProducts(ids)
   res.json({ success: true, data: { ids, products, count: ids.length } })
 })
@@ -57,16 +74,15 @@ export const replaceWishlist = asyncHandler(async (req, res) => {
   const user = await User.findById(userId)
   if (!user) throw new AppError('User not found', 404)
 
-  const docs = await Product.find({ legacyId: { $in: unique } }).select('_id legacyId')
-  const byLegacy = new Map(docs.map((d) => [d.legacyId, d._id]))
-  user.wishlist = unique.filter((id) => byLegacy.has(id)).map((id) => byLegacy.get(id))
+  const docs = await findProductsByClientIds(unique)
+  const keptLegacy = docs.map((d) => d.legacyId || d._id.toString())
+  user.wishlist = docs.map((d) => d._id)
   await user.save()
 
-  const kept = unique.filter((id) => byLegacy.has(id))
-  const products = await resolveProducts(kept)
+  const products = await resolveProducts(keptLegacy)
   res.json({
     success: true,
-    data: { ids: kept, products, count: kept.length },
+    data: { ids: keptLegacy, products, count: keptLegacy.length },
   })
 })
 
@@ -78,10 +94,12 @@ export const toggleWishlist = asyncHandler(async (req, res) => {
   const product = await productCatalog.getByLegacyId(productId)
   if (!product) throw new AppError('Product not found', 404)
 
+  const stableId = product.id
+
   if (useMemory()) {
-    const ids = memoryStore.toggleWishlist(userId, productId)
+    const ids = memoryStore.toggleWishlist(userId, stableId)
     const products = await resolveProducts(ids)
-    const added = ids.includes(productId)
+    const added = ids.includes(stableId)
     res.json({
       success: true,
       data: { ids, products, count: ids.length, added },
@@ -92,7 +110,9 @@ export const toggleWishlist = asyncHandler(async (req, res) => {
   const user = await User.findById(userId)
   if (!user) throw new AppError('User not found', 404)
 
-  const dbProduct = await Product.findOne({ legacyId: productId })
+  const or = [{ legacyId: productId }]
+  if (mongoose.isValidObjectId(productId)) or.push({ _id: productId })
+  const dbProduct = await Product.findOne({ $or: or })
   if (!dbProduct) {
     throw new AppError('Product not available in database. Run npm run seed.', 503)
   }

@@ -41,6 +41,7 @@ export type ProductReview = {
   comment: string
   createdAt: string
   verified?: boolean
+  status?: 'pending' | 'published' | 'hidden'
 }
 
 export type ProductFaq = {

@@ -12,12 +12,8 @@ export const ADMIN_ROUTES = {
   coupons: '/coupons',
   inventory: '/inventory',
   reviews: '/reviews',
-  blogs: '/blogs',
-  blogCreate: '/blogs/new',
-  blogEdit: '/blogs/:id/edit',
   analytics: '/analytics',
   sales: '/sales',
-  media: '/media',
   settings: '/settings',
   notifications: '/notifications',
 } as const

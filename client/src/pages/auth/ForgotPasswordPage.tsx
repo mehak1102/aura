@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft, KeyRound, Lock, Mail, ShieldCheck } from 'lucide-react'
@@ -20,7 +20,12 @@ const submitButton =
   'h-12 w-full rounded-full bg-forest text-[0.7rem] font-medium tracking-[0.22em] text-warm-white uppercase transition-colors duration-300 hover:bg-forest-deep disabled:pointer-events-none disabled:opacity-50'
 
 export default function ForgotPasswordPage() {
-  const [step, setStep] = useState<'request' | 'reset'>('request')
+  const [params] = useSearchParams()
+  const urlToken = params.get('token')?.trim() || ''
+
+  const [step, setStep] = useState<'request' | 'reset'>(
+    urlToken ? 'reset' : 'request',
+  )
   const [devToken, setDevToken] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
   const [formError, setFormError] = useState<string | null>(null)
@@ -34,8 +39,19 @@ export default function ForgotPasswordPage() {
 
   const resetForm = useForm<ResetPasswordInput>({
     resolver: zodResolver(resetPasswordSchema),
-    defaultValues: { token: '', password: '', confirmPassword: '' },
+    defaultValues: {
+      token: urlToken,
+      password: '',
+      confirmPassword: '',
+    },
   })
+
+  // Email links land on /auth/reset-password?token=… — jump straight to the form.
+  useEffect(() => {
+    if (!urlToken) return
+    resetForm.setValue('token', urlToken)
+    setStep('reset')
+  }, [urlToken, resetForm])
 
   const onRequest = requestForm.handleSubmit(async (values) => {
     setFormError(null)
@@ -47,6 +63,15 @@ export default function ForgotPasswordPage() {
         setDevToken(res.resetToken)
         resetForm.setValue('token', res.resetToken)
         setStep('reset')
+      }
+      // Prefer opening the emailed link; also surface resetUrl in local/dev.
+      if (res.resetUrl && !res.resetToken) {
+        const tokenFromUrl = new URL(res.resetUrl).searchParams.get('token')
+        if (tokenFromUrl) {
+          setDevToken(tokenFromUrl)
+          resetForm.setValue('token', tokenFromUrl)
+          setStep('reset')
+        }
       }
     } catch (err) {
       const msg =
@@ -75,9 +100,14 @@ export default function ForgotPasswordPage() {
     </p>
   )
 
+  const hideTokenField = Boolean(urlToken)
+
   return (
     <>
-      <Seo title="Forgot Password" noindex />
+      <Seo
+        title={step === 'request' ? 'Forgot Password' : 'Reset Password'}
+        noindex
+      />
       <AuthShell
         eyebrow="Account recovery"
         title={step === 'request' ? 'Forgot password' : 'Set new password'}
@@ -121,13 +151,17 @@ export default function ForgotPasswordPage() {
           </form>
         ) : (
           <form onSubmit={onReset} className="space-y-5" noValidate>
-            <AuthField
-              label="Reset token"
-              icon={KeyRound}
-              placeholder="Paste your token"
-              error={resetForm.formState.errors.token?.message}
-              {...resetForm.register('token')}
-            />
+            {hideTokenField ? (
+              <input type="hidden" {...resetForm.register('token')} />
+            ) : (
+              <AuthField
+                label="Reset token"
+                icon={KeyRound}
+                placeholder="Paste your token"
+                error={resetForm.formState.errors.token?.message}
+                {...resetForm.register('token')}
+              />
+            )}
             <AuthField
               label="New password"
               icon={Lock}

@@ -1,16 +1,37 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { PageHeader, Card, Badge } from '@components/ui'
 import { adminApi } from '@services/api/admin'
 import { formatDate } from '@utils/index'
 import type { AdminNotification } from '@/types'
 
+const READ_KEY = 'aura_admin_notifications_read'
+
+function loadReadIds(): Set<string> {
+  try {
+    const raw = localStorage.getItem(READ_KEY)
+    const list = raw ? (JSON.parse(raw) as string[]) : []
+    return new Set(list)
+  } catch {
+    return new Set()
+  }
+}
+
+function saveReadIds(ids: Set<string>) {
+  localStorage.setItem(READ_KEY, JSON.stringify([...ids]))
+}
+
 export default function NotificationsPage() {
-  const [readIds, setReadIds] = useState<Set<string>>(new Set())
+  const [readIds, setReadIds] = useState<Set<string>>(() => loadReadIds())
   const { data: notifications = [], isLoading } = useQuery({
     queryKey: ['admin-notifications'],
     queryFn: () => adminApi.notifications(),
+    refetchInterval: 60_000,
   })
+
+  useEffect(() => {
+    saveReadIds(readIds)
+  }, [readIds])
 
   const markRead = (id: string) => {
     setReadIds((prev) => new Set(prev).add(id))

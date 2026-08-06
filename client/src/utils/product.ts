@@ -19,11 +19,18 @@ export function enrichProduct(product: CatalogProduct): CatalogProduct {
 
   return {
     ...product,
+    id: local.id,
     images: local.images.length ? local.images : product.images.map(normalizeMedia),
     gallery: local.gallery.length ? local.gallery : (product.gallery ?? []).map(normalizeMedia),
     videos: local.videos?.length ? local.videos : product.videos,
     concerns: product.concerns?.length ? product.concerns : local.concerns,
     category: (product.category || local.category) as CatalogProduct['category'],
+    reviews:
+      product.reviews?.length > 0
+        ? product.reviews
+        : local.reviews?.length
+          ? local.reviews
+          : product.reviews,
   }
 }
 

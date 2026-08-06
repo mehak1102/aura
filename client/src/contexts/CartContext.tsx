@@ -19,6 +19,7 @@ import {
   hydrateCart,
   loadCart,
   mergeCartLines,
+  pruneCartLines,
   saveCart,
   type CartLine,
   type StoredCartLine,
@@ -62,7 +63,8 @@ const CartContext = createContext<CartContextValue | null>(null)
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const { products } = useCatalog()
-  const { isAuthenticated } = useAuth()
+  const { user, isAuthenticated } = useAuth()
+  const userId = user?.id ?? null
   const [items, setItems] = useState<StoredCartLine[]>(() =>
     typeof window !== 'undefined' ? loadCart() : [],
   )
@@ -73,38 +75,72 @@ export function CartProvider({ children }: { children: ReactNode }) {
   })
   /** Blocks the push-to-server effect while we are pulling from it */
   const hydratingRef = useRef(false)
+  const prevUserIdRef = useRef<string | null | undefined>(undefined)
+
+  const [promo, setPromo] = useState<AppliedPromo | null>(null)
+  const [promoError, setPromoError] = useState<string | null>(null)
+  const [promoPending, setPromoPending] = useState(false)
 
   useEffect(() => {
     saveCart(items)
   }, [items])
 
-  // On sign-in, fold whatever sits in this browser into the saved cart so a
-  // guest bag is never dropped, then treat the merged result as current
+  // Per-account cart: clear on logout; load server cart on login.
+  // Guest bag is only merged when going from logged-out → logged-in.
   useEffect(() => {
-    if (!isAuthenticated) return
+    const prev = prevUserIdRef.current
+    prevUserIdRef.current = userId
+
+    if (prev === undefined && userId === null && !isAuthenticated) {
+      return
+    }
+
+    if (!userId) {
+      if (prev) {
+        hydratingRef.current = true
+        setItems([])
+        setGiftWrap(false)
+        setPromo(null)
+        setPromoError(null)
+        localStorage.removeItem('aura_cart')
+        localStorage.removeItem('aura_gift_wrap')
+        localStorage.removeItem(PROMO_KEY)
+        queueMicrotask(() => {
+          hydratingRef.current = false
+        })
+      }
+      return
+    }
 
     let cancelled = false
     hydratingRef.current = true
+
+    const guestItems = prev == null ? loadCart() : []
 
     cartApi
       .get()
       .then((serverItems) => {
         if (cancelled) return
-        const local = loadCart()
-        const merged = mergeCartLines(serverItems, local)
+        const merged =
+          guestItems.length > 0
+            ? mergeCartLines(serverItems, guestItems)
+            : serverItems
         setItems(merged)
         const changed =
           merged.length !== serverItems.length ||
           merged.some((line) => {
             const match = serverItems.find(
               (i) =>
-                i.productId === line.productId && i.variantId === line.variantId,
+                i.productId === line.productId &&
+                i.variantId === line.variantId,
             )
             return !match || match.quantity !== line.quantity
           })
         return changed ? cartApi.replace(merged) : undefined
       })
-      .catch(() => undefined)
+      .catch(() => {
+        if (!cancelled) setItems([])
+      })
       .finally(() => {
         hydratingRef.current = false
       })
@@ -113,7 +149,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       cancelled = true
       hydratingRef.current = false
     }
-  }, [isAuthenticated])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId, isAuthenticated])
 
   // Mirror later edits to the server, debounced so steppers don't spam it
   useEffect(() => {
@@ -130,15 +167,36 @@ export function CartProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('aura_gift_wrap', giftWrap ? '1' : '0')
   }, [giftWrap])
 
+  // Drop / remap stale product ids once the catalog is available
+  useEffect(() => {
+    if (!products.length) return
+    setItems((prev) => {
+      const pruned = pruneCartLines(prev, products)
+      const normalized = pruned.map((line) => {
+        const match = products.find((p) => p.id === line.productId)
+        return match ? { ...line, productId: match.id } : line
+      })
+      const same =
+        normalized.length === prev.length &&
+        normalized.every(
+          (line, i) =>
+            line.productId === prev[i]?.productId &&
+            line.variantId === prev[i]?.variantId &&
+            line.quantity === prev[i]?.quantity,
+        )
+      return same ? prev : normalized
+    })
+  }, [products])
+
   const lines = useMemo(() => hydrateCart(items, products), [items, products])
-  const count = useMemo(() => cartCount(items), [items])
+  // Badge matches what the cart page can actually show
+  const count = useMemo(
+    () => (products.length ? cartCount(lines) : cartCount(items)),
+    [products.length, lines, items],
+  )
   const subtotal = useMemo(() => cartSubtotal(lines), [lines])
   const mrpTotal = useMemo(() => cartMrpTotal(lines), [lines])
   const savings = Math.max(0, mrpTotal - subtotal)
-
-  const [promo, setPromo] = useState<AppliedPromo | null>(null)
-  const [promoError, setPromoError] = useState<string | null>(null)
-  const [promoPending, setPromoPending] = useState(false)
 
   const applyPromo = useCallback(
     async (code: string) => {
@@ -208,22 +266,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addItem = useCallback(
     (productId: string, variantId: string, quantity = 1) => {
+      const catalogId =
+        products.find((p) => p.id === productId)?.id ?? productId
+
       setItems((prev) => {
         const existing = prev.find(
-          (i) => i.productId === productId && i.variantId === variantId,
+          (i) => i.productId === catalogId && i.variantId === variantId,
         )
         if (existing) {
           return prev.map((i) =>
-            i.productId === productId && i.variantId === variantId
+            i.productId === catalogId && i.variantId === variantId
               ? { ...i, quantity: i.quantity + quantity }
               : i,
           )
         }
-        return [...prev, { productId, variantId, quantity }]
+        return [...prev, { productId: catalogId, variantId, quantity }]
       })
       setJustAdded(true)
     },
-    [],
+    [products],
   )
 
   const updateQty = useCallback(

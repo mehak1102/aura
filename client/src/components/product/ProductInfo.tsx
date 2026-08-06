@@ -17,6 +17,7 @@ import { ROUTES } from '@/routes/paths'
 import { useWishlist } from '@contexts/WishlistContext'
 import { useCart } from '@contexts/CartContext'
 import { useFreeShippingThreshold } from '@hooks/usePublicSettings'
+import { summarizeReviews } from '@/data/productReviews'
 
 type ProductInfoProps = {
   product: CatalogProduct
@@ -92,8 +93,20 @@ export function ProductInfo({ product, onAddToCart }: ProductInfoProps) {
       (l) => l.productId === product.id && l.variantId === variant?.id,
     )?.quantity ?? 0
 
-  const rating = product.ratingCount > 0 ? product.ratingAverage : 4.8
-  const reviewCount = product.ratingCount > 0 ? product.ratingCount : 128
+  const ratingSummary = useMemo(() => {
+    const published = (product.reviews ?? []).filter(
+      (r) => !r.status || r.status === 'published',
+    )
+    const fromProduct = summarizeReviews(published)
+    if (fromProduct.count > 0) return fromProduct
+    if (product.ratingCount > 0) {
+      return { average: product.ratingAverage, count: product.ratingCount }
+    }
+    return { average: 0, count: 0 }
+  }, [product.reviews, product.ratingAverage, product.ratingCount])
+
+  const rating = ratingSummary.average
+  const reviewCount = ratingSummary.count
 
   const burstTheme = product.slug.includes('coffee')
     ? ('coffee' as const)
@@ -137,7 +150,7 @@ export function ProductInfo({ product, onAddToCart }: ProductInfoProps) {
               key={i}
               className={cn(
                 'h-3.5 w-3.5',
-                i < Math.round(rating)
+                i < Math.round(rating || 0)
                   ? 'fill-current text-[#d4a84b]'
                   : 'fill-transparent text-[#d4a84b]/35',
               )}
@@ -149,7 +162,9 @@ export function ProductInfo({ product, onAddToCart }: ProductInfoProps) {
           href="#reviews"
           className="text-sm text-[#8a8478] transition-colors hover:text-forest"
         >
-          {rating.toFixed(1)} ({reviewCount} reviews)
+          {reviewCount > 0
+            ? `${rating.toFixed(1)} (${reviewCount} review${reviewCount === 1 ? '' : 's'})`
+            : 'Be the first to review'}
         </a>
       </div>
 
