@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
+import { Download } from 'lucide-react'
 import { Seo } from '@components/seo/Seo'
 import { Body, Display, Eyebrow, Button } from '@components/ui'
 import { AccountShell } from '@components/account/AccountShell'
-import { loadOrders } from '@utils/orders'
+import { loadOrders, mergeOrders, saveOrder } from '@utils/orders'
+import { downloadInvoice } from '@utils/invoice'
 import { ordersApi } from '@services/api/orders'
 import { useAuth } from '@contexts/AuthContext'
 import { formatCurrency } from '@utils/index'
@@ -13,20 +15,23 @@ export default function OrderHistoryPage() {
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth()
 
-  const { data: orders = [] } = useQuery({
-    queryKey: ['orders'],
+  const { data: displayOrders = loadOrders() } = useQuery({
+    queryKey: ['orders', isAuthenticated],
     queryFn: async () => {
+      const local = loadOrders()
+      if (!isAuthenticated) return local
       try {
-        return await ordersApi.list()
+        const remote = await ordersApi.list()
+        for (const order of remote) {
+          if (!getLocalHas(order.id, local)) saveOrder(order)
+        }
+        return mergeOrders(remote, loadOrders())
       } catch {
-        return loadOrders()
+        return local
       }
     },
-    enabled: isAuthenticated,
-    initialData: () => (isAuthenticated ? undefined : loadOrders()),
+    initialData: () => loadOrders(),
   })
-
-  const displayOrders = isAuthenticated ? orders : loadOrders()
 
   return (
     <>
@@ -72,12 +77,22 @@ export default function OrderHistoryPage() {
                     {formatCurrency(order.total)}
                   </p>
                 </div>
-                <Link
-                  to={`${ROUTES.orderSuccess}?id=${order.id}`}
-                  className="text-micro text-forest"
-                >
-                  View
-                </Link>
+                <div className="flex flex-wrap items-center gap-4">
+                  <button
+                    type="button"
+                    onClick={() => downloadInvoice(order)}
+                    className="inline-flex items-center gap-1.5 text-micro tracking-[0.14em] uppercase text-[#b8975c] transition-colors hover:text-forest"
+                  >
+                    <Download className="h-3.5 w-3.5" strokeWidth={1.7} aria-hidden />
+                    Invoice
+                  </button>
+                  <Link
+                    to={`${ROUTES.orderSuccess}?id=${order.id}`}
+                    className="text-micro tracking-[0.14em] uppercase text-forest"
+                  >
+                    View
+                  </Link>
+                </div>
               </li>
             ))}
           </ul>
@@ -85,4 +100,8 @@ export default function OrderHistoryPage() {
       </AccountShell>
     </>
   )
+}
+
+function getLocalHas(id: string, local: ReturnType<typeof loadOrders>) {
+  return local.some((o) => o.id === id)
 }

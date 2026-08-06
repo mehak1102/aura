@@ -4,6 +4,7 @@ export type User = {
   email: string
   phone?: string
   role: 'customer' | 'admin'
+  mustChangePassword?: boolean
   createdAt?: string
 }
 

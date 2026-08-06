@@ -44,6 +44,19 @@ export const adminOnly = (req, _res, next) => {
   next()
 }
 
+/** Block admin API use until the seeded / forced password is changed. */
+export const requirePasswordChanged = (req, _res, next) => {
+  if (req.user?.mustChangePassword) {
+    next(
+      new AppError('You must change your password before continuing', 403, {
+        code: 'MUST_CHANGE_PASSWORD',
+      }),
+    )
+    return
+  }
+  next()
+}
+
 export const optionalAuth = asyncHandler(async (req, _res, next) => {
   const header = req.headers.authorization
   const token =

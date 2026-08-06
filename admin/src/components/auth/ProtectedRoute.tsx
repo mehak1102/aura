@@ -3,8 +3,9 @@ import { useAuth } from '@contexts/AuthContext'
 import { ADMIN_ROUTES } from '@/routes/paths'
 
 export function ProtectedRoute() {
-  const { isAuthenticated, isAdmin, isLoading } = useAuth()
+  const { isAuthenticated, isAdmin, isLoading, mustChangePassword } = useAuth()
   const location = useLocation()
+  const onChangePassword = location.pathname === ADMIN_ROUTES.changePassword
 
   if (isLoading) {
     return (
@@ -18,6 +19,14 @@ export function ProtectedRoute() {
     return (
       <Navigate to={ADMIN_ROUTES.login} replace state={{ from: location.pathname }} />
     )
+  }
+
+  if (mustChangePassword && !onChangePassword) {
+    return <Navigate to={ADMIN_ROUTES.changePassword} replace />
+  }
+
+  if (!mustChangePassword && onChangePassword) {
+    return <Navigate to={ADMIN_ROUTES.dashboard} replace />
   }
 
   return <Outlet />

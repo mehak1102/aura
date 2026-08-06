@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -18,7 +19,8 @@ import { useAuth } from '@contexts/AuthContext'
 import { useWishlist } from '@contexts/WishlistContext'
 import { useCart } from '@contexts/CartContext'
 import { profileSchema, type ProfileInput } from '@/lib/authSchemas'
-import { loadOrders } from '@utils/orders'
+import { loadOrders, mergeOrders, saveOrder } from '@utils/orders'
+import { ordersApi } from '@services/api/orders'
 import { loadAddresses } from '@utils/addresses'
 import { ROUTES } from '@/routes/paths'
 import { Seo } from '@components/seo/Seo'
@@ -64,12 +66,28 @@ function ProfileRow({
 }
 
 export default function AccountPage() {
-  const { user, updateProfile } = useAuth()
+  const { user, updateProfile, isAuthenticated } = useAuth()
   const { count: wishCount } = useWishlist()
   const { count: cartCount } = useCart()
   const navigate = useNavigate()
   const [error, setError] = useState<string | null>(null)
-  const orders = loadOrders()
+  const { data: orders = loadOrders() } = useQuery({
+    queryKey: ['orders', isAuthenticated],
+    queryFn: async () => {
+      const local = loadOrders()
+      if (!isAuthenticated) return local
+      try {
+        const remote = await ordersApi.list()
+        for (const order of remote) {
+          if (!local.some((o) => o.id === order.id)) saveOrder(order)
+        }
+        return mergeOrders(remote, loadOrders())
+      } catch {
+        return local
+      }
+    },
+    initialData: () => loadOrders(),
+  })
   const addresses = loadAddresses()
 
   const {

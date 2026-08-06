@@ -50,6 +50,8 @@ const userSchema = new mongoose.Schema(
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
     resetPasswordToken: String,
     resetPasswordExpires: Date,
+    /** Seeded admins must change this before using the admin console. */
+    mustChangePassword: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
   },
   { timestamps: true },
@@ -73,6 +75,7 @@ userSchema.methods.toSafeJSON = function toSafeJSON() {
     phone: this.phone,
     role: this.role,
     avatar: this.avatar,
+    mustChangePassword: Boolean(this.mustChangePassword),
     addresses: (this.addresses || []).map((a) => ({
       id: a._id.toString(),
       label: a.label,

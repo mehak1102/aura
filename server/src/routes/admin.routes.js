@@ -1,5 +1,9 @@
 import { Router } from 'express'
-import { protect, adminOnly } from '../middleware/auth.js'
+import {
+  protect,
+  adminOnly,
+  requirePasswordChanged,
+} from '../middleware/auth.js'
 import {
   getDashboard,
   listAdminOrders,
@@ -20,7 +24,7 @@ import {
 
 const router = Router()
 
-router.use(protect, adminOnly)
+router.use(protect, adminOnly, requirePasswordChanged)
 
 router.get('/dashboard', getDashboard)
 router.get('/orders', listAdminOrders)

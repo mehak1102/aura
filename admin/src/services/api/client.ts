@@ -20,6 +20,12 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       setStoredToken(null)
     }
-    return Promise.reject(error)
+    const message =
+      error.response?.data?.message ||
+      error.message ||
+      'Request failed'
+    const err = new Error(message) as Error & { code?: string }
+    if (error.response?.data?.code) err.code = error.response.data.code
+    return Promise.reject(err)
   },
 )

@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom'
 import { ROUTES } from '@/routes/paths'
 import { useWishlist } from '@contexts/WishlistContext'
 import { useCart } from '@contexts/CartContext'
+import { useFreeShippingThreshold } from '@hooks/usePublicSettings'
 
 type ProductInfoProps = {
   product: CatalogProduct
@@ -77,6 +78,7 @@ export function ProductInfo({ product, onAddToCart }: ProductInfoProps) {
   const [variantId, setVariantId] = useState(product.variants[0]?.id)
   const { has, toggle } = useWishlist()
   const { items, addItem, updateQty } = useCart()
+  const freeShippingThreshold = useFreeShippingThreshold()
   const wished = has(product.id)
 
   const variant = useMemo(
@@ -261,7 +263,7 @@ export function ProductInfo({ product, onAddToCart }: ProductInfoProps) {
             Shipping
           </span>
           <span className="text-[0.72rem] leading-snug text-[#8a8478]">
-            Free shipping over ₹999
+            Free shipping over ₹{freeShippingThreshold}
           </span>
         </Link>
 

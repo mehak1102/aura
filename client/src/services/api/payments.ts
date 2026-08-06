@@ -3,7 +3,7 @@ import { API_ENDPOINTS } from './endpoints'
 import type { ApiResponse } from '@/types'
 
 export const paymentsApi = {
-  async createOrder(amountInPaise: number, receipt?: string) {
+  async createOrder(payload: { orderNumber: string; receipt?: string }) {
     const { data } = await api.post<
       ApiResponse<{
         mode: 'demo' | 'live'
@@ -13,8 +13,8 @@ export const paymentsApi = {
         keyId?: string
       }>
     >(API_ENDPOINTS.payments.createOrder, {
-      amount: amountInPaise,
-      receipt,
+      orderNumber: payload.orderNumber,
+      receipt: payload.receipt,
     })
     return data.data
   },

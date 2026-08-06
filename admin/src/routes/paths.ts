@@ -1,5 +1,6 @@
 export const ADMIN_ROUTES = {
   login: '/login',
+  changePassword: '/change-password',
   dashboard: '/',
   orders: '/orders',
   orderDetail: '/orders/:id',

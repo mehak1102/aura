@@ -15,7 +15,7 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>
 
 export default function LoginPage() {
-  const { login, isAuthenticated, isAdmin } = useAuth()
+  const { login, isAuthenticated, isAdmin, mustChangePassword } = useAuth()
   const location = useLocation()
   const [error, setError] = useState<string | null>(null)
   const from = (location.state as { from?: string } | null)?.from
@@ -30,6 +30,9 @@ export default function LoginPage() {
   })
 
   if (isAuthenticated && isAdmin) {
+    if (mustChangePassword) {
+      return <Navigate to={ADMIN_ROUTES.changePassword} replace />
+    }
     return <Navigate to={from || ADMIN_ROUTES.dashboard} replace />
   }
 

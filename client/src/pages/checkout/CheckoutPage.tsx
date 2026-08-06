@@ -46,6 +46,7 @@ import { loadAddresses } from '@utils/addresses'
 import { scrollToSection } from '@/lib/lenisControl'
 import { ROUTES } from '@/routes/paths'
 import { cn } from '@utils/index'
+import { useFreeShippingThreshold } from '@hooks/usePublicSettings'
 
 /** Top-to-bottom order of the form, so we can jump to the first problem */
 const FIELD_ORDER: (keyof CheckoutInput)[] = [
@@ -129,7 +130,12 @@ export default function CheckoutPage() {
   })
 
   const shippingMethod = watch('shippingMethod')
-  const shippingFee = getShippingFee(shippingMethod)
+  const freeShippingThreshold = useFreeShippingThreshold()
+  const shippingFee = getShippingFee(
+    shippingMethod,
+    payable,
+    freeShippingThreshold,
+  )
   const total = payable + giftWrapFee + shippingFee
   const errorCount = Object.keys(errors).length
 
@@ -169,6 +175,11 @@ export default function CheckoutPage() {
 
   const onSubmit = handleSubmit(
     (values) => {
+      const fee = getShippingFee(
+        values.shippingMethod,
+        payable,
+        freeShippingThreshold,
+      )
       savePendingCheckout({
         shipping: values,
         items,
@@ -176,8 +187,9 @@ export default function CheckoutPage() {
         mrpTotal,
         savings: savings + discount,
         giftWrapFee,
-        shippingFee: getShippingFee(values.shippingMethod),
-        total: payable + giftWrapFee + getShippingFee(values.shippingMethod),
+        shippingFee: fee,
+        total: payable + giftWrapFee + fee,
+        couponCode: promo?.code,
       })
       navigate(ROUTES.payment)
     },
@@ -428,7 +440,8 @@ export default function CheckoutPage() {
                             {opt.label}
                           </span>
                           <span className="mt-0.5 block text-body-sm text-charcoal-muted">
-                            {opt.detail}
+                            3–5 business days · Free over ₹
+                            {freeShippingThreshold}
                           </span>
                           <span className="mt-1 block text-micro text-soft-gold">
                             {opt.price === 0 ? 'Free' : `₹${opt.price}`}

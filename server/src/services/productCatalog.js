@@ -114,7 +114,6 @@ function filterCatalog(list, query = {}) {
 
 async function loadAllFromDb() {
   const docs = await Product.find({ isActive: { $ne: false } }).lean()
-  if (!docs.length) return catalog.map((p) => ({ ...p }))
   return docs.map((d) =>
     toClientProduct({
       ...d,
@@ -126,13 +125,14 @@ async function loadAllFromDb() {
 
 export const productCatalog = {
   getStaticCatalog() {
+    // Dev/memory only — never used when Mongo is connected.
     return catalog.map((p) => ({ ...p }))
   },
 
   async list(query = {}) {
     if (isDbReady()) {
-      const count = await Product.countDocuments()
-      const source = count ? await loadAllFromDb() : this.getStaticCatalog()
+      const source = await loadAllFromDb()
+      // Empty collection = empty catalog (force seed). No silent JSON fallback.
       return filterCatalog(source, query)
     }
     return filterCatalog(this.getStaticCatalog(), query)
@@ -141,14 +141,13 @@ export const productCatalog = {
   async getBySlug(slug) {
     if (isDbReady()) {
       const doc = await Product.findOne({ slug, isActive: { $ne: false } })
-      if (doc) return toClientProduct(doc)
+      return doc ? toClientProduct(doc) : null
     }
     return this.getStaticCatalog().find((p) => p.slug === slug) || null
   },
 
   async getByLegacyId(id) {
     if (isDbReady()) {
-      // Legacy ids ("1", "2", …) would throw a CastError on the _id clause
       const or = [{ legacyId: id }]
       if (mongoose.isValidObjectId(id)) or.push({ _id: id })
 
@@ -156,7 +155,7 @@ export const productCatalog = {
         $or: or,
         isActive: { $ne: false },
       })
-      if (doc) return toClientProduct(doc)
+      return doc ? toClientProduct(doc) : null
     }
     return this.getStaticCatalog().find((p) => p.id === id) || null
   },

@@ -1,17 +1,12 @@
 import type { CatalogProduct, ShopFilters, ShopSort } from '@/types/shop'
-import { PRODUCTS } from '@/data/products'
 import { calculateSalePrice } from '@utils/index'
 import { fuzzyRank } from '@utils/fuzzy'
-
-export function getProductBySlug(slug: string) {
-  return PRODUCTS.find((p) => p.slug === slug)
-}
 
 export function getSalePrice(product: CatalogProduct) {
   return calculateSalePrice(product.mrp, product.discountPercent)
 }
 
-export function getUniqueIngredients(source: CatalogProduct[] = PRODUCTS) {
+export function getUniqueIngredients(source: CatalogProduct[] = []) {
   const set = new Set<string>()
   source.forEach((p) => p.ingredients.forEach((i) => set.add(i)))
   return Array.from(set).sort((a, b) => a.localeCompare(b))
@@ -19,7 +14,7 @@ export function getUniqueIngredients(source: CatalogProduct[] = PRODUCTS) {
 
 export function filterProducts(
   filters: ShopFilters,
-  source: CatalogProduct[] = PRODUCTS,
+  source: CatalogProduct[] = [],
 ): CatalogProduct[] {
   let list = [...source]
 

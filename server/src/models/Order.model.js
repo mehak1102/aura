@@ -37,6 +37,9 @@ const orderSchema = new mongoose.Schema(
   {
     orderNumber: { type: String, unique: true, index: true },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true },
+    /** Guest checkout — order is keyed by email when user is absent. */
+    guestEmail: { type: String, lowercase: true, trim: true, index: true },
+    isGuest: { type: Boolean, default: false },
     status: {
       type: String,
       enum: ['pending', 'paid', 'cod_placed', 'failed', 'cancelled'],
@@ -45,12 +48,16 @@ const orderSchema = new mongoose.Schema(
     paymentMethod: { type: String, enum: ['razorpay', 'cod'] },
     paymentId: String,
     razorpayOrderId: String,
+    couponCode: String,
+    /** True once stock + coupon usage have been applied (COD create or payment). */
+    inventoryDeducted: { type: Boolean, default: false },
     shipping: shippingSchema,
     shippingFee: Number,
     giftWrapFee: { type: Number, default: 0 },
     subtotal: Number,
     mrpTotal: Number,
     savings: Number,
+    discount: { type: Number, default: 0 },
     total: Number,
     items: [orderLineSchema],
   },
@@ -64,12 +71,16 @@ orderSchema.methods.toClientJSON = function toClientJSON() {
     status: this.status,
     paymentMethod: this.paymentMethod,
     paymentId: this.paymentId,
+    razorpayOrderId: this.razorpayOrderId,
+    couponCode: this.couponCode,
+    isGuest: this.isGuest,
     shipping: this.shipping,
     shippingFee: this.shippingFee,
     giftWrapFee: this.giftWrapFee ?? 0,
     subtotal: this.subtotal,
     mrpTotal: this.mrpTotal,
     savings: this.savings,
+    discount: this.discount ?? 0,
     total: this.total,
     items: this.items,
   }

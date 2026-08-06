@@ -39,7 +39,7 @@ export const SHIPPING_OPTIONS: {
   {
     id: 'standard',
     label: 'Standard',
-    detail: '3–5 business days',
-    price: 0,
+    detail: '3–5 business days · Free over threshold',
+    price: 79,
   },
 ]

@@ -4,13 +4,12 @@ import {
   getOrder,
   createOrder,
 } from '../controllers/order.controller.js'
-import { protect } from '../middleware/auth.js'
+import { protect, optionalAuth } from '../middleware/auth.js'
 
 const router = Router()
 
-router.use(protect)
-router.get('/', listOrders)
-router.post('/', createOrder)
-router.get('/:id', getOrder)
+router.post('/', optionalAuth, createOrder)
+router.get('/', protect, listOrders)
+router.get('/:id', optionalAuth, getOrder)
 
 export default router

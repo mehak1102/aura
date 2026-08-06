@@ -9,6 +9,14 @@ import { Product } from '../models/Product.model.js'
 import { Coupon } from '../models/Coupon.model.js'
 import { Review } from '../models/Review.model.js'
 import { CATEGORIES } from './category.controller.js'
+import { Category, DEFAULT_CATEGORIES } from '../models/Category.model.js'
+import {
+  getSiteSettings,
+  updateSiteSettings,
+  DEFAULT_SETTINGS,
+} from '../models/Settings.model.js'
+import { isDbReady } from '../config/db.js'
+import { markOrderPaidAndFulfill } from '../services/orderFulfillment.js'
 import blogs from '../data/blogs.json' with { type: 'json' }
 
 function startOfDay(d = new Date()) {
@@ -133,6 +141,23 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
     return
   }
 
+  const existing = await Order.findOne({ orderNumber: req.params.id })
+  if (!existing) throw new AppError('Order not found', 404)
+
+  // Marking paid must run the same stock + coupon path as payment verify.
+  if (status === 'paid' && existing.status !== 'paid') {
+    const fulfilled = await markOrderPaidAndFulfill({
+      orderNumber: existing.orderNumber,
+      paymentId: existing.paymentId || 'admin_manual',
+      razorpayOrderId: existing.razorpayOrderId,
+    })
+    res.json({
+      success: true,
+      data: { order: fulfilled.toClientJSON() },
+    })
+    return
+  }
+
   const doc = await Order.findOneAndUpdate(
     { orderNumber: req.params.id },
     { status },
@@ -248,16 +273,7 @@ const SAMPLE_REVIEW_COMMENTS = [
   'Works well for my sensitive skin without any irritation.',
 ]
 
-let adminSettings = {
-  storeName: 'Aura of Nature',
-  supportEmail: 'support@auraofnature.com',
-  contactPhone: '+91 80 4567 8900',
-  freeShippingThreshold: 999,
-  lowStockThreshold: 20,
-  currency: 'INR',
-  notifyLowStock: true,
-  notifyNewOrders: true,
-}
+let memoryAdminSettings = { ...DEFAULT_SETTINGS }
 
 function mapProductRow(p) {
   return {
@@ -338,7 +354,29 @@ function buildNotifications(orders, products, threshold = 20) {
 
 export const listAdminCategories = asyncHandler(async (_req, res) => {
   const products = await productCatalog.list()
-  const categories = CATEGORIES.map((c) => ({
+
+  let base = CATEGORIES
+  if (isDbReady()) {
+    let docs = await Category.find({ isActive: { $ne: false } })
+      .sort({ sortOrder: 1, name: 1 })
+      .lean()
+    if (!docs.length) {
+      await Category.insertMany(
+        DEFAULT_CATEGORIES.map((c) => ({ ...c, isActive: true })),
+      )
+      docs = await Category.find({ isActive: { $ne: false } })
+        .sort({ sortOrder: 1, name: 1 })
+        .lean()
+    }
+    base = docs.map((c) => ({
+      id: c.slug,
+      name: c.name,
+      slug: c.slug,
+      description: c.description || '',
+    }))
+  }
+
+  const categories = base.map((c) => ({
     ...c,
     productCount: products.filter((p) => p.category === c.slug).length,
   }))
@@ -396,7 +434,10 @@ export const listAdminBlogs = asyncHandler(async (_req, res) => {
 
 export const listAdminInventory = asyncHandler(async (_req, res) => {
   const products = await productCatalog.list()
-  const threshold = adminSettings.lowStockThreshold
+  const settings = isDbReady()
+    ? await getSiteSettings()
+    : memoryAdminSettings
+  const threshold = settings.lowStockThreshold
   const rows = products
     .map(mapProductRow)
     .sort((a, b) => a.stock - b.stock)
@@ -427,6 +468,9 @@ export const listAdminMedia = asyncHandler(async (_req, res) => {
 
 export const listAdminNotifications = asyncHandler(async (_req, res) => {
   const products = await productCatalog.list()
+  const settings = isDbReady()
+    ? await getSiteSettings()
+    : memoryAdminSettings
   const orders = useMemory()
     ? memoryStore.listAllOrders()
     : (await Order.find().sort({ createdAt: -1 }).limit(20).lean()).map(
@@ -444,31 +488,31 @@ export const listAdminNotifications = asyncHandler(async (_req, res) => {
       notifications: buildNotifications(
         orders,
         products,
-        adminSettings.lowStockThreshold,
+        settings.lowStockThreshold,
       ),
     },
   })
 })
 
 export const getAdminSettings = asyncHandler(async (_req, res) => {
-  res.json({ success: true, data: { settings: adminSettings } })
+  const settings = isDbReady()
+    ? await getSiteSettings()
+    : memoryAdminSettings
+  res.json({ success: true, data: { settings } })
 })
 
 export const updateAdminSettings = asyncHandler(async (req, res) => {
-  const allowed = [
-    'storeName',
-    'supportEmail',
-    'contactPhone',
-    'freeShippingThreshold',
-    'lowStockThreshold',
-    'currency',
-    'notifyLowStock',
-    'notifyNewOrders',
-  ]
+  if (isDbReady()) {
+    const settings = await updateSiteSettings(req.body)
+    res.json({ success: true, data: { settings } })
+    return
+  }
+
+  const allowed = Object.keys(DEFAULT_SETTINGS)
   for (const key of allowed) {
     if (req.body[key] !== undefined) {
-      adminSettings[key] = req.body[key]
+      memoryAdminSettings[key] = req.body[key]
     }
   }
-  res.json({ success: true, data: { settings: adminSettings } })
+  res.json({ success: true, data: { settings: memoryAdminSettings } })
 })

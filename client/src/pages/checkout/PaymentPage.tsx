@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import {
   ArrowLeft,
   Banknote,
@@ -50,6 +51,7 @@ const PAYMENT_METHODS: {
 
 export default function PaymentPage() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const { isAuthenticated } = useAuth()
   const { clearCart, lines: liveLines } = useCart()
   const pending = useMemo(() => loadPendingCheckout(), [])
@@ -72,7 +74,7 @@ export default function PaymentPage() {
 
   const persistOrder = async (payload: {
     id: string
-    status: 'paid' | 'cod_placed'
+    status: 'paid' | 'cod_placed' | 'pending'
     paymentMethod: PaymentMethod
     paymentId?: string
     razorpayOrderId?: string
@@ -93,20 +95,56 @@ export default function PaymentPage() {
       paymentId: payload.paymentId,
     }
 
+    const createPayload = {
+      ...base,
+      items: pending.items,
+      giftWrap: Boolean((pending.giftWrapFee ?? 0) > 0),
+      couponCode: pending.couponCode,
+      razorpayOrderId: payload.razorpayOrderId,
+    }
+
     if (isAuthenticated) {
       try {
-        await ordersApi.create({
+        const created = await ordersApi.create(createPayload)
+        saveOrder({
           ...base,
-          items: pending.items,
-          razorpayOrderId: payload.razorpayOrderId,
+          ...created,
+          items: created.items?.length ? created.items : base.items,
         })
-        return
+        if (!isAuthenticated && pending.shipping.email) {
+          sessionStorage.setItem(
+            'aura_guest_order_email',
+            pending.shipping.email.toLowerCase().trim(),
+          )
+        }
+        void queryClient.invalidateQueries({ queryKey: ['orders'] })
+        return created
       } catch {
-        // fall through to local storage
+        // fall through — still try guest create
       }
     }
 
-    saveOrder(base)
+    // Guest (or auth API failure): still hit the server so ops can see the order.
+    try {
+      const created = await ordersApi.create(createPayload)
+      saveOrder({
+        ...base,
+        ...created,
+        items: created.items?.length ? created.items : base.items,
+      })
+      if (pending.shipping.email) {
+        sessionStorage.setItem(
+          'aura_guest_order_email',
+          pending.shipping.email.toLowerCase().trim(),
+        )
+      }
+      void queryClient.invalidateQueries({ queryKey: ['orders'] })
+      return created
+    } catch {
+      saveOrder(base)
+      void queryClient.invalidateQueries({ queryKey: ['orders'] })
+      return base
+    }
   }
 
   const placeOrder = async () => {
@@ -128,13 +166,23 @@ export default function PaymentPage() {
         return
       }
 
-      const paymentOrder = await paymentsApi.createOrder(
-        Math.round(pending.total * 100),
-        orderId,
-      )
+      // Create a pending server order first so verify can match amount + stock.
+      const pendingServer = await persistOrder({
+        id: orderId,
+        status: 'pending',
+        paymentMethod: 'razorpay',
+      })
+      // Prefer server total; fall back to pending preview only if create failed offline.
+      const payAmount = Math.round((pendingServer.total ?? pending.total) * 100)
+
+      const paymentOrder = await paymentsApi.createOrder({
+        orderNumber: orderId,
+        receipt: orderId,
+      })
+      const chargedPaise = paymentOrder.amount ?? payAmount
 
       await openRazorpayCheckout({
-        amountInPaise: Math.round(pending.total * 100),
+        amountInPaise: chargedPaise,
         name: pending.shipping.fullName,
         email: pending.shipping.email,
         phone: pending.shipping.phone,
@@ -149,15 +197,15 @@ export default function PaymentPage() {
               orderNumber: orderId,
             })
           } catch {
-            // demo mode or verify optional when API offline
+            // demo / offline — order already exists as pending
           }
 
-          await persistOrder({
-            id: orderId,
+          // Refresh local mirror as paid
+          saveOrder({
+            ...pendingServer,
             status: 'paid',
             paymentMethod: 'razorpay',
             paymentId: payload.razorpay_payment_id,
-            razorpayOrderId: payload.razorpay_order_id,
           })
           clearPendingCheckout()
           clearCart()

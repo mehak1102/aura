@@ -28,6 +28,14 @@ export const authApi = {
     const { data } = await api.get<ApiResponse<{ user: User }>>(ADMIN_API.me)
     return data.data.user
   },
+
+  async changePassword(currentPassword: string, newPassword: string) {
+    const { data } = await api.post<ApiResponse<{ user: User }>>(
+      ADMIN_API.changePassword,
+      { currentPassword, newPassword },
+    )
+    return data.data.user
+  },
 }
 
 export const adminApi = {

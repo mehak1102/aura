@@ -1,6 +1,5 @@
 import type { CatalogProduct } from '@/types/shop'
 import type { ProductVariant } from '@/types'
-import { PRODUCTS } from '@/data/products'
 import { enrichProduct } from '@utils/product'
 
 export type StoredCartLine = {
@@ -57,7 +56,7 @@ export function mergeCartLines(
 
 export function hydrateCart(
   items: StoredCartLine[],
-  source: CatalogProduct[] = PRODUCTS,
+  source: CatalogProduct[] = [],
 ): CartLine[] {
   return items
     .map((line) => {

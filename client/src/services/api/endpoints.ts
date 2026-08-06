@@ -4,6 +4,7 @@ export const API_ENDPOINTS = {
     register: '/auth/register',
     logout: '/auth/logout',
     me: '/auth/me',
+    changePassword: '/auth/change-password',
     forgotPassword: '/auth/forgot-password',
     resetPassword: '/auth/reset-password',
   },
@@ -57,8 +58,11 @@ export const API_ENDPOINTS = {
   coupons: {
     validate: '/coupons/validate',
   },
+  settings: {
+    public: '/settings/public',
+  },
   upload: {
-    image: '/upload/image',
+    image: '/upload',
   },
   analytics: {
     dashboard: '/admin/analytics/dashboard',

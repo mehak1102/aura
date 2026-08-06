@@ -7,8 +7,6 @@ import {
 } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import type { CatalogProduct } from '@/types/shop'
-import { PRODUCTS } from '@/data/products'
-import { enrichProduct } from '@utils/product'
 import { productsApi } from '@services/api/products'
 
 type CatalogContextValue = {
@@ -25,10 +23,9 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
     queryKey: ['catalog'],
     queryFn: () => productsApi.list(),
     staleTime: 30 * 60_000,
-    placeholderData: PRODUCTS.map((p) => enrichProduct(p)),
   })
 
-  const products = data ?? PRODUCTS.map((p) => enrichProduct(p))
+  const products = data ?? []
 
   const getBySlug = useCallback(
     (slug: string) => products.find((p) => p.slug === slug),

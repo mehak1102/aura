@@ -6,6 +6,7 @@ import {
   me,
   logout,
   updateProfile,
+  changePassword,
   forgotPassword,
   resetPassword,
 } from '../controllers/auth.controller.js'
@@ -27,6 +28,7 @@ router.post('/forgot-password', authLimiter, forgotPassword)
 router.post('/reset-password', authLimiter, resetPassword)
 router.get('/me', protect, me)
 router.patch('/me', protect, updateProfile)
+router.post('/change-password', protect, changePassword)
 router.post('/logout', protect, logout)
 
 export default router

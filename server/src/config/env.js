@@ -1,12 +1,21 @@
 export const env = {
   port: Number(process.env.PORT) || 5000,
   mongoUri: process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/aura-of-nature',
-  jwtSecret: process.env.JWT_SECRET || 'dev-only-change-me',
+  /** Empty in prod until assertProductionSecrets runs — never use a default secret live. */
+  jwtSecret:
+    process.env.JWT_SECRET ||
+    (process.env.NODE_ENV === 'production' ? '' : 'dev-only-change-me'),
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   isProd: process.env.NODE_ENV === 'production',
   clientOrigins: (process.env.CLIENT_ORIGINS || 'http://localhost:5173,http://localhost:5174')
     .split(',')
-    .map((s) => s.trim()),
+    .map((s) => s.trim())
+    .filter(Boolean),
+  clientUrl: (
+    process.env.CLIENT_URL ||
+    (process.env.CLIENT_ORIGINS || 'http://localhost:5173').split(',')[0] ||
+    'http://localhost:5173'
+  ).replace(/\/$/, ''),
   cloudinary: {
     cloudName: process.env.CLOUDINARY_CLOUD_NAME || '',
     apiKey: process.env.CLOUDINARY_API_KEY || '',
@@ -25,11 +34,9 @@ export const env = {
   },
   instagram: {
     username: process.env.INSTAGRAM_USERNAME || 'auraofnatureofficial',
-    // Optional — never required for the feed to work
     accessToken: process.env.INSTAGRAM_ACCESS_TOKEN || '',
     userId: process.env.INSTAGRAM_USER_ID || '',
   },
-  /** Public origin of this API (e.g. https://aura-api.onrender.com) — used for absolute image proxy URLs */
   publicApiUrl: (
     process.env.PUBLIC_API_URL ||
     process.env.RENDER_EXTERNAL_URL ||

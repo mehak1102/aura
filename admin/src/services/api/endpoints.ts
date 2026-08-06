@@ -1,6 +1,7 @@
 export const ADMIN_API = {
   login: '/auth/login',
   me: '/auth/me',
+  changePassword: '/auth/change-password',
   dashboard: '/admin/dashboard',
   orders: '/admin/orders',
   orderStatus: (id: string) => `/admin/orders/${id}`,

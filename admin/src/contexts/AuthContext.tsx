@@ -15,9 +15,11 @@ type AuthContextValue = {
   user: User | null
   isAuthenticated: boolean
   isAdmin: boolean
+  mustChangePassword: boolean
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
   logout: () => void
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -67,16 +69,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null)
   }, [])
 
+  const changePassword = useCallback(
+    async (currentPassword: string, newPassword: string) => {
+      const next = await authApi.changePassword(currentPassword, newPassword)
+      setUser(next)
+    },
+    [],
+  )
+
   const value = useMemo(
     () => ({
       user,
       isAuthenticated: Boolean(user),
       isAdmin: user?.role === 'admin',
+      mustChangePassword: Boolean(user?.mustChangePassword),
       isLoading,
       login,
       logout,
+      changePassword,
     }),
-    [user, isLoading, login, logout],
+    [user, isLoading, login, logout, changePassword],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

@@ -95,6 +95,7 @@ export type User = {
   phone?: string
   role: 'customer' | 'admin'
   avatar?: string
+  mustChangePassword?: boolean
   addresses?: Address[]
   createdAt?: string
 }

@@ -4,6 +4,11 @@ import { env } from '../src/config/env.js'
 import { Product } from '../src/models/Product.model.js'
 import { Coupon } from '../src/models/Coupon.model.js'
 import { User } from '../src/models/User.model.js'
+import { Category, DEFAULT_CATEGORIES } from '../src/models/Category.model.js'
+import {
+  Settings,
+  DEFAULT_SETTINGS,
+} from '../src/models/Settings.model.js'
 import catalog from '../src/data/catalog.json' with { type: 'json' }
 
 const DEMO_COUPONS = [
@@ -29,6 +34,22 @@ const DEMO_COUPONS = [
 async function seed() {
   await mongoose.connect(env.mongoUri)
   console.log('Connected to MongoDB')
+
+  for (const cat of DEFAULT_CATEGORIES) {
+    await Category.findOneAndUpdate(
+      { slug: cat.slug },
+      { ...cat, isActive: true },
+      { upsert: true, new: true },
+    )
+  }
+  console.log(`Upserted ${DEFAULT_CATEGORIES.length} categories`)
+
+  await Settings.findOneAndUpdate(
+    { key: 'site' },
+    { $setOnInsert: { key: 'site', ...DEFAULT_SETTINGS } },
+    { upsert: true, new: true },
+  )
+  console.log('Ensured site settings document')
 
   const legacyIds = catalog.map((p) => p.id)
   await Product.deleteMany({ legacyId: { $in: legacyIds } })
@@ -92,14 +113,27 @@ async function seed() {
       email: adminEmail,
       password: 'Admin1234!',
       role: 'admin',
+      mustChangePassword: true,
     })
-    console.log(`Created admin user: ${adminEmail} / Admin1234!`)
-  } else if (existingAdmin.role !== 'admin') {
-    existingAdmin.role = 'admin'
-    await existingAdmin.save()
+    console.log(
+      `Created admin user: ${adminEmail} / Admin1234! (must change password)`,
+    )
+  } else {
+    let dirty = false
+    if (existingAdmin.role !== 'admin') {
+      existingAdmin.role = 'admin'
+      dirty = true
+    }
+    if (existingAdmin.mustChangePassword == null) {
+      existingAdmin.mustChangePassword = true
+      dirty = true
+    }
+    if (dirty) await existingAdmin.save()
   }
 
-  console.log(`Seeded ${catalog.length} products and ${DEMO_COUPONS.length} coupons`)
+  console.log(
+    `Seeded ${catalog.length} products and ${DEMO_COUPONS.length} coupons`,
+  )
   await mongoose.disconnect()
 }
 

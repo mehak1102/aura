@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, Leaf } from 'lucide-react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
 import type { Swiper as SwiperInstance } from 'swiper'
-import { PRODUCTS } from '@/data/products'
+import { useCatalog } from '@contexts/CatalogContext'
 import { ingredientShowcaseItems } from '@/data/home'
 import { productImageUrl } from '@utils/productImage'
 import { cn } from '@utils/index'
@@ -112,6 +112,7 @@ const showcaseHeroImages: Record<string, string> = {
 }
 
 export function HomeIngredients() {
+  const { products: catalog } = useCatalog()
   const [activeIndex, setActiveIndex] = useState(0)
   const [fadeFrom, setFadeFrom] = useState<number | null>(null)
   const fadeTimerRef = useRef<number | null>(null)
@@ -126,7 +127,7 @@ export function HomeIngredients() {
       ingredientShowcaseItems
         .map((item) => {
           const slug = productSlugByIngredientId[item.id]
-          const product = PRODUCTS.find((p) => p.slug === slug)
+          const product = catalog.find((p) => p.slug === slug)
           if (!product) return null
           return {
             id: product.id,
@@ -139,7 +140,7 @@ export function HomeIngredients() {
           }
         })
         .filter((p): p is NonNullable<typeof p> => p !== null),
-    [],
+    [catalog],
   )
 
   const selectIngredient = (index: number) => {

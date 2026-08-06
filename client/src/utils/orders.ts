@@ -1,5 +1,4 @@
 import type { CheckoutInput, ShippingMethod } from '@/lib/checkoutSchemas'
-import { SHIPPING_OPTIONS } from '@/lib/checkoutSchemas'
 import type { CartLine, StoredCartLine } from '@utils/cart'
 
 export type PaymentMethod = 'razorpay' | 'cod'
@@ -42,14 +41,22 @@ export type PendingCheckout = {
   giftWrapFee?: number
   shippingFee: number
   total: number
+  couponCode?: string
 }
 
 const PENDING_KEY = 'aura_checkout_pending'
 const ORDERS_KEY = 'aura_orders'
 const LAST_ORDER_KEY = 'aura_last_order_id'
 
-export function getShippingFee(method: ShippingMethod) {
-  return SHIPPING_OPTIONS.find((o) => o.id === method)?.price ?? 0
+export const DEFAULT_FREE_SHIPPING_THRESHOLD = 999
+export const FLAT_SHIPPING_FEE = 79
+
+export function getShippingFee(
+  _method: ShippingMethod,
+  orderSubtotal = 0,
+  freeShippingThreshold = DEFAULT_FREE_SHIPPING_THRESHOLD,
+) {
+  return orderSubtotal >= freeShippingThreshold ? 0 : FLAT_SHIPPING_FEE
 }
 
 export function buildOrderLines(lines: CartLine[]): OrderLine[] {
@@ -112,4 +119,15 @@ export function getOrderById(id: string) {
 
 export function getLastOrderId() {
   return localStorage.getItem(LAST_ORDER_KEY)
+}
+
+/** Merge API + local orders, newest first, de-duped by id. */
+export function mergeOrders(remote: Order[], local: Order[] = loadOrders()): Order[] {
+  const byId = new Map<string, Order>()
+  for (const order of [...remote, ...local]) {
+    if (!byId.has(order.id)) byId.set(order.id, order)
+  }
+  return Array.from(byId.values()).sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  )
 }

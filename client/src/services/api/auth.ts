@@ -62,6 +62,17 @@ export const authApi = {
     return data.data.user
   },
 
+  async changePassword(input: {
+    currentPassword: string
+    newPassword: string
+  }) {
+    const { data } = await api.post<ApiResponse<{ user: User }>>(
+      API_ENDPOINTS.auth.changePassword,
+      input,
+    )
+    return data.data.user
+  },
+
   async forgotPassword(input: ForgotPasswordInput) {
     const { data } = await api.post<{
       success: boolean

@@ -17,6 +17,8 @@ import { useGsap, revealOnScroll } from '@animations/gsap'
 import { scrollToSection } from '@/lib/lenisControl'
 import { ROUTES } from '@/routes/paths'
 import { cn } from '@utils/index'
+import { useFreeShippingThreshold } from '@hooks/usePublicSettings'
+import { FLAT_SHIPPING_FEE } from '@utils/orders'
 
 const SECTION_ICONS: Record<string, LucideIcon> = {
   'delivery-times': Clock3,
@@ -25,12 +27,6 @@ const SECTION_ICONS: Record<string, LucideIcon> = {
   tracking: MapPin,
   'delivery-issues': Truck,
 }
-
-const COST_HIGHLIGHTS = [
-  { label: 'Orders above ₹999', value: 'Free', detail: 'Standard shipping' },
-  { label: 'Orders below ₹999', value: '₹79', detail: 'Flat fee' },
-  { label: 'Express delivery', value: '₹149', detail: 'Select metros' },
-]
 
 function LeafRule() {
   return (
@@ -75,6 +71,19 @@ function splitListItem(item: string) {
 
 export default function ShippingPolicyPage() {
   const navigate = useNavigate()
+  const freeShippingThreshold = useFreeShippingThreshold()
+  const costHighlights = [
+    {
+      label: `Orders above ₹${freeShippingThreshold}`,
+      value: 'Free',
+      detail: 'Standard shipping',
+    },
+    {
+      label: `Orders below ₹${freeShippingThreshold}`,
+      value: `₹${FLAT_SHIPPING_FEE}`,
+      detail: 'Flat fee',
+    },
+  ]
   const sections = shippingPolicy.sections
   const [activeSection, setActiveSection] = useState(
     sectionId(sections[0].heading, sections[0].id),
@@ -271,7 +280,7 @@ export default function ShippingPolicyPage() {
 
                       {isCosts && (
                         <div className="mt-6 grid gap-0 border-y border-charcoal/8 sm:grid-cols-3">
-                          {COST_HIGHLIGHTS.map((row, i) => (
+                          {costHighlights.map((row, i) => (
                             <div
                               key={row.label}
                               className={cn(
@@ -279,7 +288,7 @@ export default function ShippingPolicyPage() {
                                 i > 0 &&
                                   'border-t border-charcoal/8 sm:border-t-0 sm:border-l',
                                 i === 0 && 'sm:pl-0',
-                                i === COST_HIGHLIGHTS.length - 1 && 'sm:pr-0',
+                                i === costHighlights.length - 1 && 'sm:pr-0',
                               )}
                             >
                               <p className="text-[0.72rem] tracking-[0.12em] text-charcoal/45 uppercase">

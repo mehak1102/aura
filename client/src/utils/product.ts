@@ -47,14 +47,17 @@ export function normalizeProductUrl(url: string): string {
   return next
 }
 
-export function getEnrichedProductBySlug(slug: string) {
-  const product = PRODUCTS.find((p) => p.slug === slug)
+export function getEnrichedProductBySlug(
+  slug: string,
+  source: CatalogProduct[] = [],
+) {
+  const product = source.find((p) => p.slug === slug)
   return product ? enrichProduct(product) : undefined
 }
 
 export function getRelatedProducts(
   product: CatalogProduct,
-  source: CatalogProduct[] = PRODUCTS,
+  source: CatalogProduct[] = [],
   limit = 4,
 ) {
   const exclude = new Set([product.id])
@@ -96,7 +99,7 @@ export function getRelatedProducts(
  */
 export function getRecommendedProducts(
   product: CatalogProduct,
-  source: CatalogProduct[] = PRODUCTS,
+  source: CatalogProduct[] = [],
   limit = 4,
   excludeProducts: CatalogProduct[] = [],
 ) {

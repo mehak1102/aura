@@ -13,6 +13,7 @@ function toSafe(user) {
     role: user.role,
     avatar: user.avatar,
     addresses: user.addresses ?? [],
+    mustChangePassword: Boolean(user.mustChangePassword),
     createdAt: user.createdAt,
   }
 }
@@ -182,6 +183,7 @@ export const memoryAuth = {
     if (users.has(key)) {
       const user = users.get(key)
       user.role = 'admin'
+      if (user.mustChangePassword == null) user.mustChangePassword = true
       users.set(key, user)
       return toSafe(user)
     }
@@ -195,6 +197,7 @@ export const memoryAuth = {
       avatar: undefined,
       addresses: [],
       isActive: true,
+      mustChangePassword: true,
       createdAt: new Date().toISOString(),
       resetPasswordToken: undefined,
       resetPasswordExpires: undefined,

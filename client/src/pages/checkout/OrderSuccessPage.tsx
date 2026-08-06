@@ -1,20 +1,80 @@
-import { useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { CheckCircle2 } from 'lucide-react'
+import { CheckCircle2, Download } from 'lucide-react'
 import { Seo } from '@components/seo/Seo'
-import { Body, Display, Eyebrow, Button } from '@components/ui'
+import { Body, Display, Eyebrow, Button, LeafWatermarks } from '@components/ui'
 import {
   getLastOrderId,
   getOrderById,
+  saveOrder,
+  type Order,
 } from '@utils/orders'
+import { downloadInvoice } from '@utils/invoice'
+import { ordersApi } from '@services/api/orders'
+import { useAuth } from '@contexts/AuthContext'
 import { formatCurrency } from '@utils/index'
 import { ROUTES } from '@/routes/paths'
 
 export default function OrderSuccessPage() {
   const [params] = useSearchParams()
   const navigate = useNavigate()
+  const { isAuthenticated } = useAuth()
   const id = params.get('id') || getLastOrderId()
-  const order = useMemo(() => (id ? getOrderById(id) : undefined), [id])
+
+  const [order, setOrder] = useState<Order | undefined>(() =>
+    id ? getOrderById(id) : undefined,
+  )
+  const [loading, setLoading] = useState(!order && Boolean(id))
+  const guestEmail =
+    typeof window !== 'undefined'
+      ? sessionStorage.getItem('aura_guest_order_email') || undefined
+      : undefined
+
+  useEffect(() => {
+    if (!id || order) {
+      setLoading(false)
+      return
+    }
+
+    let cancelled = false
+
+    ;(async () => {
+      const local = getOrderById(id)
+      if (local) {
+        if (!cancelled) {
+          setOrder(local)
+          setLoading(false)
+        }
+        return
+      }
+
+      try {
+        const remote = await ordersApi.get(
+          id,
+          isAuthenticated ? undefined : guestEmail,
+        )
+        if (cancelled) return
+        saveOrder(remote)
+        setOrder(remote)
+      } catch {
+        // leave order undefined → empty state
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    })()
+
+    return () => {
+      cancelled = true
+    }
+  }, [id, isAuthenticated, order, guestEmail])
+
+  if (loading) {
+    return (
+      <main className="flex min-h-[70vh] flex-col items-center justify-center px-[var(--spacing-gutter)] pt-32 text-center">
+        <Body muted>Loading your confirmation…</Body>
+      </main>
+    )
+  }
 
   if (!order) {
     return (
@@ -25,10 +85,18 @@ export default function OrderSuccessPage() {
         <Body muted className="mt-4">
           Your confirmation may have expired from this browser.
         </Body>
-        <div className="mt-8">
+        <div className="mt-8 flex flex-wrap justify-center gap-4">
           <Button onClick={() => navigate(ROUTES.shop)}>
             Continue shopping
           </Button>
+          {isAuthenticated && (
+            <Button
+              variant="outline"
+              onClick={() => navigate(ROUTES.orderHistory)}
+            >
+              View orders
+            </Button>
+          )}
         </div>
       </main>
     )
@@ -37,8 +105,9 @@ export default function OrderSuccessPage() {
   return (
     <>
       <Seo title="Order confirmed" noindex />
-      <section className="pt-28 md:pt-32">
-        <div className="container-aura pb-[var(--spacing-section)]">
+      <section className="relative overflow-hidden pt-28 md:pt-32">
+        <LeafWatermarks />
+        <div className="container-aura relative pb-[var(--spacing-section)]">
           <div className="mx-auto max-w-2xl text-center">
             <CheckCircle2 className="mx-auto h-12 w-12 text-forest" strokeWidth={1.25} />
             <Eyebrow className="mt-6">Thank you</Eyebrow>
@@ -53,7 +122,7 @@ export default function OrderSuccessPage() {
             <p className="mt-6 text-micro text-olive">Order {order.id}</p>
           </div>
 
-          <div className="mx-auto mt-14 max-w-2xl border border-charcoal/10 p-6 md:p-8">
+          <div className="mx-auto mt-14 max-w-2xl border border-charcoal/10 bg-white/70 p-6 backdrop-blur-[2px] md:p-8">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <Eyebrow tone="gold">Summary</Eyebrow>
@@ -128,6 +197,14 @@ export default function OrderSuccessPage() {
           </div>
 
           <div className="mt-10 flex flex-wrap justify-center gap-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => downloadInvoice(order)}
+            >
+              <Download className="h-4 w-4" strokeWidth={1.7} aria-hidden />
+              Download invoice
+            </Button>
             <Button onClick={() => navigate(ROUTES.shop)}>
               Continue shopping
             </Button>

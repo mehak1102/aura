@@ -19,6 +19,7 @@ const MediaLibraryPage = lazy(() => import('@pages/media/MediaLibraryPage'))
 const SettingsPage = lazy(() => import('@pages/settings/SettingsPage'))
 const NotificationsPage = lazy(() => import('@pages/notifications/NotificationsPage'))
 const LoginPage = lazy(() => import('@pages/auth/LoginPage'))
+const ChangePasswordPage = lazy(() => import('@pages/auth/ChangePasswordPage'))
 
 function Loading() {
   return (
@@ -35,6 +36,10 @@ export default function App() {
         <Routes>
           <Route path={ADMIN_ROUTES.login} element={<LoginPage />} />
           <Route element={<ProtectedRoute />}>
+            <Route
+              path={ADMIN_ROUTES.changePassword}
+              element={<ChangePasswordPage />}
+            />
             <Route element={<AdminLayout />}>
               <Route path={ADMIN_ROUTES.dashboard} element={<DashboardPage />} />
               <Route path={ADMIN_ROUTES.orders} element={<OrdersPage />} />

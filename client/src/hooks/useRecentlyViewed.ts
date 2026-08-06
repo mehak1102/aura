@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { CatalogProduct } from '@/types/shop'
-import { PRODUCTS } from '@/data/products'
+import { useCatalog } from '@contexts/CatalogContext'
 import { enrichProduct } from '@utils/product'
 import {
   getRecentlyViewedSlugs,
@@ -8,6 +8,7 @@ import {
 } from '@utils/recentlyViewed'
 
 export function useRecentlyViewed(currentSlug?: string) {
+  const { products } = useCatalog()
   const [items, setItems] = useState<CatalogProduct[]>([])
 
   useEffect(() => {
@@ -15,11 +16,11 @@ export function useRecentlyViewed(currentSlug?: string) {
     const slugs = getRecentlyViewedSlugs().filter((s) => s !== currentSlug)
     setItems(
       slugs
-        .map((slug) => PRODUCTS.find((p) => p.slug === slug))
+        .map((slug) => products.find((p) => p.slug === slug))
         .filter(Boolean)
         .map((p) => enrichProduct(p!)),
     )
-  }, [currentSlug])
+  }, [currentSlug, products])
 
   return items
 }
