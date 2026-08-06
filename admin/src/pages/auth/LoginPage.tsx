@@ -26,7 +26,7 @@ export default function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { email: 'admin@auraofnature.com', password: 'Admin1234!' },
+    defaultValues: { email: '', password: '' },
   })
 
   if (isAuthenticated && isAdmin) {
@@ -69,15 +69,15 @@ export default function LoginPage() {
             error={errors.password?.message}
             {...register('password')}
           />
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && (
+            <p className="text-sm text-red-600" role="alert">
+              {error}
+            </p>
+          )}
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? 'Signing in…' : 'Sign in'}
           </Button>
         </form>
-
-        <p className="mt-6 text-xs text-charcoal/50">
-          Dev default: admin@auraofnature.com / Admin1234!
-        </p>
       </div>
     </div>
   )

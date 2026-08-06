@@ -680,7 +680,7 @@ export const updateAdminUser = asyncHandler(async (req, res) => {
   if (!doc) throw new AppError('User not found', 404)
 
   const actorId = req.user?._id?.toString?.() || req.user?.id
-  const { role, isActive, name, phone } = req.body
+  const { role, isActive, name, phone, confirmPassword } = req.body
 
   if (role != null) {
     if (!['customer', 'admin'].includes(role)) {
@@ -689,7 +689,33 @@ export const updateAdminUser = asyncHandler(async (req, res) => {
     if (doc._id.toString() === actorId && role !== 'admin') {
       throw new AppError('You cannot remove your own admin role', 400)
     }
+
+    if (role === 'admin' && doc.role !== 'admin') {
+      if (!confirmPassword) {
+        throw new AppError(
+          'Re-enter your password to grant admin access',
+          400,
+        )
+      }
+      const actor = await User.findById(actorId).select('+password')
+      if (!actor || !(await actor.comparePassword(confirmPassword))) {
+        throw new AppError('Password confirmation failed', 403)
+      }
+    }
+
+    const previousRole = doc.role
     doc.role = role
+    if (previousRole !== role) {
+      const { writeAuditLog } = await import('../models/AuditLog.model.js')
+      await writeAuditLog({
+        actorId,
+        actorEmail: req.user?.email,
+        action: 'user.role_change',
+        targetType: 'user',
+        targetId: doc._id.toString(),
+        meta: { from: previousRole, to: role },
+      })
+    }
   }
   if (isActive != null) {
     if (doc._id.toString() === actorId && !isActive) {

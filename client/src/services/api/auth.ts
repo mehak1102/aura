@@ -16,17 +16,18 @@ type AuthPayload = {
 
 const TOKEN_KEY = 'aura_token'
 
+/** Legacy cleanup — JWTs must not live in localStorage. */
 export function getStoredToken() {
-  return localStorage.getItem(TOKEN_KEY)
+  return null
 }
 
-export function setStoredToken(token: string | null) {
-  if (token) localStorage.setItem(TOKEN_KEY, token)
-  else localStorage.removeItem(TOKEN_KEY)
+export function setStoredToken(_token: string | null) {
+  localStorage.removeItem(TOKEN_KEY)
 }
 
 export const authApi = {
   async login(input: LoginInput) {
+    setStoredToken(null)
     const { data } = await api.post<ApiResponse<AuthPayload>>(
       API_ENDPOINTS.auth.login,
       input,
@@ -35,6 +36,7 @@ export const authApi = {
   },
 
   async register(input: Omit<RegisterInput, 'confirmPassword'>) {
+    setStoredToken(null)
     const { data } = await api.post<ApiResponse<AuthPayload>>(
       API_ENDPOINTS.auth.register,
       input,
@@ -50,8 +52,11 @@ export const authApi = {
   },
 
   async logout() {
-    await api.post(API_ENDPOINTS.auth.logout)
-    setStoredToken(null)
+    try {
+      await api.post(API_ENDPOINTS.auth.logout)
+    } finally {
+      setStoredToken(null)
+    }
   },
 
   async updateProfile(input: ProfileInput) {
@@ -85,6 +90,7 @@ export const authApi = {
   },
 
   async resetPassword(input: ResetPasswordInput) {
+    setStoredToken(null)
     const { data } = await api.post<ApiResponse<AuthPayload>>(
       API_ENDPOINTS.auth.resetPassword,
       {

@@ -18,6 +18,9 @@ const AnalyticsPage = lazy(() => import('@pages/analytics/AnalyticsPage'))
 const SalesPage = lazy(() => import('@pages/analytics/SalesPage'))
 const SettingsPage = lazy(() => import('@pages/settings/SettingsPage'))
 const NotificationsPage = lazy(() => import('@pages/notifications/NotificationsPage'))
+const ContactInquiriesPage = lazy(
+  () => import('@pages/contact/ContactInquiriesPage'),
+)
 const LoginPage = lazy(() => import('@pages/auth/LoginPage'))
 const ChangePasswordPage = lazy(() => import('@pages/auth/ChangePasswordPage'))
 
@@ -58,6 +61,10 @@ export default function App() {
               />
               <Route path={ADMIN_ROUTES.categories} element={<CategoriesPage />} />
               <Route path={ADMIN_ROUTES.users} element={<UsersPage />} />
+              <Route
+                path={ADMIN_ROUTES.contact}
+                element={<ContactInquiriesPage />}
+              />
               <Route path={ADMIN_ROUTES.coupons} element={<CouponsPage />} />
               <Route path={ADMIN_ROUTES.inventory} element={<InventoryPage />} />
               <Route path={ADMIN_ROUTES.reviews} element={<ReviewsPage />} />

@@ -5,6 +5,8 @@ import { z } from 'zod'
 import { Send } from 'lucide-react'
 import { Body } from '@components/ui'
 import { cn } from '@utils/index'
+import { api } from '@services/api/client'
+import { API_ENDPOINTS } from '@services/api/endpoints'
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name is required'),
@@ -46,7 +48,11 @@ function FieldShell({
         >
           {label}
         </label>
-        {error && <span className="text-micro text-olive">{error}</span>}
+        {error && (
+          <span id={`${htmlFor}-error`} className="text-micro text-olive" role="alert">
+            {error}
+          </span>
+        )}
       </div>
       {children}
     </div>
@@ -55,6 +61,7 @@ function FieldShell({
 
 export function ContactForm() {
   const [sent, setSent] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const {
     register,
@@ -66,10 +73,25 @@ export function ContactForm() {
     defaultValues: { name: '', email: '', subject: '', message: '' },
   })
 
-  const onSubmit = handleSubmit(async () => {
-    await new Promise((r) => setTimeout(r, 800))
-    setSent(true)
-    reset()
+  const onSubmit = handleSubmit(async (values) => {
+    setSubmitError(null)
+    try {
+      await api.post(API_ENDPOINTS.contact.submit, values)
+      setSent(true)
+      reset()
+    } catch (err: unknown) {
+      const axiosMsg =
+        err &&
+        typeof err === 'object' &&
+        'response' in err &&
+        (err as { response?: { data?: { message?: string } } }).response?.data
+          ?.message
+      setSubmitError(
+        axiosMsg ||
+          (err instanceof Error ? err.message : null) ||
+          'Could not send your message. Please try again.',
+      )
+    }
   })
 
   if (sent) {
@@ -97,6 +119,8 @@ export function ContactForm() {
           id="name"
           autoComplete="name"
           placeholder="Your full name"
+          aria-invalid={Boolean(errors.name)}
+          aria-describedby={errors.name ? 'name-error' : undefined}
           className={cn(fieldBase, errors.name && 'border-olive/60')}
           {...register('name')}
         />
@@ -108,6 +132,8 @@ export function ContactForm() {
           type="email"
           autoComplete="email"
           placeholder="Your email address"
+          aria-invalid={Boolean(errors.email)}
+          aria-describedby={errors.email ? 'email-error' : undefined}
           className={cn(fieldBase, errors.email && 'border-olive/60')}
           {...register('email')}
         />
@@ -121,6 +147,8 @@ export function ContactForm() {
         <select
           id="subject"
           defaultValue=""
+          aria-invalid={Boolean(errors.subject)}
+          aria-describedby={errors.subject ? 'subject-error' : undefined}
           className={cn(
             fieldBase,
             'appearance-none bg-[length:1rem] bg-[right_1rem_center] bg-no-repeat pr-10',
@@ -152,6 +180,8 @@ export function ContactForm() {
           id="message"
           rows={5}
           placeholder="Type your message here..."
+          aria-invalid={Boolean(errors.message)}
+          aria-describedby={errors.message ? 'message-error' : undefined}
           className={cn(
             fieldBase,
             'min-h-32 resize-y',
@@ -160,6 +190,12 @@ export function ContactForm() {
           {...register('message')}
         />
       </FieldShell>
+
+      {submitError && (
+        <p className="text-sm text-olive" role="alert">
+          {submitError}
+        </p>
+      )}
 
       <button
         type="submit"

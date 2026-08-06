@@ -8,11 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import type { User } from '@/types'
-import {
-  authApi,
-  getStoredToken,
-  setStoredToken,
-} from '@services/api/auth'
+import { authApi, setStoredToken } from '@services/api/auth'
 import type {
   LoginInput,
   ProfileInput,
@@ -37,26 +33,15 @@ const AuthContext = createContext<AuthContextValue | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [token, setToken] = useState<string | null>(() => getStoredToken())
   const [isLoading, setIsLoading] = useState(true)
 
   const refreshUser = useCallback(async () => {
-    const stored = getStoredToken()
-    if (!stored) {
-      setUser(null)
-      setToken(null)
-      setIsLoading(false)
-      return
-    }
-
+    setStoredToken(null)
     try {
       const me = await authApi.me()
       setUser(me)
-      setToken(stored)
     } catch {
-      setStoredToken(null)
       setUser(null)
-      setToken(null)
     } finally {
       setIsLoading(false)
     }
@@ -67,30 +52,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [refreshUser])
 
   const login = useCallback(async (input: LoginInput) => {
-    const { user: nextUser, token: nextToken } = await authApi.login(input)
-    setStoredToken(nextToken)
-    setToken(nextToken)
+    const { user: nextUser } = await authApi.login(input)
     setUser(nextUser)
     return nextUser
   }, [])
 
   const register = useCallback(async (input: RegisterInput) => {
     const { confirmPassword: _, ...payload } = input
-    const { user: nextUser, token: nextToken } = await authApi.register(payload)
-    setStoredToken(nextToken)
-    setToken(nextToken)
+    const { user: nextUser } = await authApi.register(payload)
     setUser(nextUser)
     return nextUser
   }, [])
 
   const logout = useCallback(async () => {
     try {
-      if (getStoredToken()) await authApi.logout()
+      await authApi.logout()
     } catch {
       // clear locally even if API fails
     } finally {
       setStoredToken(null)
-      setToken(null)
       setUser(null)
     }
   }, [])
@@ -102,9 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const resetPassword = useCallback(async (input: ResetPasswordInput) => {
-    const { user: nextUser, token: nextToken } = await authApi.resetPassword(input)
-    setStoredToken(nextToken)
-    setToken(nextToken)
+    const { user: nextUser } = await authApi.resetPassword(input)
     setUser(nextUser)
     return nextUser
   }, [])
@@ -112,8 +90,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
-      token,
-      isAuthenticated: Boolean(user && token),
+      token: null,
+      isAuthenticated: Boolean(user),
       isLoading,
       login,
       register,
@@ -124,7 +102,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }),
     [
       user,
-      token,
       isLoading,
       login,
       register,

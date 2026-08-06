@@ -14,8 +14,13 @@ export default function UsersPage() {
   })
 
   const update = useMutation({
-    mutationFn: ({ id, patch }: { id: string; patch: Partial<User> }) =>
-      adminApi.updateUser(id, patch),
+    mutationFn: ({
+      id,
+      patch,
+    }: {
+      id: string
+      patch: Partial<User> & { confirmPassword?: string }
+    }) => adminApi.updateUser(id, patch),
     onSuccess: () =>
       void queryClient.invalidateQueries({ queryKey: ['admin-users'] }),
   })
@@ -45,12 +50,45 @@ export default function UsersPage() {
               <select
                 value={row.role}
                 disabled={row.id === me?.id || update.isPending}
-                onChange={(e) =>
+                onChange={(e) => {
+                  const nextRole = e.target.value as User['role']
+                  if (nextRole === row.role) return
+
+                  if (nextRole === 'admin') {
+                    const ok = window.confirm(
+                      `Promote ${row.email} to admin? They will get full store access.`,
+                    )
+                    if (!ok) {
+                      e.target.value = row.role
+                      return
+                    }
+                    const confirmPassword = window.prompt(
+                      'Re-enter your admin password to confirm this promotion:',
+                    )
+                    if (!confirmPassword) {
+                      e.target.value = row.role
+                      return
+                    }
+                    update.mutate({
+                      id: row.id,
+                      patch: { role: nextRole, confirmPassword },
+                    })
+                    return
+                  }
+
+                  if (
+                    !window.confirm(
+                      `Change ${row.email} from ${row.role} to ${nextRole}?`,
+                    )
+                  ) {
+                    e.target.value = row.role
+                    return
+                  }
                   update.mutate({
                     id: row.id,
-                    patch: { role: e.target.value as User['role'] },
+                    patch: { role: nextRole },
                   })
-                }
+                }}
                 className="rounded-md border border-charcoal/15 bg-white px-2 py-1 text-xs"
               >
                 <option value="customer">customer</option>

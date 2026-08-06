@@ -12,6 +12,7 @@ import {
   Settings,
   Bell,
   LogOut,
+  Mail,
 } from 'lucide-react'
 import { ADMIN_ROUTES } from '@/routes/paths'
 import { useAuth } from '@contexts/AuthContext'
@@ -22,6 +23,7 @@ const NAV = [
   { to: ADMIN_ROUTES.orders, label: 'Orders', icon: ShoppingBag },
   { to: ADMIN_ROUTES.products, label: 'Products', icon: Package },
   { to: ADMIN_ROUTES.users, label: 'Users', icon: Users },
+  { to: ADMIN_ROUTES.contact, label: 'Contact', icon: Mail },
   { to: ADMIN_ROUTES.analytics, label: 'Analytics', icon: BarChart3 },
   { to: ADMIN_ROUTES.categories, label: 'Categories', icon: Tags },
   { to: ADMIN_ROUTES.coupons, label: 'Coupons', icon: Ticket },
@@ -70,7 +72,7 @@ export function Sidebar() {
         <p className="truncate text-xs text-charcoal/55">{user?.email}</p>
         <button
           type="button"
-          onClick={logout}
+          onClick={() => void logout()}
           className="mt-3 inline-flex items-center gap-2 text-xs text-olive hover:text-forest"
         >
           <LogOut className="h-3.5 w-3.5" />

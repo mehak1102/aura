@@ -9,7 +9,7 @@ import {
 } from 'react'
 import type { User } from '@/types'
 import { authApi } from '@services/api/admin'
-import { getStoredToken, setStoredToken } from '@services/api/tokens'
+import { setStoredToken } from '@services/api/tokens'
 
 type AuthContextValue = {
   user: User | null
@@ -18,7 +18,7 @@ type AuthContextValue = {
   mustChangePassword: boolean
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
-  logout: () => void
+  logout: () => Promise<void>
   changePassword: (currentPassword: string, newPassword: string) => Promise<void>
 }
 
@@ -29,22 +29,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
 
   const refresh = useCallback(async () => {
-    const token = getStoredToken()
-    if (!token) {
-      setUser(null)
-      setIsLoading(false)
-      return
-    }
+    setStoredToken(null)
     try {
       const me = await authApi.me()
       if (me.role !== 'admin') {
-        setStoredToken(null)
         setUser(null)
       } else {
         setUser(me)
       }
     } catch {
-      setStoredToken(null)
       setUser(null)
     } finally {
       setIsLoading(false)
@@ -56,17 +49,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [refresh])
 
   const login = useCallback(async (email: string, password: string) => {
-    const { user: nextUser, token } = await authApi.login(email, password)
+    const { user: nextUser } = await authApi.login(email, password)
     if (nextUser.role !== 'admin') {
       throw new Error('Admin access required for this panel')
     }
-    setStoredToken(token)
+    setStoredToken(null)
     setUser(nextUser)
   }, [])
 
-  const logout = useCallback(() => {
-    setStoredToken(null)
-    setUser(null)
+  const logout = useCallback(async () => {
+    try {
+      await authApi.logout()
+    } catch {
+      // clear locally even if API fails
+    } finally {
+      setStoredToken(null)
+      setUser(null)
+    }
   }, [])
 
   const changePassword = useCallback(

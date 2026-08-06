@@ -12,6 +12,8 @@ import { productsApi } from '@services/api/products'
 type CatalogContextValue = {
   products: CatalogProduct[]
   isLoading: boolean
+  isError: boolean
+  refetch: () => void
   getBySlug: (slug: string) => CatalogProduct | undefined
   getById: (id: string) => CatalogProduct | undefined
 }
@@ -19,7 +21,7 @@ type CatalogContextValue = {
 const CatalogContext = createContext<CatalogContextValue | null>(null)
 
 export function CatalogProvider({ children }: { children: ReactNode }) {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['catalog'],
     queryFn: () => productsApi.list(),
     staleTime: 30 * 60_000,
@@ -38,8 +40,17 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
   )
 
   const value = useMemo(
-    () => ({ products, isLoading, getBySlug, getById }),
-    [products, isLoading, getBySlug, getById],
+    () => ({
+      products,
+      isLoading,
+      isError,
+      refetch: () => {
+        void refetch()
+      },
+      getBySlug,
+      getById,
+    }),
+    [products, isLoading, isError, refetch, getBySlug, getById],
   )
 
   return (

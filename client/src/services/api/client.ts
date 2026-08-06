@@ -8,14 +8,7 @@ export const api = axios.create({
   },
 })
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('aura_token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
-
+// Cookie-only browser auth — do not attach Bearer from localStorage (XSS).
 api.interceptors.response.use(
   (response) => response,
   (error) => {

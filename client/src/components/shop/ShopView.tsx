@@ -5,6 +5,7 @@ import { ProductCard } from './ProductCard'
 import { ShopFiltersPanel } from './ShopFilters'
 import { ShopToolbar } from './ShopToolbar'
 import { useShopFilters } from '@hooks/useShopFilters'
+import { useCatalog } from '@contexts/CatalogContext'
 import {
   useGsap,
   revealCommerceHeader,
@@ -63,6 +64,7 @@ export function ShopView({
     newArrival: metaKey === 'new-arrivals' || defaults?.newArrival,
     ...defaults,
   })
+  const { isLoading, isError, refetch } = useCatalog()
 
   const scope = useGsap(() => {
     if (!scope.current) return
@@ -125,7 +127,27 @@ export function ShopView({
                 onOpenFilters={() => setFiltersOpen(true)}
               />
 
-              {products.length === 0 ? (
+              {isError ? (
+                <div className="py-24 text-center" role="alert">
+                  <Display as="h2" size="sm" className="text-forest">
+                    Catalog unavailable
+                  </Display>
+                  <Body muted className="mt-3">
+                    We could not load products right now. Please try again.
+                  </Body>
+                  <button
+                    type="button"
+                    onClick={() => refetch()}
+                    className="mt-6 text-micro text-olive hover:text-forest"
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : isLoading && products.length === 0 ? (
+                <div className="py-24 text-center">
+                  <Body muted>Loading products…</Body>
+                </div>
+              ) : products.length === 0 ? (
                 <div className="py-24 text-center">
                   <Display as="h2" size="sm" className="text-forest">
                     No products found

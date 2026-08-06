@@ -59,3 +59,23 @@ export async function sendOrderConfirmationEmail({ to, orderId, total }) {
 
   return { sent: true }
 }
+
+export async function sendContactNotificationEmail({ to, inquiry }) {
+  const mailer = getTransporter()
+  if (!mailer) return { sent: false, reason: 'smtp_not_configured' }
+
+  await mailer.sendMail({
+    from: env.smtp.from,
+    to,
+    replyTo: inquiry.email,
+    subject: `Contact · ${inquiry.subject}`,
+    text: `From: ${inquiry.name} <${inquiry.email}>\nSubject: ${inquiry.subject}\n\n${inquiry.message}`,
+    html: `
+      <p><strong>${inquiry.name}</strong> &lt;${inquiry.email}&gt;</p>
+      <p>Subject: ${inquiry.subject}</p>
+      <p>${String(inquiry.message).replace(/\n/g, '<br/>')}</p>
+    `,
+  })
+
+  return { sent: true }
+}

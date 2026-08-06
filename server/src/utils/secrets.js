@@ -14,6 +14,16 @@ export function assertProductionSecrets() {
   if (!env.razorpay.keyId || !env.razorpay.keySecret) {
     missing.push('RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET')
   }
+  if (!env.smtp.host || !env.smtp.user || !env.smtp.pass) {
+    missing.push('SMTP_HOST / SMTP_USER / SMTP_PASS')
+  }
+  if (
+    !env.cloudinary.cloudName ||
+    !env.cloudinary.apiKey ||
+    !env.cloudinary.apiSecret
+  ) {
+    missing.push('CLOUDINARY_CLOUD_NAME / CLOUDINARY_API_KEY / CLOUDINARY_API_SECRET')
+  }
 
   if (missing.length) {
     throw new Error(

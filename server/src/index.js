@@ -35,7 +35,14 @@ app.use(
 app.use(compression())
 app.use(morgan(env.isProd ? 'combined' : 'dev'))
 app.use(cookieParser())
-app.use(express.json({ limit: '10mb' }))
+
+// JSON for all routes except Razorpay webhook (needs raw bytes for HMAC).
+app.use((req, res, next) => {
+  if (req.originalUrl.startsWith('/api/payments/webhook')) {
+    return express.raw({ type: 'application/json' })(req, res, next)
+  }
+  return express.json({ limit: '10mb' })(req, res, next)
+})
 app.use(express.urlencoded({ extended: true }))
 
 app.use(
@@ -49,6 +56,20 @@ app.use(
 )
 
 app.get('/api/health', (_req, res) => {
+  res.json({
+    success: true,
+    data: {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+    },
+  })
+})
+
+app.get('/api/health/details', (_req, res) => {
+  if (env.isProd) {
+    res.status(401).json({ success: false, message: 'Unauthorized' })
+    return
+  }
   res.json({
     success: true,
     data: {

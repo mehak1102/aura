@@ -34,6 +34,10 @@ export const authApi = {
     )
     return data.data.user
   },
+
+  async logout() {
+    await api.post(ADMIN_API.logout)
+  },
 }
 
 export const adminApi = {
@@ -73,12 +77,52 @@ export const adminApi = {
     return data.data.users
   },
 
-  async updateUser(id: string, patch: Partial<User>) {
+  async updateUser(
+    id: string,
+    patch: Partial<User> & { confirmPassword?: string },
+  ) {
     const { data } = await api.patch<ApiResponse<{ user: User }>>(
       ADMIN_API.user(id),
       patch,
     )
     return data.data.user
+  },
+
+  async contactInquiries() {
+    const { data } = await api.get<
+      ApiResponse<{
+        inquiries: Array<{
+          id: string
+          name: string
+          email: string
+          subject: string
+          message: string
+          status: 'new' | 'read' | 'archived'
+          createdAt: string
+        }>
+      }>
+    >(ADMIN_API.contactInquiries)
+    return data.data.inquiries
+  },
+
+  async updateContactInquiry(
+    id: string,
+    status: 'new' | 'read' | 'archived',
+  ) {
+    const { data } = await api.patch<
+      ApiResponse<{
+        inquiry: {
+          id: string
+          name: string
+          email: string
+          subject: string
+          message: string
+          status: 'new' | 'read' | 'archived'
+          createdAt: string
+        }
+      }>
+    >(ADMIN_API.contactInquiry(id), { status })
+    return data.data.inquiry
   },
 
   async products() {

@@ -1,9 +1,11 @@
 import { api } from './client'
 import { API_ENDPOINTS } from './endpoints'
 import type { ApiResponse } from '@/types'
+import { getCheckoutToken } from './orders'
 
 export const paymentsApi = {
   async createOrder(payload: { orderNumber: string; receipt?: string }) {
+    const checkoutToken = getCheckoutToken()
     const { data } = await api.post<
       ApiResponse<{
         mode: 'demo' | 'live'
@@ -15,6 +17,7 @@ export const paymentsApi = {
     >(API_ENDPOINTS.payments.createOrder, {
       orderNumber: payload.orderNumber,
       receipt: payload.receipt,
+      ...(checkoutToken ? { checkoutToken } : {}),
     })
     return data.data
   },
@@ -25,6 +28,7 @@ export const paymentsApi = {
     razorpay_signature?: string
     orderNumber: string
   }) {
+    const checkoutToken = getCheckoutToken()
     const { data } = await api.post<
       ApiResponse<{
         verified: boolean
@@ -32,7 +36,10 @@ export const paymentsApi = {
         paymentId: string
         orderId?: string
       }>
-    >(API_ENDPOINTS.payments.verify, payload)
+    >(API_ENDPOINTS.payments.verify, {
+      ...payload,
+      ...(checkoutToken ? { checkoutToken } : {}),
+    })
     return data.data
   },
 }

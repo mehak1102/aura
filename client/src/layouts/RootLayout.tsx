@@ -13,6 +13,7 @@ import {
 } from '@components/layout'
 import { CartToast } from '@components/cart/CartToast'
 import { QuickViewProvider } from '@components/shop/QuickView'
+import { ErrorBoundary } from '@components/ErrorBoundary'
 import { ROUTES } from '@/routes/paths'
 
 const TRANSPARENT_ROUTES = new Set<string>([])
@@ -34,11 +35,19 @@ export function RootLayout() {
       <ScrollTriggerRefresh />
       <QuickViewProvider>
         <div className="relative flex min-h-screen flex-col text-charcoal">
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-forest focus:px-4 focus:py-2 focus:text-sm focus:text-warm-white"
+          >
+            Skip to content
+          </a>
           <PageTransition />
           {!isAuthPage && <ScrollProgress />}
           {!isAuthPage && <Header transparent={transparentHeader} />}
-          <main className="flex-1">
-            <Outlet />
+          <main id="main-content" className="flex-1" tabIndex={-1}>
+            <ErrorBoundary>
+              <Outlet />
+            </ErrorBoundary>
           </main>
           {!isAuthPage && <SiteInstagram />}
           {!isAuthPage && <Footer />}

@@ -9,6 +9,7 @@ export const ADMIN_ROUTES = {
   productEdit: '/products/:id/edit',
   categories: '/categories',
   users: '/users',
+  contact: '/contact',
   coupons: '/coupons',
   inventory: '/inventory',
   reviews: '/reviews',

@@ -14,6 +14,7 @@ import analyticsRoutes from './analytics.routes.js'
 import adminRoutes from './admin.routes.js'
 import instagramRoutes from './instagram.routes.js'
 import settingsRoutes from './settings.routes.js'
+import contactRoutes from './contact.routes.js'
 
 const router = Router()
 
@@ -29,6 +30,7 @@ router.use('/blogs', blogRoutes)
 router.use('/payments', paymentRoutes)
 router.use('/upload', uploadRoutes)
 router.use('/settings', settingsRoutes)
+router.use('/contact', contactRoutes)
 router.use('/admin/analytics', analyticsRoutes)
 router.use('/admin', adminRoutes)
 router.use('/instagram', instagramRoutes)

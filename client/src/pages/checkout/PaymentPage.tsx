@@ -13,12 +13,10 @@ import { Seo } from '@components/seo/Seo'
 import { Body, Button, Display, Eyebrow, LeafShadows } from '@components/ui'
 import { OrderSummaryCard } from '@components/checkout/OrderSummaryCard'
 import { useCart } from '@contexts/CartContext'
-import { useAuth } from '@contexts/AuthContext'
 import { hydrateCart } from '@utils/cart'
 import {
   buildOrderLines,
   clearPendingCheckout,
-  createOrderId,
   loadPendingCheckout,
   saveOrder,
   type PaymentMethod,
@@ -52,7 +50,6 @@ const PAYMENT_METHODS: {
 export default function PaymentPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const { isAuthenticated } = useAuth()
   const { clearCart, lines: liveLines } = useCart()
   const pending = useMemo(() => loadPendingCheckout(), [])
   const [method, setMethod] = useState<PaymentMethod>('razorpay')
@@ -72,79 +69,33 @@ export default function PaymentPage() {
 
   if (!pending) return null
 
-  const persistOrder = async (payload: {
-    id: string
-    status: 'paid' | 'cod_placed' | 'pending'
-    paymentMethod: PaymentMethod
-    paymentId?: string
-    razorpayOrderId?: string
-  }) => {
-    const base = {
-      id: payload.id,
-      createdAt: new Date().toISOString(),
+  const createServerOrder = async (paymentMethod: PaymentMethod) => {
+    const created = await ordersApi.create({
       shipping: pending.shipping,
-      shippingFee: pending.shippingFee,
-      giftWrapFee: pending.giftWrapFee ?? 0,
-      subtotal: pending.subtotal,
-      mrpTotal: pending.mrpTotal,
-      savings: pending.savings,
-      total: pending.total,
-      items: buildOrderLines(lines),
-      status: payload.status,
-      paymentMethod: payload.paymentMethod,
-      paymentId: payload.paymentId,
-    }
-
-    const createPayload = {
-      ...base,
       items: pending.items,
       giftWrap: Boolean((pending.giftWrapFee ?? 0) > 0),
       couponCode: pending.couponCode,
-      razorpayOrderId: payload.razorpayOrderId,
-    }
+      paymentMethod,
+    })
 
-    if (isAuthenticated) {
-      try {
-        const created = await ordersApi.create(createPayload)
-        saveOrder({
-          ...base,
-          ...created,
-          items: created.items?.length ? created.items : base.items,
-        })
-        if (!isAuthenticated && pending.shipping.email) {
-          sessionStorage.setItem(
-            'aura_guest_order_email',
-            pending.shipping.email.toLowerCase().trim(),
-          )
-        }
-        void queryClient.invalidateQueries({ queryKey: ['orders'] })
-        return created
-      } catch {
-        // fall through — still try guest create
-      }
+    const mirrored = {
+      id: created.id,
+      createdAt: created.createdAt || new Date().toISOString(),
+      shipping: pending.shipping,
+      shippingFee: created.shippingFee ?? pending.shippingFee,
+      giftWrapFee: created.giftWrapFee ?? pending.giftWrapFee ?? 0,
+      subtotal: created.subtotal ?? pending.subtotal,
+      mrpTotal: created.mrpTotal ?? pending.mrpTotal,
+      savings: created.savings ?? pending.savings,
+      total: created.total ?? pending.total,
+      items: created.items?.length ? created.items : buildOrderLines(lines),
+      status: created.status,
+      paymentMethod,
+      paymentId: created.paymentId,
     }
-
-    // Guest (or auth API failure): still hit the server so ops can see the order.
-    try {
-      const created = await ordersApi.create(createPayload)
-      saveOrder({
-        ...base,
-        ...created,
-        items: created.items?.length ? created.items : base.items,
-      })
-      if (pending.shipping.email) {
-        sessionStorage.setItem(
-          'aura_guest_order_email',
-          pending.shipping.email.toLowerCase().trim(),
-        )
-      }
-      void queryClient.invalidateQueries({ queryKey: ['orders'] })
-      return created
-    } catch {
-      saveOrder(base)
-      void queryClient.invalidateQueries({ queryKey: ['orders'] })
-      return base
-    }
+    saveOrder(mirrored)
+    void queryClient.invalidateQueries({ queryKey: ['orders'] })
+    return mirrored
   }
 
   const placeOrder = async () => {
@@ -152,41 +103,28 @@ export default function PaymentPage() {
     setBusy(true)
 
     try {
-      const orderId = createOrderId()
-
       if (method === 'cod') {
-        await persistOrder({
-          id: orderId,
-          status: 'cod_placed',
-          paymentMethod: 'cod',
-        })
+        const order = await createServerOrder('cod')
         clearPendingCheckout()
         clearCart()
-        navigate(`${ROUTES.orderSuccess}?id=${orderId}`, { replace: true })
+        navigate(`${ROUTES.orderSuccess}?id=${order.id}`, { replace: true })
         return
       }
 
-      // Create a pending server order first so verify can match amount + stock.
-      const pendingServer = await persistOrder({
-        id: orderId,
-        status: 'pending',
-        paymentMethod: 'razorpay',
-      })
-      // Prefer server total; fall back to pending preview only if create failed offline.
-      const payAmount = Math.round((pendingServer.total ?? pending.total) * 100)
+      const pendingServer = await createServerOrder('razorpay')
+      const orderNumber = pendingServer.id
 
       const paymentOrder = await paymentsApi.createOrder({
-        orderNumber: orderId,
-        receipt: orderId,
+        orderNumber,
+        receipt: orderNumber,
       })
-      const chargedPaise = paymentOrder.amount ?? payAmount
 
       await openRazorpayCheckout({
-        amountInPaise: chargedPaise,
+        amountInPaise: paymentOrder.amount,
         name: pending.shipping.fullName,
         email: pending.shipping.email,
         phone: pending.shipping.phone,
-        description: `Aura of Nature · ${orderId}`,
+        description: `Aura of Nature · ${orderNumber}`,
         orderId: paymentOrder.mode === 'live' ? paymentOrder.orderId : undefined,
         onSuccess: async (payload) => {
           try {
@@ -194,28 +132,36 @@ export default function PaymentPage() {
               razorpay_order_id: payload.razorpay_order_id,
               razorpay_payment_id: payload.razorpay_payment_id,
               razorpay_signature: payload.razorpay_signature,
-              orderNumber: orderId,
+              orderNumber,
             })
-          } catch {
-            // demo / offline — order already exists as pending
-          }
 
-          // Refresh local mirror as paid
-          saveOrder({
-            ...pendingServer,
-            status: 'paid',
-            paymentMethod: 'razorpay',
-            paymentId: payload.razorpay_payment_id,
-          })
-          clearPendingCheckout()
-          clearCart()
-          navigate(`${ROUTES.orderSuccess}?id=${orderId}`, { replace: true })
+            saveOrder({
+              ...pendingServer,
+              status: 'paid',
+              paymentMethod: 'razorpay',
+              paymentId: payload.razorpay_payment_id,
+            })
+            clearPendingCheckout()
+            clearCart()
+            navigate(`${ROUTES.orderSuccess}?id=${orderNumber}`, {
+              replace: true,
+            })
+          } catch (err) {
+            setError(
+              err instanceof Error
+                ? err.message
+                : 'Payment could not be verified. If money was deducted, wait a moment or contact support with your order number.',
+            )
+            setBusy(false)
+          }
         },
         onDismiss: () => setBusy(false),
       })
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Payment failed. Please try again.',
+        err instanceof Error
+          ? err.message
+          : 'Could not create your order. Please try again.',
       )
       setBusy(false)
     }
@@ -337,7 +283,7 @@ export default function PaymentPage() {
               </section>
 
               {error && (
-                <Body size="sm" className="text-[#b4534b]">
+                <Body size="sm" className="text-[#b4534b]" role="alert">
                   {error}
                 </Body>
               )}
@@ -349,7 +295,9 @@ export default function PaymentPage() {
                     ? 'Processing…'
                     : method === 'cod'
                       ? 'Place COD order'
-                      : `Pay ${formatCurrency(pending.total)}`}
+                      : error
+                        ? 'Retry payment'
+                        : `Pay ${formatCurrency(pending.total)}`}
                 </Button>
                 <button
                   type="button"

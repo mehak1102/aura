@@ -1,24 +1,16 @@
 import axios from 'axios'
-import { setStoredToken } from './tokens'
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? '/api',
   withCredentials: true,
 })
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('aura_admin_token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
-
+// Cookie-only browser auth — do not attach Bearer from localStorage (XSS).
 api.interceptors.response.use(
   (res) => res,
   (error) => {
     if (error.response?.status === 401) {
-      setStoredToken(null)
+      localStorage.removeItem('aura_admin_token')
     }
     const message =
       error.response?.data?.message ||

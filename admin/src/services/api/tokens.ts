@@ -1,10 +1,8 @@
-const TOKEN_KEY = 'aura_admin_token'
-
+/** Legacy — admin auth is cookie-only; clear any leftover JWT. */
 export function getStoredToken() {
-  return localStorage.getItem(TOKEN_KEY)
+  return null
 }
 
-export function setStoredToken(token: string | null) {
-  if (token) localStorage.setItem(TOKEN_KEY, token)
-  else localStorage.removeItem(TOKEN_KEY)
+export function setStoredToken(_token: string | null) {
+  localStorage.removeItem('aura_admin_token')
 }

@@ -6,7 +6,8 @@
   "workspaces": [
     "client",
     "admin",
-    "server"
+    "server",
+    "e2e"
   ],
   "scripts": {
     "dev": "npm run dev --workspace=client",
@@ -18,7 +19,13 @@
     "build:client": "npm run build --workspace=client",
     "build:admin": "npm run build --workspace=admin",
     "build:server": "npm run build --workspace=server",
-    "lint": "npm run lint --workspaces --if-present"
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspace=@aura/e2e",
+    "test:e2e": "npm run test --workspace=@aura/e2e",
+    "test:api": "npm run test:api --workspace=@aura/e2e",
+    "test:storefront": "npm run test:storefront --workspace=@aura/e2e",
+    "test:admin": "npm run test:admin --workspace=@aura/e2e",
+    "test:report": "npm run report --workspace=@aura/e2e"
   },
   "engines": {
     "node": ">=20"

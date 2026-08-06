@@ -11,6 +11,7 @@ import {
   resetPassword,
 } from '../controllers/auth.controller.js'
 import { protect } from '../middleware/auth.js'
+import { validateBody, loginSchema, registerSchema } from '../validation/schemas.js'
 
 const router = Router()
 
@@ -22,13 +23,13 @@ const authLimiter = rateLimit({
   message: { success: false, message: 'Too many attempts. Try again later.' },
 })
 
-router.post('/register', authLimiter, register)
-router.post('/login', authLimiter, login)
+router.post('/register', authLimiter, validateBody(registerSchema), register)
+router.post('/login', authLimiter, validateBody(loginSchema), login)
 router.post('/forgot-password', authLimiter, forgotPassword)
 router.post('/reset-password', authLimiter, resetPassword)
 router.get('/me', protect, me)
 router.patch('/me', protect, updateProfile)
 router.post('/change-password', protect, changePassword)
-router.post('/logout', protect, logout)
+router.post('/logout', logout)
 
 export default router

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import rateLimit from 'express-rate-limit'
 import { Order } from '../models/Order.model.js'
 import { AppError, asyncHandler } from '../utils/asyncHandler.js'
 import { useMemory } from '../services/dbMode.js'
@@ -10,6 +11,7 @@ import {
   incrementCouponUsage,
 } from '../services/orderPricing.js'
 import { sendOrderConfirmationEmail } from '../utils/mail.js'
+import { signCheckoutToken, verifyCheckoutToken } from '../utils/checkoutToken.js'
 
 function getUserId(req) {
   return req.user?.id || req.user?._id?.toString() || null
@@ -26,6 +28,14 @@ function requireShipping(shipping) {
     throw new AppError('Postal code is required')
   }
 }
+
+export const guestOrderLookupLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Too many lookups. Try again later.' },
+})
 
 export const listOrders = asyncHandler(async (req, res) => {
   const userId = getUserId(req)
@@ -45,9 +55,10 @@ export const listOrders = asyncHandler(async (req, res) => {
 
 export const getOrder = asyncHandler(async (req, res) => {
   const userId = getUserId(req)
-  const guestEmail = String(req.query.email || '')
-    .toLowerCase()
-    .trim()
+  const checkoutToken =
+    req.headers['x-checkout-token'] ||
+    req.query.checkoutToken ||
+    req.body?.checkoutToken
 
   if (useMemory()) {
     if (userId) {
@@ -62,14 +73,21 @@ export const getOrder = asyncHandler(async (req, res) => {
   let doc = null
   if (userId) {
     doc = await Order.findOne({ orderNumber: req.params.id, user: userId })
-  } else if (guestEmail) {
+  } else if (checkoutToken) {
+    const claims = verifyCheckoutToken(checkoutToken)
+    if (claims.orderNumber !== req.params.id) {
+      throw new AppError('Checkout session does not match this order', 403)
+    }
     doc = await Order.findOne({
       orderNumber: req.params.id,
       isGuest: true,
-      guestEmail,
+      guestEmail: claims.email,
     })
   } else {
-    throw new AppError('Authentication required', 401)
+    throw new AppError(
+      'Authentication or checkout session required',
+      401,
+    )
   }
 
   if (!doc) throw new AppError('Order not found', 404)
@@ -84,7 +102,6 @@ export const createOrder = asyncHandler(async (req, res) => {
     giftWrap,
     couponCode,
     paymentMethod,
-    id,
   } = req.body
 
   requireShipping(shipping)
@@ -102,7 +119,8 @@ export const createOrder = asyncHandler(async (req, res) => {
   })
 
   const orderLines = rawLines.map(({ _available, ...line }) => line)
-  const orderNumber = id || createOrderNumber()
+  // Always mint server-side — never accept client order ids.
+  const orderNumber = createOrderNumber()
   const isGuest = !userId
   const guestEmail = shipping.email.toLowerCase().trim()
 
@@ -132,6 +150,10 @@ export const createOrder = asyncHandler(async (req, res) => {
     total: totals.total,
     items: orderLines,
   }
+
+  const checkoutToken = isGuest
+    ? signCheckoutToken({ orderNumber, email: guestEmail })
+    : undefined
 
   if (useMemory()) {
     if (!userId) {
@@ -169,7 +191,13 @@ export const createOrder = asyncHandler(async (req, res) => {
         total: totals.total,
       })
 
-      res.status(201).json({ success: true, data: { order: doc.toClientJSON() } })
+      res.status(201).json({
+        success: true,
+        data: {
+          order: doc.toClientJSON(),
+          ...(checkoutToken ? { checkoutToken } : {}),
+        },
+      })
     } catch (err) {
       await session.abortTransaction()
       throw err
@@ -180,5 +208,11 @@ export const createOrder = asyncHandler(async (req, res) => {
   }
 
   const doc = await Order.create(payload)
-  res.status(201).json({ success: true, data: { order: doc.toClientJSON() } })
+  res.status(201).json({
+    success: true,
+    data: {
+      order: doc.toClientJSON(),
+      ...(checkoutToken ? { checkoutToken } : {}),
+    },
+  })
 })

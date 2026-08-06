@@ -61,6 +61,9 @@ export const API_ENDPOINTS = {
   settings: {
     public: '/settings/public',
   },
+  contact: {
+    submit: '/contact',
+  },
   upload: {
     image: '/upload',
   },

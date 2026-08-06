@@ -10,7 +10,7 @@ import {
   type Order,
 } from '@utils/orders'
 import { downloadInvoice } from '@utils/invoice'
-import { ordersApi } from '@services/api/orders'
+import { ordersApi, getCheckoutToken } from '@services/api/orders'
 import { useAuth } from '@contexts/AuthContext'
 import { formatCurrency } from '@utils/index'
 import { ROUTES } from '@/routes/paths'
@@ -25,10 +25,6 @@ export default function OrderSuccessPage() {
     id ? getOrderById(id) : undefined,
   )
   const [loading, setLoading] = useState(!order && Boolean(id))
-  const guestEmail =
-    typeof window !== 'undefined'
-      ? sessionStorage.getItem('aura_guest_order_email') || undefined
-      : undefined
 
   useEffect(() => {
     if (!id || order) {
@@ -49,9 +45,10 @@ export default function OrderSuccessPage() {
       }
 
       try {
+        const checkoutToken = getCheckoutToken() || undefined
         const remote = await ordersApi.get(
           id,
-          isAuthenticated ? undefined : guestEmail,
+          isAuthenticated ? undefined : { checkoutToken },
         )
         if (cancelled) return
         saveOrder(remote)
@@ -66,7 +63,7 @@ export default function OrderSuccessPage() {
     return () => {
       cancelled = true
     }
-  }, [id, isAuthenticated, order, guestEmail])
+  }, [id, isAuthenticated, order])
 
   if (loading) {
     return (
@@ -116,7 +113,7 @@ export default function OrderSuccessPage() {
             </Display>
             <Body muted className="mt-4">
               {order.paymentMethod === 'cod'
-                ? 'Your cash-on-delivery order is placed. We’ll confirm by email shortly.'
+                ? 'Your cash-on-delivery order is placed. We will confirm by email shortly.'
                 : 'Payment received. A confirmation is on its way to your inbox.'}
             </Body>
             <p className="mt-6 text-micro text-olive">Order {order.id}</p>

@@ -23,7 +23,7 @@ function authResponse(user, token) {
 
 function issueAuth(res, user, userId, role) {
   const token = signToken(userId, role)
-  setAuthCookie(res, token)
+  setAuthCookie(res, token, { role })
   return authResponse(user, token)
 }
 

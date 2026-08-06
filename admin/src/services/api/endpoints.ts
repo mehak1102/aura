@@ -1,5 +1,6 @@
 export const ADMIN_API = {
   login: '/auth/login',
+  logout: '/auth/logout',
   me: '/auth/me',
   changePassword: '/auth/change-password',
   dashboard: '/admin/dashboard',
@@ -21,4 +22,6 @@ export const ADMIN_API = {
   notifications: '/admin/notifications',
   settings: '/admin/settings',
   analytics: '/admin/analytics/dashboard',
+  contactInquiries: '/contact/admin',
+  contactInquiry: (id: string) => `/contact/admin/${id}`,
 } as const
