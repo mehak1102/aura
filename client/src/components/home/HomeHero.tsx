@@ -295,7 +295,7 @@ export function HomeHero() {
 
         {/* Trust bar */}
         <div className="relative z-30 bg-[#1b261e] text-[#b8975c]">
-          <div className="mx-auto flex max-w-[86rem] snap-x snap-mandatory gap-0 overflow-x-auto sm:grid sm:grid-cols-3 sm:overflow-visible lg:grid-cols-6">
+          <div className="mx-auto flex max-w-[86rem] snap-x snap-mandatory gap-0 overflow-x-auto sm:grid sm:grid-cols-3 sm:overflow-visible xl:grid-cols-6">
             {trustItems.map((item, i) => (
               <div
                 key={item.title}
@@ -303,7 +303,7 @@ export function HomeHero() {
                 className={cn(
                   'relative flex min-w-[42%] snap-start flex-col items-center gap-1 px-2.5 py-3.5 text-center sm:min-w-0 sm:py-[1.25rem]',
                   i < trustItems.length - 1 &&
-                    'lg:after:absolute lg:after:right-0 lg:after:top-[22%] lg:after:h-[56%] lg:after:w-px lg:after:bg-[#b8975c]/25',
+                    'xl:after:absolute xl:after:right-0 xl:after:top-[22%] xl:after:h-[56%] xl:after:w-px xl:after:bg-[#b8975c]/25',
                 )}
               >
                 {item.featured ? (

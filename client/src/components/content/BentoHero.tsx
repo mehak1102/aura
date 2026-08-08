@@ -34,7 +34,7 @@ export function BentoHero({
     <section ref={scope} className="bento-hero">
       <div className="bento-grid" data-bento-grid="">
         {images.map((image, index) => (
-          <div key={image.src} className="bento-grid__item" data-bento-item="">
+          <div key={`${image.src}-${index}`} className="bento-grid__item" data-bento-item="">
             <img
               src={image.src}
               alt={image.alt}
@@ -52,19 +52,19 @@ export function BentoHero({
         <Display
           as="h1"
           size="xl"
-          className="mt-4 max-w-3xl text-forest"
+          className="mt-4 max-w-3xl text-[clamp(1.65rem,6.5vw,3.5rem)] text-forest"
           data-char-roll=""
         >
           {title}
         </Display>
         {description && (
-          <Body muted className="mt-5 max-w-xl lg:text-body-lg">
+          <Body muted className="mt-4 max-w-xl text-[0.88rem] leading-relaxed sm:mt-5 lg:text-body-lg">
             {description}
           </Body>
         )}
         {hint && (
-          <span className="mt-8 hidden items-center gap-3 text-micro tracking-[0.28em] text-olive uppercase lg:inline-flex">
-            <span className="h-px w-10 bg-soft-gold/60" />
+          <span className="mt-6 inline-flex items-center gap-3 text-[0.58rem] tracking-[0.22em] text-olive uppercase sm:mt-8 sm:text-micro sm:tracking-[0.28em] lg:gap-3">
+            <span className="h-px w-8 bg-soft-gold/60 sm:w-10" />
             {hint}
           </span>
         )}

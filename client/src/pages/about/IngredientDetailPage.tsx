@@ -315,7 +315,7 @@ export default function IngredientDetailPage() {
 
         <div className="relative z-[1]">
           {/* Hero */}
-          <section className="pt-24 md:pt-28">
+          <section className="pt-28 md:pt-32">
             <div className="container-aura">
               <BackButton
                 to={ROUTES.ingredients}
@@ -511,7 +511,7 @@ export default function IngredientDetailPage() {
                   {related.map((product) => (
                     <div
                       key={product.id}
-                      className="w-[min(100%,18rem)] shrink-0 sm:w-[17.5rem]"
+                      className="w-[min(68vw,13.5rem)] shrink-0 sm:w-[16rem] lg:w-[17.5rem]"
                     >
                       <ProductCard product={product} />
                     </div>
@@ -537,12 +537,12 @@ export default function IngredientDetailPage() {
           {/* Feature bar */}
           <section data-block-reveal="" className="pb-6 md:pb-8">
             <div className="container-aura">
-              <div className="grid gap-6 rounded-2xl border border-charcoal/10 bg-[#f7f1e6]/80 px-6 py-7 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0 lg:px-2 lg:py-8">
+              <div className="grid gap-6 rounded-2xl border border-charcoal/10 bg-[#f7f1e6]/80 px-6 py-7 sm:grid-cols-2 xl:grid-cols-4 xl:gap-0 xl:px-2 xl:py-8">
                 {detail.features.map((feature, i) => (
                   <div
                     key={feature.label}
-                    className={`flex items-center gap-3 px-3 lg:justify-center lg:px-5 ${
-                      i > 0 ? 'lg:border-l lg:border-charcoal/10' : ''
+                    className={`flex items-center gap-3 px-3 xl:justify-center xl:px-5 ${
+                      i > 0 ? 'xl:border-l xl:border-charcoal/10' : ''
                     }`}
                   >
                     <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-soft-gold/35 text-soft-gold">
@@ -574,7 +574,7 @@ export default function IngredientDetailPage() {
 
               <div
                 data-explore-grid=""
-                className="mt-6 flex gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] sm:grid sm:grid-cols-3 sm:overflow-visible lg:grid-cols-6 lg:gap-5 [&::-webkit-scrollbar]:hidden"
+                className="mt-6 flex gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] sm:grid sm:grid-cols-3 sm:overflow-visible lg:grid-cols-3 xl:grid-cols-6 xl:gap-5 [&::-webkit-scrollbar]:hidden"
               >
                 {moreBotanicals.map((b) => (
                   <Link

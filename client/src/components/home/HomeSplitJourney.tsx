@@ -44,6 +44,9 @@ export function HomeSplitJourney() {
 
     if (!pin || !mediaWrap || !copyWrap || images.length < 2) return
 
+    // Desktop pin layout is xl+ only — avoid ScrollTrigger on stacked mobile/tablet
+    if (window.innerWidth < 1280) return
+
     const swapDistance = () => copyWrap.offsetLeft - mediaWrap.offsetLeft
 
     // Preload so panels never flash empty green
@@ -413,7 +416,7 @@ export function HomeSplitJourney() {
       </div>
 
       {/* Desktop — full-viewport pin; card centered below fixed header so it never clips */}
-      <div data-journey-pin className="relative z-10 hidden h-svh lg:block">
+      <div data-journey-pin className="relative z-10 hidden h-svh xl:block">
         <div className="flex h-full w-full items-center px-[clamp(0.5rem,1.5vw,1rem)] pt-[2rem] pb-5">
           <div
             className="relative mx-auto h-[min(72svh,42rem)] w-full max-w-[100rem]"
@@ -462,7 +465,7 @@ export function HomeSplitJourney() {
       </div>
 
       {/* Mobile */}
-      <div className="container-aura relative z-10 pb-[clamp(4rem,9vw,6.5rem)] pt-2 lg:hidden">
+      <div className="container-aura relative z-10 pb-[clamp(4rem,9vw,6.5rem)] pt-2 xl:hidden">
         <JourneyMobileStack slides={slides} />
       </div>
     </section>

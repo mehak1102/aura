@@ -254,7 +254,7 @@ export function ShopFiltersPanel({
 
   return (
     <>
-      <aside className="shop-filters-panel hidden lg:block lg:w-[17.5rem] lg:shrink-0">
+      <aside className="shop-filters-panel hidden xl:block xl:w-[17.5rem] xl:shrink-0">
         <div
           data-lenis-prevent
           data-lenis-prevent-wheel
@@ -266,7 +266,7 @@ export function ShopFiltersPanel({
 
       <div
         className={cn(
-          'fixed inset-0 z-[var(--z-overlay)] lg:hidden',
+          'fixed inset-0 z-[var(--z-overlay)] xl:hidden',
           open ? 'visible' : 'invisible',
         )}
       >
@@ -281,7 +281,7 @@ export function ShopFiltersPanel({
         />
         <div
           className={cn(
-            'shop-filters-scroll absolute inset-y-0 left-0 flex w-[min(100%,22rem)] flex-col overflow-y-auto overscroll-contain bg-[#f7f3eb] p-6 shadow-[var(--shadow-lift)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]',
+            'shop-filters-scroll absolute top-[6.75rem] bottom-3 left-0 flex w-[min(78vw,17rem)] flex-col overflow-y-auto overscroll-contain rounded-r-2xl bg-[#f7f3eb] p-5 shadow-[var(--shadow-lift)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:top-[7.25rem] sm:w-[min(72vw,18rem)] sm:p-6',
             open ? 'translate-x-0' : '-translate-x-full',
           )}
           data-lenis-prevent

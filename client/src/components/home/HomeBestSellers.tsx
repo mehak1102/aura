@@ -231,9 +231,9 @@ export function HomeBestSellers() {
   return (
     <section
       ref={scope}
-      className="relative overflow-hidden bg-[#f3ebe0] pt-[clamp(3rem,6vw,4.75rem)] pb-[clamp(3.5rem,7vw,5.5rem)]"
+      className="relative overflow-x-clip bg-[#f3ebe0] pt-[clamp(3rem,6vw,4.75rem)] pb-[clamp(3.5rem,7vw,5.5rem)]"
     >
-      <div className="container-aura relative">
+      <div className="container-aura relative min-w-0">
         <header className="mx-auto max-w-2xl text-center">
           <div data-bs-eyebrow="" className="flex flex-col items-center gap-3">
             <Leaf className="h-7 w-7 text-[#b8975c]" strokeWidth={1.2} />
@@ -265,7 +265,7 @@ export function HomeBestSellers() {
           </p>
         </header>
 
-        <div className="mt-12 grid grid-cols-2 gap-4 sm:gap-5 lg:mt-14 lg:grid-cols-4 lg:gap-5">
+        <div className="mt-12 grid w-full min-w-0 grid-cols-2 gap-3 sm:gap-5 lg:mt-14 lg:grid-cols-2 xl:grid-cols-4 lg:gap-5">
           {bestSellers.slice(0, 8).map((item, index) => {
             const catalog = getBySlug(item.slug)
             const productId = catalog?.id
@@ -277,7 +277,7 @@ export function HomeBestSellers() {
               <article
                 key={item.slug}
                 data-bs-card=""
-                className="group relative flex flex-col overflow-hidden rounded-[1.1rem] bg-[#faf7f1] shadow-[0_1px_0_rgba(36,53,40,0.04)] ring-1 ring-[#243528]/10 [contain:paint] transition-[box-shadow,transform] duration-500 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(36,53,40,0.1)]"
+                className="group relative flex min-w-0 flex-col overflow-hidden rounded-[1.1rem] bg-[#faf7f1] shadow-[0_1px_0_rgba(36,53,40,0.04)] ring-1 ring-[#243528]/10 transition-[box-shadow,transform] duration-500 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(36,53,40,0.1)]"
               >
                 <div className="relative aspect-[9/10] overflow-hidden bg-[#ebe4d8]">
                   <Link to={`/product/${item.slug}`} className="block h-full w-full">
@@ -308,21 +308,21 @@ export function HomeBestSellers() {
                   />
                 </div>
 
-                <div className="flex flex-1 flex-col justify-between px-3.5 py-4 sm:px-4 sm:py-5">
-                  <div>
-                    <div className="mb-2.5 flex w-full flex-nowrap items-center gap-1">
+                <div className="flex min-w-0 flex-1 flex-col justify-between px-3 py-3.5 sm:px-4 sm:py-5">
+                  <div className="min-w-0">
+                    <div className="mb-2.5 flex w-full min-w-0 flex-wrap items-center gap-1">
                       {item.pills.map((pill) => (
                         <span
                           key={pill.label}
-                          className="inline-flex max-w-full items-center gap-0.5 whitespace-nowrap rounded-full border border-[#c4a35a]/55 bg-[#faf7f1] px-1.5 py-0.5 text-[0.48rem] font-medium leading-none tracking-wide text-[#4a463e] sm:gap-1 sm:px-2 sm:py-[0.2rem] sm:text-[0.55rem]"
+                          className="inline-flex max-w-full items-center gap-0.5 truncate rounded-full border border-[#c4a35a]/55 bg-[#faf7f1] px-1.5 py-0.5 text-[0.48rem] font-medium leading-none tracking-wide text-[#4a463e] sm:gap-1 sm:px-2 sm:py-[0.2rem] sm:text-[0.55rem]"
                         >
                           <PillIcon icon={pill.icon} />
-                          {pill.label}
+                          <span className="truncate">{pill.label}</span>
                         </span>
                       ))}
                     </div>
 
-                    <Link to={`/product/${item.slug}`}>
+                    <Link to={`/product/${item.slug}`} className="block min-w-0">
                       <h3 className="font-display text-[1.05rem] leading-snug tracking-tight text-[#243528] transition-colors group-hover:text-forest sm:text-[1.15rem]">
                         {item.title}
                       </h3>

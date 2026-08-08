@@ -197,14 +197,14 @@ export default function ContactPage() {
             data-page-reveal=""
             className="rounded-2xl border border-forest/10 bg-white/70 px-6 py-7 shadow-[0_16px_44px_rgba(23,55,40,0.06)] backdrop-blur-sm md:px-8"
           >
-            <ul className="grid gap-7 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
+            <ul className="grid gap-7 sm:grid-cols-2 xl:grid-cols-4 xl:gap-0">
               {assurances.map(({ icon: Icon, title, body }, i) => (
                 <li
                   key={title}
                   className={
                     i > 0
-                      ? 'flex gap-4 lg:border-l lg:border-forest/10 lg:pl-7'
-                      : 'flex gap-4 lg:pr-7'
+                      ? 'flex gap-4 xl:border-l xl:border-forest/10 xl:pl-7'
+                      : 'flex gap-4 xl:pr-7'
                   }
                 >
                   <span className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-soft-gold/45 bg-[#f2ece1] text-forest">

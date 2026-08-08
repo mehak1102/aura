@@ -43,7 +43,7 @@ export function ProductRail({ title, eyebrow, products }: ProductRailProps) {
         <Display as="h2" size="md" className={`${eyebrow ? 'mt-3' : ''} text-forest`}>
           {title}
         </Display>
-        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

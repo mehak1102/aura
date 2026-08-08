@@ -43,8 +43,8 @@ export function AuthShell({
       />
 
       {/* ── Left — copy over the botanical half ── */}
-      <aside className="absolute inset-y-0 left-0 hidden w-[52%] lg:block">
-        <div className="relative z-10 flex h-full max-w-[26rem] flex-col justify-between p-12 xl:max-w-[30rem] xl:p-16">
+      <aside className="absolute inset-y-0 left-0 hidden w-[48%] xl:w-[52%] lg:block">
+        <div className="relative z-10 flex h-full max-w-[22rem] flex-col justify-between p-8 xl:max-w-[30rem] xl:p-16">
           <Link
             to={ROUTES.home}
             className="inline-flex items-center gap-3 self-start"
@@ -83,16 +83,16 @@ export function AuthShell({
           </div>
 
           <div>
-            <ul className="flex items-center gap-9">
+            <ul className="flex flex-wrap items-center gap-5 xl:gap-9">
               {BADGES.map(({ icon: Icon, line1, line2 }) => (
                 <li key={line2} className="flex flex-col items-center text-center">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full border border-[#c2a378]/45 backdrop-blur-[2px]">
-                    <Icon className="h-5 w-5 text-[#c2a378]" strokeWidth={1.4} aria-hidden />
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#c2a378]/45 backdrop-blur-[2px] xl:h-12 xl:w-12">
+                    <Icon className="h-4 w-4 text-[#c2a378] xl:h-5 xl:w-5" strokeWidth={1.4} aria-hidden />
                   </span>
-                  <span className="mt-2.5 text-[0.64rem] font-semibold tracking-[0.06em] text-warm-white/90">
+                  <span className="mt-2 text-[0.6rem] font-semibold tracking-[0.06em] text-warm-white/90 xl:mt-2.5 xl:text-[0.64rem]">
                     {line1}
                   </span>
-                  <span className="text-[0.58rem] font-light tracking-[0.04em] text-warm-white/60">
+                  <span className="text-[0.54rem] font-light tracking-[0.04em] text-warm-white/60 xl:text-[0.58rem]">
                     {line2}
                   </span>
                 </li>
@@ -111,8 +111,8 @@ export function AuthShell({
       </aside>
 
       {/* ── Right — form over the cream panel ── */}
-      <section className="relative flex min-h-[100svh] items-center justify-center px-[var(--spacing-gutter)] py-20 lg:ml-[58%]">
-        <div className="relative w-full max-w-[24rem]">
+      <section className="relative flex min-h-[100svh] items-center justify-center px-[var(--spacing-gutter)] py-20 lg:ml-[48%] xl:ml-[52%]">
+        <div className="relative w-full max-w-[min(24rem,100%)]">
           <div className="mb-3 flex items-center gap-3">
             <p className="text-[0.64rem] font-medium tracking-[0.3em] text-[#b8975c] uppercase">
               {eyebrow}

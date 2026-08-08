@@ -228,8 +228,8 @@ export default function OurStoryPage() {
         </section>
 
         <section className="section-aura-sm">
-          <div className="container-aura grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.75fr)] lg:gap-16">
-            <div>
+          <div className="container-aura grid grid-cols-1 items-center gap-8 sm:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] sm:gap-8 md:gap-12 lg:gap-16">
+            <div className="min-w-0">
               <Eyebrow tone="gold" data-line-reveal="">
                 {whyAura.eyebrow}
               </Eyebrow>
@@ -242,7 +242,7 @@ export default function OurStoryPage() {
                 {whyAura.title}
               </Display>
               <Body
-                className="mt-5 max-w-xl text-body-lg"
+                className="mt-5 max-w-xl text-[0.95rem] sm:text-body-lg"
                 data-line-reveal=""
               >
                 {whyAura.lead}
@@ -252,7 +252,7 @@ export default function OurStoryPage() {
                   <Body
                     key={paragraph}
                     muted
-                    className="max-w-xl"
+                    className="max-w-xl text-[0.9rem] sm:text-body"
                     data-line-reveal=""
                   >
                     {paragraph}
@@ -263,7 +263,7 @@ export default function OurStoryPage() {
 
             <div
               data-reveal-image=""
-              className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-lg)] bg-beige lg:aspect-[3/4]"
+              className="relative aspect-[4/5] w-full min-w-0 overflow-hidden rounded-[var(--radius-lg)] bg-beige sm:aspect-[3/4]"
             >
               <img
                 src={whyAura.image}

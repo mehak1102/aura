@@ -66,7 +66,7 @@ function RitualsCta({ to, children }: { to: string; children: string }) {
 
 function RitualTitle({
   lines,
-  className = 'absolute left-[3.5%] top-[5.5%] z-20 max-w-[8.6ch] font-display text-[clamp(3.75rem,7.2vw,6.75rem)] leading-[0.88] tracking-tight',
+  className = 'absolute top-[5.5%] left-[3.5%] z-20 max-w-[8.6ch] font-display text-[clamp(3rem,6.2vw,6.75rem)] leading-[0.88] tracking-tight',
 }: {
   lines: readonly string[]
   className?: string
@@ -309,7 +309,7 @@ function Frame({
 
 function advancePinnedScroll(section: HTMLElement) {
   const pin = ScrollTrigger.getAll().find(
-    (t) => t.trigger === section && Boolean(t.vars.pin),
+    (t) => Boolean(t.vars.pin) && section.contains(t.trigger as Node),
   )
 
   if (!pin) {
@@ -325,14 +325,17 @@ function advancePinnedScroll(section: HTMLElement) {
 
 function editorialMotion(section: HTMLElement, track: HTMLElement) {
   if (prefersReducedMotion()) return
-  if (window.innerWidth < 1024) return
+  if (window.innerWidth < 1280) return
 
-  // Kill leftover pin ScrollTriggers + unwrap dead pin-spacers from HMR
+  const viewport = track.parentElement
+  if (!viewport) return
+
+  // Kill leftover ScrollTriggers + unwrap dead pin-spacers from HMR
   ScrollTrigger.getAll().forEach((st) => {
-    if (st.trigger === section) st.kill(true)
+    if (st.trigger === section || st.trigger === viewport) st.kill(true)
   })
   document.querySelectorAll('.pin-spacer').forEach((spacer) => {
-    if (!spacer.contains(track)) return
+    if (!spacer.contains(track) && !section.contains(spacer)) return
     const parent = spacer.parentNode
     if (!parent) return
     while (spacer.firstChild) parent.insertBefore(spacer.firstChild, spacer)
@@ -340,22 +343,24 @@ function editorialMotion(section: HTMLElement, track: HTMLElement) {
   })
 
   const getTravel = () => {
-    const viewW = track.parentElement?.clientWidth ?? window.innerWidth
+    const viewW = viewport.clientWidth || window.innerWidth
     const last = track.querySelector<HTMLElement>('[data-h-last]')
-    // Last panel fills the viewport (rings + products + copy)
     if (last) return Math.max(0, last.offsetLeft)
     return Math.max(0, track.scrollWidth - viewW)
   }
 
-  // No pin — `lg:h-[160vh]` on the section is the scroll length
+  const scrollEnd = () => `+=${Math.max(getTravel(), 1)}`
+
+  // Pin the viewport only — no trailing empty maroon after the collage
   gsap.to(track, {
     x: () => -getTravel(),
     ease: 'none',
     scrollTrigger: {
-      trigger: section,
+      trigger: viewport,
       start: 'top top',
-      end: 'bottom bottom',
+      end: scrollEnd,
       scrub: 0.5,
+      pin: true,
       invalidateOnRefresh: true,
       anticipatePin: 1,
     },
@@ -370,9 +375,9 @@ function editorialMotion(section: HTMLElement, track: HTMLElement) {
         y: intensity * 70,
         ease: 'none',
         scrollTrigger: {
-          trigger: section,
+          trigger: viewport,
           start: 'top top',
-          end: 'bottom bottom',
+          end: scrollEnd,
           scrub: true,
         },
       },
@@ -388,9 +393,9 @@ function editorialMotion(section: HTMLElement, track: HTMLElement) {
         x: -amount,
         ease: 'none',
         scrollTrigger: {
-          trigger: section,
+          trigger: viewport,
           start: 'top top',
-          end: 'bottom bottom',
+          end: scrollEnd,
           scrub: 1.2,
         },
       },
@@ -420,223 +425,224 @@ export function HomeEditorialScroll() {
   return (
     <section
       ref={scope}
-      className="relative z-10 bg-[#6f3a44] text-warm-white lg:h-[160vh]"
+      className="relative z-10 overflow-x-hidden bg-[#6f3a44] text-warm-white"
     >
-      {/* Desktop: sticky viewport — section height = scroll length (no pin-spacer) */}
-      <div className="hidden h-screen overflow-hidden lg:sticky lg:top-0 lg:block">
-        <div data-h-track className="relative flex h-full w-max gap-x-20 xl:gap-x-24">
+      {/* Wide desktop only — absolute collage needs ≥1280px */}
+      <div className="hidden h-screen overflow-hidden xl:block">
+        <div data-h-track className="relative flex h-full w-max gap-x-20 2xl:gap-x-24">
           {/* ── Panel 1: Aura Rituals ── */}
           <div className="relative h-full w-[min(100vw,76rem)] shrink-0 overflow-hidden px-[4%]">
-          <div
-            aria-hidden
-            data-drift="28"
-            className="pointer-events-none absolute left-[58%] top-[4%] h-[min(52vw,520px)] w-[min(52vw,520px)] -translate-x-1/2 rounded-full border border-warm-white/16"
-          />
-          <div
-            aria-hidden
-            data-drift="14"
-            className="pointer-events-none absolute left-[58%] top-[12%] h-[min(36vw,360px)] w-[min(36vw,360px)] -translate-x-1/2 rounded-full border border-warm-white/10"
-          />
+            <div
+              aria-hidden
+              data-drift="28"
+              className="pointer-events-none absolute top-[4%] left-[58%] h-[min(52vw,520px)] w-[min(52vw,520px)] -translate-x-1/2 rounded-full border border-warm-white/16"
+            />
+            <div
+              aria-hidden
+              data-drift="14"
+              className="pointer-events-none absolute top-[12%] left-[58%] h-[min(36vw,360px)] w-[min(36vw,360px)] -translate-x-1/2 rounded-full border border-warm-white/10"
+            />
 
-          <RitualTitle lines={groups.title} />
+            <RitualTitle lines={groups.title} />
 
-          {/* Craft cluster — clear of title + watermelon */}
-          <div className="absolute left-[51%] top-[9%] z-20 w-[min(14.5vw,200px)]">
-            <span className="mb-4 inline-flex h-8 items-center rounded-full border border-warm-white/55 px-3.5 text-[0.58rem] tracking-[0.2em] uppercase text-warm-white/75">
-              {groups.badge}
-            </span>
+            <div className="absolute top-[9%] left-[51%] z-20 w-[min(14.5vw,200px)]">
+              <span className="mb-4 inline-flex h-8 items-center rounded-full border border-warm-white/55 px-3.5 text-[0.58rem] tracking-[0.2em] uppercase text-warm-white/75">
+                {groups.badge}
+              </span>
+              <Frame
+                float={0.28}
+                src={groups.images.secondary}
+                alt={groups.images.secondaryAlt}
+                to={groups.images.secondaryTo}
+                className="aspect-[3/4] w-full"
+              />
+              <ScrollDiscover label={groups.scrollHint} onDiscover={onDiscover} />
+            </div>
+
             <Frame
-              float={0.28}
-              src={groups.images.secondary}
-              alt={groups.images.secondaryAlt}
-              to={groups.images.secondaryTo}
-              className="aspect-[3/4] w-full"
+              float={0.14}
+              src={groups.images.primary}
+              alt={groups.images.primaryAlt}
+              to={groups.images.primaryTo}
+              className="absolute bottom-[9%] left-[2%] z-10 h-[min(54vh,540px)] w-[min(40%,520px)]"
             />
-            <ScrollDiscover label={groups.scrollHint} onDiscover={onDiscover} />
-          </div>
 
-          {/* Primary product */}
-          <Frame
-            float={0.14}
-            src={groups.images.primary}
-            alt={groups.images.primaryAlt}
-            to={groups.images.primaryTo}
-            className="absolute bottom-[9%] left-[2%] z-10 h-[min(54vh,540px)] w-[min(40%,520px)]"
-          />
-
-          {/* Tall product */}
-          <Frame
-            float={0.1}
-            src={groups.images.tall}
-            alt={groups.images.tallAlt}
-            to={groups.images.tallTo}
-            className="absolute bottom-[7%] right-[2.5%] z-[5] h-[min(66vh,600px)] w-[min(19vw,290px)]"
-          />
-
-          {/* Copy + CTA */}
-          <div className="absolute bottom-[12%] left-[min(48%,calc(2%+500px))] z-20 w-[min(26rem,28%)] max-w-[28rem]">
-            <FlowBody
-              paragraphs={groups.body}
-              paragraphClassName="mb-6 text-[0.95rem] font-light leading-[1.75] text-warm-white/90"
-            />
-            <div className="mt-8">
-              <RitualsCta to={groups.cta.to}>{groups.cta.label}</RitualsCta>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Panel 2: Spaces ── */}
-        <div className="relative h-full w-[min(100vw,76rem)] shrink-0 overflow-hidden px-[4%]">
-          {/* Concentric rings — behind peach / oils cluster */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute right-[2%] top-[42%] z-0 size-[min(78vh,700px)] translate-x-[18%] -translate-y-1/2 rounded-full border border-warm-white/20"
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute right-[2%] top-[42%] z-0 size-[min(54vh,480px)] translate-x-[18%] -translate-y-1/2 rounded-full border border-warm-white/15"
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute right-[2%] top-[42%] z-0 size-[min(30vh,280px)] translate-x-[18%] -translate-y-1/2 rounded-full border border-warm-white/12"
-          />
-
-          <Frame
-            float={0.14}
-            src={spaces.images.hero}
-            alt={spaces.images.heroAlt}
-            to={spaces.images.heroTo}
-            className="absolute left-[2%] top-[11%] z-10 h-[58vh] w-[min(24vw,320px)]"
-          />
-
-          <div className="absolute left-[min(30%,calc(2%+340px))] top-[18%] z-20 w-[min(32rem,34%)] max-w-[34rem] pr-4">
-            <FlowBody
-              paragraphs={spaces.body}
-              paragraphClassName="mb-5 text-[0.95rem] font-light leading-[1.75] text-warm-white/90"
-            />
-            <div className="mt-9">
-              <GhostPill to={spaces.cta.to}>{spaces.cta.label}</GhostPill>
-            </div>
-          </div>
-
-          <RitualTitle
-            lines={[spaces.title]}
-            className="absolute bottom-[7%] left-[24%] z-20 font-display text-[clamp(3.25rem,6.5vw,5.5rem)] leading-[0.88] tracking-tight uppercase"
-          />
-
-          <div className="absolute right-[1%] top-[10%] h-[66vh] w-[min(28vw,400px)]">
             <Frame
               float={0.1}
-              src={spaces.images.main}
-              alt={spaces.images.mainAlt}
-              to={spaces.images.mainTo}
-              className="absolute inset-0 z-10"
+              src={groups.images.tall}
+              alt={groups.images.tallAlt}
+              to={groups.images.tallTo}
+              className="absolute right-[2.5%] bottom-[7%] z-[5] h-[min(66vh,600px)] w-[min(19vw,290px)]"
             />
-            <Frame
-              float={0.35}
-              src={spaces.images.overlap}
-              alt={spaces.images.overlapAlt}
-              to={spaces.images.overlapTo}
-              className="absolute bottom-[-18%] left-[-40%] z-20 h-[50%] w-[66%]"
-            />
-            <Frame
-              float={0.5}
-              src={spaces.images.detail}
-              alt={spaces.images.detailAlt}
-              to={spaces.images.detailTo}
-              className="absolute bottom-[-22%] left-[20%] z-30 h-[44%] w-[62%]"
-            />
-          </div>
-        </div>
 
-        {/* ── Panel 3: Shop now ── */}
-        <div
-          data-h-last
-          className="relative h-full w-screen max-w-[100vw] shrink-0 overflow-hidden px-[5%]"
-        >
-          {/* Concentric rings */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute left-[62%] top-[44%] z-0 size-[min(88vh,820px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-warm-white/22"
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute left-[62%] top-[44%] z-0 size-[min(60vh,560px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-warm-white/17"
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute left-[62%] top-[44%] z-0 size-[min(34vh,320px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-warm-white/13"
-          />
-
-          {/* Product cluster */}
-          <div className="absolute left-[4%] top-[12%] z-10 h-[70vh] w-[min(42vw,560px)]">
-            <Frame
-              float={0.12}
-              src={book.images.main}
-              alt={book.images.mainAlt}
-              to={book.images.mainTo}
-              className="absolute right-0 top-0 z-10 h-[86%] w-[84%]"
-            />
-            <Frame
-              float={0.35}
-              src={book.images.overlap}
-              alt={book.images.overlapAlt}
-              to={book.images.overlapTo}
-              className="absolute bottom-[-2%] left-0 z-20 h-[40%] w-[44%]"
-            />
+            <div className="absolute bottom-[12%] left-[min(48%,calc(2%+500px))] z-20 w-[min(26rem,28%)] max-w-[28rem]">
+              <FlowBody
+                paragraphs={groups.body}
+                paragraphClassName="mb-6 text-[0.95rem] font-light leading-[1.75] text-warm-white/90"
+              />
+              <div className="mt-8">
+                <RitualsCta to={groups.cta.to}>{groups.cta.label}</RitualsCta>
+              </div>
+            </div>
           </div>
 
-          {/* Copy + text flow */}
-          <div className="absolute left-[min(51%,calc(5%+600px))] top-[16%] z-30 w-[min(32rem,40%)] max-w-[34rem]">
+          {/* ── Panel 2: Spaces ── */}
+          <div className="relative h-full w-[min(100vw,76rem)] shrink-0 overflow-hidden px-[4%]">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute top-[42%] right-[2%] z-0 size-[min(78vh,700px)] translate-x-[18%] -translate-y-1/2 rounded-full border border-warm-white/20"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute top-[42%] right-[2%] z-0 size-[min(54vh,480px)] translate-x-[18%] -translate-y-1/2 rounded-full border border-warm-white/15"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute top-[42%] right-[2%] z-0 size-[min(30vh,280px)] translate-x-[18%] -translate-y-1/2 rounded-full border border-warm-white/12"
+            />
+
+            <Frame
+              float={0.14}
+              src={spaces.images.hero}
+              alt={spaces.images.heroAlt}
+              to={spaces.images.heroTo}
+              className="absolute top-[11%] left-[2%] z-10 h-[58vh] w-[min(24vw,320px)]"
+            />
+
+            <div className="absolute top-[18%] left-[min(30%,calc(2%+340px))] z-20 w-[min(32rem,34%)] max-w-[34rem] pr-4">
+              <FlowBody
+                paragraphs={spaces.body}
+                paragraphClassName="mb-5 text-[0.95rem] font-light leading-[1.75] text-warm-white/90"
+              />
+              <div className="mt-9">
+                <GhostPill to={spaces.cta.to}>{spaces.cta.label}</GhostPill>
+              </div>
+            </div>
+
             <RitualTitle
-              lines={['Shop', 'now']}
-              className="relative font-display text-[clamp(3.5rem,7vw,6.25rem)] leading-[0.88] tracking-tight uppercase"
+              lines={[spaces.title]}
+              className="absolute bottom-[7%] left-[24%] z-20 font-display text-[clamp(3.25rem,6.5vw,5.5rem)] leading-[0.88] tracking-tight uppercase"
             />
-            <FlowBody
-              paragraphs={book.body}
-              className="mt-7"
-              paragraphClassName="mb-5 text-[0.95rem] font-light leading-[1.75] text-warm-white/90"
-            />
-            <div className="mt-10">
-              <GhostPill to={book.cta.to}>{book.cta.label}</GhostPill>
+
+            <div className="absolute top-[10%] right-[1%] h-[66vh] w-[min(28vw,400px)]">
+              <Frame
+                float={0.1}
+                src={spaces.images.main}
+                alt={spaces.images.mainAlt}
+                to={spaces.images.mainTo}
+                className="absolute inset-0 z-10"
+              />
+              <Frame
+                float={0.35}
+                src={spaces.images.overlap}
+                alt={spaces.images.overlapAlt}
+                to={spaces.images.overlapTo}
+                className="absolute bottom-[-18%] left-[-40%] z-20 h-[50%] w-[66%]"
+              />
+              <Frame
+                float={0.5}
+                src={spaces.images.detail}
+                alt={spaces.images.detailAlt}
+                to={spaces.images.detailTo}
+                className="absolute bottom-[-22%] left-[20%] z-30 h-[44%] w-[62%]"
+              />
             </div>
           </div>
 
-          <RitualTitle
-            lines={['Radiant']}
-            className="absolute bottom-[11%] left-[min(60%,calc(4%+700px))] z-20 font-display text-[clamp(3.25rem,6.5vw,5.5rem)] leading-[0.88] tracking-tight uppercase"
-          />
+          {/* ── Panel 3: Shop now / Radiant ── */}
+          <div
+            data-h-last
+            className="relative h-full w-screen max-w-[100vw] shrink-0 overflow-hidden px-[2%] 2xl:px-[3%]"
+          >
+            <div
+              aria-hidden
+              className="pointer-events-none absolute top-[48%] left-[68%] z-0 size-[min(88vh,820px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-warm-white/22"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute top-[48%] left-[68%] z-0 size-[min(60vh,560px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-warm-white/17"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute top-[48%] left-[68%] z-0 size-[min(34vh,320px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-warm-white/13"
+            />
 
-          {/* Right collage — fills blank space over rings */}
-          <div className="absolute right-[14%] top-[10%] z-10 h-[64vh] w-[min(28vw,380px)]">
-            <Frame
-              float={0.1}
-              src={book.images.accent}
-              alt={book.images.accentAlt}
-              to={book.images.accentTo}
-              className="absolute inset-0 z-10"
-            />
-            <Frame
-              float={0.32}
-              src={book.images.detail}
-              alt={book.images.detailAlt}
-              to={book.images.detailTo}
-              className="absolute bottom-[-12%] left-[-38%] z-20 h-[46%] w-[62%]"
-            />
-            <Frame
-              float={0.48}
-              src={book.images.tertiary}
-              alt={book.images.tertiaryAlt}
-              to={book.images.tertiaryTo}
-              className="absolute bottom-[-8%] right-[-10%] z-30 h-[38%] w-[52%]"
-            />
+            <div className="relative z-10 grid h-full grid-cols-[minmax(0,1.2fr)_minmax(14rem,0.7fr)_minmax(0,1.1fr)] items-stretch gap-3 pt-28 pb-16 xl:gap-6 xl:pt-32 xl:pb-20">
+              {/* Left products — large */}
+              <div className="relative min-h-0 self-center">
+                <div className="relative ml-0 mr-auto h-[min(72vh,680px)] w-full max-w-[min(100%,40rem)] 2xl:max-w-[46rem]">
+                  <Frame
+                    float={0.12}
+                    src={book.images.main}
+                    alt={book.images.mainAlt}
+                    to={book.images.mainTo}
+                    className="absolute top-0 right-0 z-10 h-[86%] w-[82%]"
+                  />
+                  <Frame
+                    float={0.35}
+                    src={book.images.overlap}
+                    alt={book.images.overlapAlt}
+                    to={book.images.overlapTo}
+                    className="absolute bottom-[0%] left-[0%] z-20 h-[40%] w-[44%]"
+                  />
+                </div>
+              </div>
+
+              {/* Center copy */}
+              <div className="flex min-h-0 min-w-0 flex-col justify-between pt-2 pb-8 xl:pb-10">
+                <div>
+                  <RitualTitle
+                    lines={['Shop', 'now']}
+                    className="relative font-display text-[clamp(3.25rem,5.5vw,5.75rem)] leading-[0.9] tracking-tight uppercase"
+                  />
+                  <FlowBody
+                    paragraphs={book.body}
+                    className="mt-6"
+                    paragraphClassName="mb-4 text-[0.92rem] font-light leading-[1.75] text-warm-white/90"
+                  />
+                  <div className="mt-8">
+                    <GhostPill to={book.cta.to}>{book.cta.label}</GhostPill>
+                  </div>
+                </div>
+                <RitualTitle
+                  lines={['Radiant']}
+                  className="relative mb-1 font-display text-[clamp(2.75rem,4.5vw,4.5rem)] leading-[0.88] tracking-tight uppercase xl:mb-2"
+                />
+              </div>
+
+              {/* Right products — large */}
+              <div className="relative min-h-0 self-center">
+                <div className="relative ml-auto mr-0 h-[min(68vh,640px)] w-full max-w-[min(100%,34rem)] 2xl:max-w-[40rem]">
+                  <Frame
+                    float={0.1}
+                    src={book.images.accent}
+                    alt={book.images.accentAlt}
+                    to={book.images.accentTo}
+                    className="absolute inset-x-[4%] top-0 z-10 h-[74%]"
+                  />
+                  <Frame
+                    float={0.32}
+                    src={book.images.detail}
+                    alt={book.images.detailAlt}
+                    to={book.images.detailTo}
+                    className="absolute bottom-[2%] left-0 z-20 h-[34%] w-[40%]"
+                  />
+                  <Frame
+                    float={0.48}
+                    src={book.images.tertiary}
+                    alt={book.images.tertiaryAlt}
+                    to={book.images.tertiaryTo}
+                    className="absolute right-0 bottom-[1%] z-30 h-[32%] w-[38%]"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
         </div>
       </div>
 
-      {/* Mobile / tablet — larger stacked collage */}
-      <div className="space-y-16 overflow-hidden px-[var(--spacing-gutter)] py-[var(--spacing-section)] sm:space-y-20 lg:hidden">
+      {/* Phone / tablet / laptop < 1280 — stacked, no horizontal swipe */}
+      <div className="space-y-16 overflow-hidden px-[var(--spacing-gutter)] py-[var(--spacing-section)] sm:space-y-20 xl:hidden">
         <div>
           <h2 className="font-display text-4xl leading-[0.9] sm:text-5xl md:text-6xl">
             <span className="block">{groups.title[0]}</span>
@@ -673,7 +679,9 @@ export function HomeEditorialScroll() {
         </div>
 
         <div>
-          <h2 className="font-display text-4xl uppercase sm:text-5xl md:text-6xl">{spaces.title}</h2>
+          <h2 className="font-display text-4xl uppercase sm:text-5xl md:text-6xl">
+            {spaces.title}
+          </h2>
           <div className="relative mt-10 max-w-md overflow-hidden">
             <Frame
               src={spaces.images.hero}
@@ -699,7 +707,9 @@ export function HomeEditorialScroll() {
         </div>
 
         <div>
-          <h2 className="font-display text-4xl uppercase sm:text-5xl md:text-6xl">{book.title}</h2>
+          <h2 className="font-display text-4xl uppercase sm:text-5xl md:text-6xl">
+            {book.title}
+          </h2>
           <div className="relative mt-10 mb-8 max-w-md overflow-hidden pb-14 sm:pb-16">
             <Frame
               src={book.images.main}
@@ -758,7 +768,7 @@ function CollectionBanner({
     const el = scope.current
     if (!el) return
 
-    const isDesktop = window.matchMedia('(min-width: 768px)').matches
+    const isDesktop = window.matchMedia('(min-width: 1024px)').matches
     const root = el.querySelector<HTMLElement>(
       isDesktop ? '[data-banner-desktop]' : '[data-banner-mobile]',
     )
@@ -880,7 +890,7 @@ function CollectionBanner({
       {/* Mobile stacked */}
       <div
         data-banner-mobile
-        className="overflow-hidden rounded-[1.35rem] bg-[#faf7f2] shadow-[0_14px_36px_rgba(70,55,25,0.1)] md:hidden"
+        className="overflow-hidden rounded-[1.35rem] bg-[#faf7f2] shadow-[0_14px_36px_rgba(70,55,25,0.1)] lg:hidden"
       >        <Link
           to={panel.productTo}
           aria-label={panel.imageAlt}
@@ -952,7 +962,7 @@ function CollectionBanner({
       {/* Desktop — card size stays fixed; only peach breaks out above */}
       <div
         data-banner-desktop
-        className="relative hidden h-[clamp(15rem,20vw,19.5rem)] md:block"
+        className="relative hidden h-[clamp(15rem,20vw,19.5rem)] lg:block"
       >
         <div className="absolute inset-0 overflow-hidden rounded-[1.75rem] shadow-[0_14px_36px_rgba(70,55,25,0.1)] lg:rounded-[2rem]">
           <img
@@ -976,10 +986,10 @@ function CollectionBanner({
         <Link
           to={panel.productTo}
           aria-label={panel.imageAlt}
-          className={`absolute z-30 flex items-end ${
+          className={`absolute z-30 flex max-h-[min(118%,22rem)] items-end overflow-hidden ${
             productLeft
-              ? 'bottom-[2%] left-[8%] h-[118%] w-[54%]'
-              : 'bottom-[-27%] right-[-5%] h-[195%] w-[56%]'
+              ? 'bottom-[2%] left-[8%] h-[118%] w-[min(54%,18rem)]'
+              : 'bottom-[-18%] right-[-2%] h-[min(160%,24rem)] w-[min(56%,19rem)]'
           }`}
         >
           <img
@@ -996,10 +1006,10 @@ function CollectionBanner({
 
         {/* Typed content in the empty cream area */}
         <div
-          className={`absolute inset-y-0 z-20 flex flex-col justify-center ${
+          className={`absolute inset-y-0 z-20 flex min-w-0 flex-col justify-center ${
             productLeft
-              ? 'left-[67%] w-[30%] items-start pr-3 lg:pr-5'
-              : 'left-[10%] w-[42%] items-start pl-8 lg:pl-12'
+              ? 'left-[62%] w-[min(34%,16rem)] items-start pr-3 xl:left-[67%] xl:w-[30%] xl:pr-5'
+              : 'left-[8%] w-[min(44%,18rem)] items-start pl-4 xl:left-[10%] xl:w-[42%] xl:pl-12'
           }`}
         >
           <p
@@ -1112,7 +1122,7 @@ export function HomeFeaturedSplit() {
       <Link
         to={bridgeTo}
         aria-label={bridgeAlt}
-        className="absolute left-1/2 top-0 z-40 w-[min(48vw,240px)] -translate-x-1/2 -translate-y-[52%] sm:w-[min(38vw,260px)] md:w-[min(28vw,280px)]"
+        className="absolute left-1/2 top-0 z-40 w-[min(48vw,240px)] -translate-x-1/2 -translate-y-[40%] sm:w-[min(38vw,260px)] md:w-[min(28vw,280px)]"
       >
         <div className="flex aspect-[5/4] items-end justify-center gap-1 rounded-sm bg-[#f7f1e8] px-3 pb-3 pt-4 shadow-[0_22px_50px_rgba(0,0,0,0.28)] transition-transform duration-500 hover:scale-[1.03] sm:gap-1.5 sm:px-4 sm:pb-4">
           <img

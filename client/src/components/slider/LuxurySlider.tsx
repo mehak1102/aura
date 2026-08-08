@@ -333,7 +333,7 @@ export function LuxurySlider({
 
         {/* Main grid */}
         <div className="relative flex min-h-0 flex-1 flex-col justify-center px-[var(--spacing-gutter)]">
-          <div className="grid max-h-full items-center gap-4 py-3 max-lg:auto-rows-auto lg:grid-cols-[minmax(200px,0.85fr)_minmax(0,1.25fr)_minmax(180px,0.6fr)] lg:gap-5 lg:py-4 xl:gap-6">
+          <div className="grid max-h-full items-center gap-4 py-3 max-xl:auto-rows-auto xl:grid-cols-[minmax(200px,0.85fr)_minmax(0,1.25fr)_minmax(180px,0.6fr)] xl:gap-5 xl:py-4 2xl:gap-6">
             <SlideContent
               ref={copyRef}
               slide={slide}
@@ -356,7 +356,7 @@ export function LuxurySlider({
               onMouseLeave={() => {
                 hoverPausedRef.current = false
               }}
-              className="relative mx-auto flex h-[min(87vh,780px)] w-full max-w-[35rem] items-end justify-center self-center overflow-hidden rounded-[1.25rem] border border-soft-gold bg-[#ecdfd6] shadow-[0_20px_44px_rgba(36,53,40,0.12)] lg:mx-0 lg:max-w-none"
+              className="relative mx-auto flex h-[min(52vh,420px)] w-full max-w-[35rem] items-end justify-center self-center overflow-hidden rounded-[1.25rem] border border-soft-gold bg-[#ecdfd6] shadow-[0_20px_44px_rgba(36,53,40,0.12)] lg:h-[min(70vh,560px)] xl:mx-0 xl:h-[min(87vh,780px)] xl:max-w-none"
             >
               {slide.cta ? (
                 <Link
@@ -417,7 +417,7 @@ export function LuxurySlider({
             {/* Up next card — full-bleed cover image + overlay chrome */}
             <div
               ref={previewRef}
-              className="relative mx-auto h-[min(79vh,670px)] w-full max-w-[25rem] self-center overflow-hidden rounded-[1.25rem] border border-forest/12 bg-[#e4dccd] shadow-[0_16px_36px_rgba(36,53,40,0.1)] lg:mx-0 lg:max-w-none"
+              className="relative mx-auto h-[min(48vh,380px)] w-full max-w-[25rem] self-center overflow-hidden rounded-[1.25rem] border border-forest/12 bg-[#e4dccd] shadow-[0_16px_36px_rgba(36,53,40,0.1)] lg:h-[min(62vh,520px)] xl:mx-0 xl:h-[min(79vh,670px)] xl:max-w-none"
             >
               <div className="absolute inset-0 overflow-hidden">
                 {/* Current up-next panel */}

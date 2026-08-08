@@ -1,11 +1,9 @@
-import { gsap, ScrollTrigger, Flip } from './core'
-
-const DESKTOP = '(min-width: 1024px)'
+import { gsap, ScrollTrigger, Flip, prefersReducedMotion } from './core'
 
 /**
- * Bento gallery that zooms from a centred grid to a full-bleed frame while pinned.
+ * Bento gallery that zooms from a centred collage to a full-bleed frame while pinned.
  * Flip measures the `--final` layout, then plays that state change on scrub.
- * Desktop only — smaller screens keep the static stacked grid.
+ * Same flow on mobile, tablet, and desktop.
  */
 export function expandBentoGallery(section: HTMLElement) {
   const grid = section.querySelector<HTMLElement>('[data-bento-grid]')
@@ -21,7 +19,10 @@ export function expandBentoGallery(section: HTMLElement) {
   const build = () => {
     ctx?.revert()
     grid.classList.remove('bento-grid--final')
-    if (!window.matchMedia(DESKTOP).matches) return
+    gsap.set([copy, veil].filter(Boolean), { clearProps: 'all' })
+    gsap.set(items, { clearProps: 'all' })
+
+    if (prefersReducedMotion()) return
 
     ctx = gsap.context(() => {
       // Capture the end layout, then snap back so Flip can animate towards it
@@ -37,10 +38,14 @@ export function expandBentoGallery(section: HTMLElement) {
           scrub: true,
           pin: true,
           anticipatePin: 1,
+          invalidateOnRefresh: true,
         },
       })
 
-      timeline.add(Flip.to(finalState, { simple: true, ease: 'expoScale(1, 4)' }), 0)
+      timeline.add(
+        Flip.to(finalState, { simple: true, ease: 'expoScale(1, 4)' }),
+        0,
+      )
 
       if (copy) {
         timeline.to(
@@ -60,7 +65,7 @@ export function expandBentoGallery(section: HTMLElement) {
       }
 
       return () => gsap.set(items, { clearProps: 'all' })
-    })
+    }, section)
   }
 
   build()

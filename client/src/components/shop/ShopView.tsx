@@ -82,7 +82,7 @@ export function ShopView({
       <div ref={scope} className="shop-page relative min-h-full overflow-hidden bg-[#eae2d4]">
         <LeafShadows />
 
-        <section className="shop-hero relative z-[1] overflow-hidden pt-24 md:pt-28">
+        <section className="shop-hero relative z-[1] overflow-hidden pt-28 md:pt-32">
           <div className="container-aura relative z-[1] pb-6 text-center md:pb-8">
             <Eyebrow data-page-reveal="" tone="gold">
               {eyebrow || meta.eyebrow}
@@ -109,7 +109,7 @@ export function ShopView({
         </section>
 
         <section className="relative z-[1] pb-[var(--spacing-section)]">
-          <div className="container-aura flex gap-8 lg:gap-12 xl:gap-14">
+          <div className="container-aura flex gap-6 lg:gap-8 xl:gap-12 2xl:gap-14">
             <ShopFiltersPanel
               filters={filters}
               setFilter={setFilter}
@@ -164,7 +164,7 @@ export function ShopView({
                   </button>
                 </div>
               ) : (
-                <div className="mt-8 grid gap-6 sm:grid-cols-2 sm:gap-7 xl:grid-cols-3 xl:gap-8">
+                <div className="mt-8 grid grid-cols-2 gap-2.5 min-[440px]:grid-cols-3 sm:gap-5 lg:gap-6 xl:gap-8">
                   {products.map((product) => (
                     <ProductCard
                       key={product.id}

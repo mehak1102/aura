@@ -154,7 +154,7 @@ export default function CartPage() {
             </div>
           </div>
 
-          <div className="mt-10 grid items-start gap-8 lg:grid-cols-[1fr_380px] lg:gap-10">
+          <div className="mt-10 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,22rem)] lg:gap-8 xl:gap-10">
             <div>
               <div className="space-y-4">
                 <AnimatePresence initial={false}>
@@ -193,13 +193,13 @@ export default function CartPage() {
 
             <aside
               data-block-reveal=""
-              className="h-fit rounded-[var(--radius-lg)] border border-charcoal/8 bg-warm-white/85 p-6 shadow-[var(--shadow-soft)] backdrop-blur-sm lg:sticky lg:top-28 lg:p-7"
+              className="h-fit rounded-[var(--radius-md)] border border-charcoal/8 bg-warm-white/85 p-4 shadow-[var(--shadow-soft)] backdrop-blur-sm sm:p-5 lg:sticky lg:top-28"
             >
-              <Display as="h2" size="sm" className="text-forest">
+              <Display as="h2" size="sm" className="text-[1.35rem] text-forest sm:text-[1.5rem]">
                 Order summary
               </Display>
 
-              <div className="mt-6 space-y-3 text-body-sm">
+              <div className="mt-4 space-y-2 text-[0.8rem]">
                 <div className="flex justify-between">
                   <span className="text-charcoal-muted">
                     Subtotal ({count} {count === 1 ? 'item' : 'items'})
@@ -241,24 +241,24 @@ export default function CartPage() {
                   <div className="flex justify-between">
                     <span className="inline-flex items-center gap-1.5 text-charcoal-muted">
                       Shipping
-                      <Info className="h-3.5 w-3.5 text-charcoal/35" />
+                      <Info className="h-3 w-3 text-charcoal/35" />
                     </span>
                     <span className="text-charcoal">{formatCurrency(0)}</span>
                   </div>
-                  <p className="mt-1 text-[0.72rem] text-olive">
+                  <p className="mt-0.5 text-[0.68rem] text-olive">
                     Free shipping on all orders
                   </p>
                 </div>
               </div>
 
               {promo ? (
-                <div className="mt-5 flex items-center gap-3 rounded-[var(--radius-md)] border border-olive/25 bg-olive/8 px-4 py-3">
-                  <Check className="h-4 w-4 shrink-0 text-olive" strokeWidth={2} />
+                <div className="mt-3.5 flex items-center gap-2.5 rounded-[var(--radius-md)] border border-olive/25 bg-olive/8 px-3 py-2.5">
+                  <Check className="h-3.5 w-3.5 shrink-0 text-olive" strokeWidth={2} />
                   <span className="min-w-0 flex-1">
-                    <span className="block text-body-sm text-forest">
+                    <span className="block text-[0.8rem] text-forest">
                       {promo.code} applied
                     </span>
-                    <span className="mt-0.5 block text-[0.72rem] text-charcoal/55">
+                    <span className="mt-0.5 block text-[0.68rem] text-charcoal/55">
                       {promo.description ?? 'Discount applied to your bag'}
                       {discount > 0 ? ` · −${formatCurrency(discount)}` : ''}
                     </span>
@@ -269,21 +269,21 @@ export default function CartPage() {
                     aria-label={`Remove promo code ${promo.code}`}
                     className="shrink-0 rounded-full p-1 text-charcoal/45 transition-colors hover:text-forest"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-3.5 w-3.5" />
                   </button>
                 </div>
               ) : (
-                <div className="mt-5">
+                <div className="mt-3.5">
                   <form
                     onSubmit={async (e) => {
                       e.preventDefault()
                       await applyPromoCode(promoInput)
                     }}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-1.5"
                   >
                     <div className="relative min-w-0 flex-1">
                       <Tag
-                        className="pointer-events-none absolute top-1/2 left-3.5 h-3.5 w-3.5 -translate-y-1/2 text-soft-gold"
+                        className="pointer-events-none absolute top-1/2 left-3 h-3 w-3 -translate-y-1/2 text-soft-gold"
                         strokeWidth={1.5}
                         aria-hidden
                       />
@@ -293,22 +293,22 @@ export default function CartPage() {
                         placeholder="Promo code"
                         aria-label="Promo code"
                         style={{ outline: 'none' }}
-                        className="h-10 w-full rounded-full border border-charcoal/12 bg-white/70 pr-4 pl-9.5 text-[0.8rem] tracking-[0.08em] text-forest uppercase transition-colors placeholder:tracking-normal placeholder:normal-case placeholder:text-charcoal/40 focus:border-soft-gold/70"
+                        className="h-9 w-full rounded-full border border-charcoal/12 bg-white/70 pr-3 pl-8 text-[0.75rem] tracking-[0.08em] text-forest uppercase transition-colors placeholder:tracking-normal placeholder:normal-case placeholder:text-charcoal/40 focus:border-soft-gold/70"
                       />
                     </div>
                     <button
                       type="submit"
                       disabled={promoPending || !promoInput.trim()}
-                      className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full bg-forest px-5 text-[0.65rem] font-medium tracking-[0.16em] text-warm-white uppercase transition-colors hover:bg-forest-deep disabled:opacity-50"
+                      className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-forest px-4 text-[0.6rem] font-medium tracking-[0.14em] text-warm-white uppercase transition-colors hover:bg-forest-deep disabled:opacity-50"
                     >
                       {promoPending && (
-                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        <Loader2 className="h-3 w-3 animate-spin" />
                       )}
                       Apply
                     </button>
                   </form>
 
-                  <div className="mt-3 flex flex-wrap gap-2">
+                  <div className="mt-2 flex flex-wrap gap-1.5">
                     {PROMO_SUGGESTIONS.map((suggestion) => (
                       <button
                         key={suggestion.code}
@@ -318,12 +318,12 @@ export default function CartPage() {
                           setPromoInput(suggestion.code)
                           void applyPromoCode(suggestion.code)
                         }}
-                        className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-soft-gold/50 bg-cream/60 px-3 py-1.5 text-left transition-colors hover:border-soft-gold hover:bg-cream disabled:opacity-50"
+                        className="inline-flex items-center gap-1 rounded-full border border-dashed border-soft-gold/50 bg-cream/60 px-2.5 py-1 text-left transition-colors hover:border-soft-gold hover:bg-cream disabled:opacity-50"
                       >
-                        <span className="text-[0.68rem] font-medium tracking-[0.12em] text-forest uppercase">
+                        <span className="text-[0.62rem] font-medium tracking-[0.1em] text-forest uppercase">
                           {suggestion.code}
                         </span>
-                        <span className="text-[0.68rem] text-charcoal/50">
+                        <span className="text-[0.62rem] text-charcoal/50">
                           {suggestion.label}
                         </span>
                       </button>
@@ -331,50 +331,50 @@ export default function CartPage() {
                   </div>
 
                   {promoError && (
-                    <p className="mt-2 text-[0.72rem] text-[#b4534b]">
+                    <p className="mt-1.5 text-[0.68rem] text-[#b4534b]">
                       {promoError}
                     </p>
                   )}
                 </div>
               )}
 
-              <label className="mt-3 flex cursor-pointer items-center gap-3 rounded-[var(--radius-md)] border border-charcoal/8 px-4 py-3">
+              <label className="mt-2.5 flex cursor-pointer items-center gap-2.5 rounded-[var(--radius-md)] border border-charcoal/8 px-3 py-2.5">
                 <input
                   type="checkbox"
                   checked={giftWrap}
                   onChange={(e) => setGiftWrap(e.target.checked)}
-                  className="h-4 w-4 shrink-0 accent-forest"
+                  className="h-3.5 w-3.5 shrink-0 accent-forest"
                 />
                 <span className="min-w-0 flex-1">
-                  <span className="block text-body-sm text-forest">
+                  <span className="block text-[0.8rem] text-forest">
                     Add gift wrapping
                   </span>
-                  <span className="mt-0.5 block text-[0.72rem] text-charcoal/55">
+                  <span className="mt-0.5 block text-[0.68rem] text-charcoal/55">
                     Make it extra special for someone you love.
                   </span>
                 </span>
-                <span className="inline-flex shrink-0 items-center gap-1.5 text-[0.72rem] text-charcoal/60">
-                  <Gift className="h-4 w-4 text-soft-gold" strokeWidth={1.5} />
+                <span className="inline-flex shrink-0 items-center gap-1 text-[0.68rem] text-charcoal/60">
+                  <Gift className="h-3.5 w-3.5 text-soft-gold" strokeWidth={1.5} />
                   {formatCurrency(GIFT_WRAP_FEE)}
                 </span>
               </label>
 
-              <div className="mt-5 flex items-end justify-between border-t border-soft-gold/25 pt-5">
+              <div className="mt-3.5 flex items-end justify-between border-t border-soft-gold/25 pt-3.5">
                 <div>
-                  <p className="text-forest">Total</p>
-                  <p className="mt-0.5 text-[0.72rem] text-charcoal/50">
+                  <p className="text-[0.9rem] text-forest">Total</p>
+                  <p className="mt-0.5 text-[0.68rem] text-charcoal/50">
                     Inclusive of all taxes
                   </p>
                 </div>
-                <p className="font-display text-2xl text-forest">
+                <p className="font-display text-xl text-forest">
                   {formatCurrency(total)}
                 </p>
               </div>
 
-              <div className="mt-6 space-y-3">
+              <div className="mt-4 space-y-2">
                 <Button
                   fullWidth
-                  size="lg"
+                  size="sm"
                   onClick={() => navigate(ROUTES.checkout)}
                 >
                   <Lock className="h-3.5 w-3.5" strokeWidth={2} />
@@ -383,6 +383,7 @@ export default function CartPage() {
                 </Button>
                 <Button
                   fullWidth
+                  size="sm"
                   variant="outline"
                   onClick={() => navigate(ROUTES.shop)}
                 >
@@ -390,16 +391,16 @@ export default function CartPage() {
                 </Button>
               </div>
 
-              <ul className="mt-7 grid grid-cols-3 gap-3 border-t border-charcoal/8 pt-6">
+              <ul className="mt-4 grid grid-cols-1 gap-3 border-t border-charcoal/8 pt-4 min-[380px]:grid-cols-3 min-[380px]:gap-2">
                 {TRUST_BADGES.map(({ icon: Icon, label }) => (
                   <li
                     key={label}
-                    className="flex flex-col items-center gap-2 text-center"
+                    className="flex flex-col items-center gap-1.5 text-center"
                   >
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full border border-soft-gold/35 bg-cream/70 text-soft-gold">
-                      <Icon className="h-4 w-4" strokeWidth={1.5} />
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full border border-soft-gold/35 bg-cream/70 text-soft-gold">
+                      <Icon className="h-3.5 w-3.5" strokeWidth={1.5} />
                     </span>
-                    <span className="text-[0.68rem] leading-tight text-charcoal/60">
+                    <span className="text-[0.62rem] leading-tight text-charcoal/60">
                       {label}
                     </span>
                   </li>

@@ -170,7 +170,7 @@ export function ProductRoutineTimeline({ steps }: ProductRoutineTimelineProps) {
             />
           </div>
 
-          <ol className="relative grid gap-12 md:grid-cols-3 md:gap-8">
+          <ol className="relative grid gap-12 lg:grid-cols-3 lg:gap-8">
             {steps.map((item) => {
               const fallback = DEFAULT_IMAGES[item.title]
               const src = item.image ?? fallback?.src

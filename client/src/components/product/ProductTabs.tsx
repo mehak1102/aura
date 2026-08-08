@@ -257,18 +257,20 @@ function FeatureRow({
   body: string
 }) {
   return (
-    <motion.li variants={fadeUp} className="flex gap-3.5">
+    <motion.li variants={fadeUp} className="flex min-w-0 gap-3.5">
       <span
         className="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border"
         style={{ borderColor: 'rgba(23,55,40,0.18)', color: FOREST }}
       >
         <Icon className="h-3.5 w-3.5" strokeWidth={1.5} />
       </span>
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         <p className="text-[0.92rem] font-semibold leading-snug" style={{ color: FOREST }}>
           {title}
         </p>
-        <p className="mt-1 text-[0.82rem] leading-relaxed text-[#6b655c]">{body}</p>
+        <p className="mt-1 break-words text-[0.82rem] leading-relaxed text-[#6b655c]">
+          {body}
+        </p>
       </div>
     </motion.li>
   )
@@ -286,7 +288,7 @@ function SplitShell({
   reduced: boolean
 }) {
   return (
-    <div className="group relative h-full overflow-hidden">
+    <div className="group relative h-full w-full min-w-0 max-w-full overflow-hidden">
       {/*
         Luxury fade: image sits under a full-card cream wash.
         No mask edge on the photo itself — the solid→transparent cream
@@ -333,7 +335,7 @@ function SplitShell({
       <span className="sr-only">{imageAlt}</span>
 
       <motion.div
-        className="relative z-10 flex h-full max-w-full flex-col justify-center overflow-y-auto px-6 py-8 md:px-8 md:py-10 lg:max-w-[48%] lg:px-10 lg:py-12"
+        className="relative z-10 flex h-full w-full min-w-0 flex-col justify-center overflow-x-hidden overflow-y-auto px-5 py-8 sm:px-6 md:px-8 md:py-10 lg:max-w-[48%] lg:px-10 lg:py-12"
         variants={stagger}
         initial="hidden"
         animate="show"
@@ -366,7 +368,7 @@ function BenefitsPanel({
         title="Benefits"
         subtitle="Nature's goodness for your skin."
       />
-      <ul className="space-y-5">
+      <ul className="min-w-0 space-y-5">
         {benefits.map((b, i) => (
           <FeatureRow
             key={b}
@@ -610,10 +612,10 @@ export function ProductTabs({ product }: ProductTabsProps) {
   return (
     <section className="relative mt-16 md:mt-24">
       <div className="container-aura py-12 md:py-16 lg:py-20">
-        <div className="mx-auto grid max-w-6xl items-stretch gap-5 lg:grid-cols-[minmax(0,1.7fr)_minmax(17rem,0.85fr)] lg:gap-6">
+        <div className="mx-auto grid w-full max-w-6xl grid-cols-1 items-stretch gap-5 xl:grid-cols-[minmax(0,1.7fr)_minmax(17rem,0.85fr)] xl:gap-6">
           {/* LEFT — content viewer only */}
           <div
-            className="relative h-[34rem] overflow-hidden border md:h-[38rem] lg:h-[40rem]"
+            className="relative h-auto min-h-[min(28rem,70svh)] w-full min-w-0 max-w-full overflow-hidden border md:h-[min(38rem,75svh)] md:min-h-0 xl:h-[min(40rem,80svh)]"
             style={{
               borderColor: BORDER,
               borderRadius: RADIUS,
@@ -624,11 +626,11 @@ export function ProductTabs({ product }: ProductTabsProps) {
             <AnimatePresence mode="wait">
               <motion.div
                 key={active}
-                initial={reduced ? false : panelMotion.initial}
-                animate={panelMotion.animate}
-                exit={reduced ? undefined : panelMotion.exit}
+                initial={reduced ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={reduced ? undefined : { opacity: 0 }}
                 transition={panelMotion.transition}
-                className="h-full"
+                className="h-full w-full min-w-0 max-w-full"
               >
                 <ContentViewer
                   section={active}

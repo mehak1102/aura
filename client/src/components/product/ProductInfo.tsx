@@ -218,9 +218,10 @@ export function ProductInfo({ product, onAddToCart }: ProductInfoProps) {
         </div>
       )}
 
-      <div className="mt-7 flex flex-wrap items-center gap-3">
-        <div className="w-full max-w-[13.5rem]">
+      <div className="mt-7 flex flex-wrap items-center gap-2.5">
+        <div className="w-full max-w-[11.5rem]">
           <AddToCartButton
+            size="sm"
             disabled={!inStock || !variant}
             label={inStock ? 'Add to Cart' : 'Out of stock'}
             burstTheme={burstTheme}
@@ -244,11 +245,11 @@ export function ProductInfo({ product, onAddToCart }: ProductInfoProps) {
           aria-label={wished ? 'Remove from wishlist' : 'Add to wishlist'}
           aria-pressed={wished}
           onClick={() => toggle(product.id)}
-          className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[#c4a35a]/65 transition-colors hover:border-[#b8975c]"
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#c4a35a]/65 transition-colors hover:border-[#b8975c]"
         >
           <Heart
             className={cn(
-              'h-4 w-4 transition-colors',
+              'h-3.5 w-3.5 transition-colors',
               wished ? 'fill-[#c43c3c] text-[#c43c3c]' : 'text-charcoal/70',
             )}
             strokeWidth={1.5}
@@ -265,10 +266,10 @@ export function ProductInfo({ product, onAddToCart }: ProductInfoProps) {
         </span>
       </div>
 
-      <div className="mt-6 grid grid-cols-3 gap-3 border-t border-charcoal/10 pt-6 sm:gap-4">
+      <div className="mt-6 grid grid-cols-1 gap-4 border-t border-charcoal/10 pt-6 min-[420px]:grid-cols-3 min-[420px]:gap-3 sm:gap-4">
         <Link
           to={ROUTES.shipping}
-          className="group flex flex-col items-start gap-2 pr-3 sm:pr-4"
+          className="group flex min-w-0 flex-col items-start gap-2 pr-0 min-[420px]:pr-3 sm:pr-4"
         >
           <Package
             className="h-4 w-4 text-forest transition-colors group-hover:text-[#b8975c]"
@@ -284,7 +285,7 @@ export function ProductInfo({ product, onAddToCart }: ProductInfoProps) {
 
         <Link
           to={ROUTES.returns}
-          className="group flex flex-col items-start gap-2 border-l border-charcoal/10 px-3 sm:px-4"
+          className="group flex min-w-0 flex-col items-start gap-2 border-charcoal/10 pt-3 min-[420px]:border-l min-[420px]:px-3 min-[420px]:pt-0 sm:px-4"
         >
           <RefreshCw
             className="h-4 w-4 text-forest transition-colors group-hover:text-[#b8975c]"
@@ -298,7 +299,7 @@ export function ProductInfo({ product, onAddToCart }: ProductInfoProps) {
           </span>
         </Link>
 
-        <div className="flex flex-col items-start gap-2 border-l border-charcoal/10 pl-3 sm:pl-4">
+        <div className="flex min-w-0 flex-col items-start gap-2 border-charcoal/10 pt-3 min-[420px]:border-l min-[420px]:pl-3 min-[420px]:pt-0 sm:pl-4">
           <Tag className="h-4 w-4 text-forest" strokeWidth={1.6} />
           <span className="text-[0.62rem] font-medium tracking-[0.16em] text-forest uppercase">
             SKU

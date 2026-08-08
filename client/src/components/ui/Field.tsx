@@ -10,7 +10,7 @@ const fieldBase =
   'w-full bg-transparent border-0 border-b border-charcoal/20 px-0 py-3 text-body font-light text-charcoal placeholder:text-charcoal-muted/60 transition-colors duration-300 focus:border-forest focus:outline-none'
 
 const boxedBase =
-  'w-full rounded-[var(--radius-md)] border border-charcoal/12 bg-warm-white/70 px-4 py-3 text-body-sm font-light text-charcoal placeholder:text-charcoal-muted/60 transition-colors duration-300 focus:border-soft-gold/70 focus:outline-none'
+  'w-full h-10 rounded-[var(--radius-md)] border border-charcoal/12 bg-warm-white/70 px-3 py-0 text-[0.8125rem] font-light leading-none text-charcoal placeholder:text-charcoal-muted/60 transition-colors duration-300 focus:border-soft-gold/70 focus:outline-none'
 
 /** `boxed` adds a bordered field with room for a leading icon (checkout, forms) */
 type FieldVariant = 'underline' | 'boxed'
@@ -32,12 +32,12 @@ function FieldMeta({
 }: FieldLabelProps) {
   const boxed = variant === 'boxed'
   return (
-    <div className="mb-2 flex items-end justify-between gap-4">
+    <div className="mb-1.5 flex items-end justify-between gap-4">
       <label
         htmlFor={htmlFor}
         className={cn(
           boxed
-            ? 'text-[0.72rem] text-charcoal/55'
+            ? 'text-[0.68rem] text-charcoal/55'
             : 'text-micro text-charcoal-muted',
         )}
       >
@@ -93,7 +93,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           {boxed && icon && (
             <span
               aria-hidden
-              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-charcoal/35"
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-charcoal/35 [&>svg]:h-3.5 [&>svg]:w-3.5"
             >
               {icon}
             </span>
@@ -105,7 +105,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             aria-describedby={errorId}
             className={cn(
               boxed ? boxedBase : fieldBase,
-              boxed && Boolean(icon) && 'pl-11',
+              boxed && Boolean(icon) && 'pl-9',
               error && (boxed ? 'border-[#b4534b]/55' : 'border-olive'),
               props.disabled && 'opacity-60 cursor-not-allowed',
               className,
@@ -148,7 +148,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           {boxed && icon && (
             <span
               aria-hidden
-              className="pointer-events-none absolute left-3.5 top-4 text-charcoal/35"
+              className="pointer-events-none absolute left-3 top-3 text-charcoal/35 [&>svg]:h-3.5 [&>svg]:w-3.5"
             >
               {icon}
             </span>
@@ -160,8 +160,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             aria-describedby={errorId}
             className={cn(
               boxed ? boxedBase : fieldBase,
-              boxed ? 'min-h-24 resize-y' : 'min-h-32 resize-y',
-              boxed && Boolean(icon) && 'pl-11',
+              boxed ? 'h-auto min-h-20 resize-y py-2.5' : 'min-h-32 resize-y',
+              boxed && Boolean(icon) && 'pl-9',
               error && (boxed ? 'border-[#b4534b]/55' : 'border-olive'),
               className,
             )}

@@ -54,11 +54,11 @@ export function CartLineItem({ line }: CartLineItemProps) {
       animate={fadeUp.animate}
       exit={reduced ? undefined : { opacity: 0, x: -12 }}
       transition={{ duration: 0.35, ease: motionEase }}
-      className="grid grid-cols-[88px_1fr] gap-4 rounded-[var(--radius-lg)] border border-charcoal/8 bg-warm-white/80 p-4 shadow-[var(--shadow-soft)] transition-colors duration-500 hover:border-soft-gold/35 sm:grid-cols-[124px_1fr] sm:gap-5 sm:p-5"
+      className="grid grid-cols-[64px_1fr] gap-3 rounded-[var(--radius-md)] border border-charcoal/8 bg-warm-white/80 p-3 shadow-[var(--shadow-soft)] transition-colors duration-500 hover:border-soft-gold/35 sm:grid-cols-[88px_1fr] sm:gap-4 sm:p-4"
     >
       <Link
         to={`/product/${product.slug}`}
-        className="relative aspect-square overflow-hidden rounded-xl bg-[#ebe4d6]"
+        className="relative aspect-square overflow-hidden rounded-lg bg-[#ebe4d6]"
       >
         <ProductImage
           src={image?.url ?? ''}
@@ -70,64 +70,64 @@ export function CartLineItem({ line }: CartLineItemProps) {
       </Link>
 
       <div className="flex min-w-0 flex-col">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-micro text-soft-gold">
+            <p className="text-[0.58rem] tracking-[0.14em] text-soft-gold uppercase">
               {product.category.replace(/-/g, ' ')}
             </p>
             <Link
               to={`/product/${product.slug}`}
-              className="mt-1 block font-display text-xl text-forest transition-colors hover:text-olive sm:text-2xl"
+              className="mt-0.5 block font-display text-[1.05rem] leading-snug text-forest transition-colors hover:text-olive sm:text-xl"
             >
               {product.title}
             </Link>
-            <p className="mt-1 text-body-sm text-charcoal-muted">
+            <p className="mt-0.5 text-[0.75rem] text-charcoal-muted">
               {variant.name}
               {variant.sku ? ` · ${variant.sku}` : ''}
             </p>
           </div>
 
           <div className="shrink-0 text-right">
-            <p className="font-display text-xl text-forest">
+            <p className="font-display text-lg text-forest sm:text-xl">
               {formatCurrency(lineTotal)}
             </p>
             {variant.discountPercent > 0 && (
-              <p className="text-body-sm text-charcoal-muted line-through">
+              <p className="text-[0.75rem] text-charcoal-muted line-through">
                 {formatCurrency(variant.mrp * quantity)}
               </p>
             )}
           </div>
         </div>
 
-        <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
+        <ul className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
           {traits.map(({ icon: Icon, label }) => (
             <li
               key={label}
-              className="inline-flex items-center gap-1.5 text-[0.7rem] leading-tight text-charcoal/60"
+              className="inline-flex items-center gap-1 text-[0.65rem] leading-tight text-charcoal/60"
             >
-              <Icon className="h-3.5 w-3.5 shrink-0 text-soft-gold" strokeWidth={1.5} />
+              <Icon className="h-3 w-3 shrink-0 text-soft-gold" strokeWidth={1.5} />
               {label}
             </li>
           ))}
         </ul>
 
-        <div className="mt-4 flex flex-wrap items-center gap-4">
+        <div className="mt-2.5 flex flex-wrap items-center gap-3">
           <div className="inline-flex items-center rounded-full border border-soft-gold/40 bg-cream/60">
             <button
               type="button"
               aria-label="Decrease quantity"
-              className="rounded-l-full px-3 py-2 text-charcoal/70 transition-colors hover:text-forest"
+              className="rounded-l-full px-2 py-1.5 text-charcoal/70 transition-colors hover:text-forest"
               onClick={() => updateQty(product.id, variant.id, quantity - 1)}
             >
-              <Minus className="h-3.5 w-3.5" />
+              <Minus className="h-3 w-3" />
             </button>
-            <span className="min-w-8 text-center text-body-sm text-forest">
+            <span className="min-w-6 text-center text-[0.8rem] text-forest">
               {quantity}
             </span>
             <button
               type="button"
               aria-label="Increase quantity"
-              className="rounded-r-full px-3 py-2 text-charcoal/70 transition-colors hover:text-forest"
+              className="rounded-r-full px-2 py-1.5 text-charcoal/70 transition-colors hover:text-forest"
               onClick={() =>
                 updateQty(
                   product.id,
@@ -136,16 +136,16 @@ export function CartLineItem({ line }: CartLineItemProps) {
                 )
               }
             >
-              <Plus className="h-3.5 w-3.5" />
+              <Plus className="h-3 w-3" />
             </button>
           </div>
 
           <button
             type="button"
             onClick={() => removeItem(product.id, variant.id)}
-            className="inline-flex items-center gap-1.5 text-body-sm text-charcoal/60 transition-colors hover:text-forest"
+            className="inline-flex items-center gap-1 text-[0.75rem] text-charcoal/60 transition-colors hover:text-forest"
           >
-            <Trash2 className="h-3.5 w-3.5" />
+            <Trash2 className="h-3 w-3" />
             Remove
           </button>
         </div>

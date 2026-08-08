@@ -232,14 +232,14 @@ export default function CheckoutPage() {
 
           <form
             onSubmit={onSubmit}
-            className="mt-8 grid items-start gap-8 lg:grid-cols-[1fr_380px] lg:gap-10"
+            className="mt-8 grid w-full min-w-0 grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:gap-8 xl:gap-10"
             noValidate
           >
-            <div className="space-y-7" data-block-reveal="">
+            <div className="min-w-0 w-full max-w-full space-y-5" data-block-reveal="">
               {!isAuthenticated && (
-                <div className="flex items-center gap-3 rounded-[var(--radius-md)] border border-soft-gold/30 bg-warm-white/60 px-4 py-3.5">
+                <div className="flex items-center gap-3 rounded-[var(--radius-md)] border border-soft-gold/30 bg-warm-white/60 px-3.5 py-2.5">
                   <Leaf className="h-4 w-4 shrink-0 text-soft-gold" strokeWidth={1.5} />
-                  <p className="text-body-sm text-charcoal/75">
+                  <p className="text-[0.8rem] text-charcoal/75">
                     Have an account?{' '}
                     <button
                       type="button"
@@ -260,13 +260,13 @@ export default function CheckoutPage() {
               {errorCount > 0 && (
                 <div
                   role="alert"
-                  className="flex items-start gap-3 rounded-[var(--radius-md)] border border-[#b4534b]/35 bg-[#b4534b]/6 px-4 py-3.5"
+                  className="flex items-start gap-3 rounded-[var(--radius-md)] border border-[#b4534b]/35 bg-[#b4534b]/6 px-3.5 py-2.5"
                 >
                   <AlertCircle
                     className="mt-0.5 h-4 w-4 shrink-0 text-[#b4534b]"
                     strokeWidth={1.6}
                   />
-                  <p className="text-body-sm text-charcoal/75">
+                  <p className="text-[0.8rem] text-charcoal/75">
                     {errorCount === 1
                       ? 'One field needs your attention — check the highlighted field below.'
                       : `${errorCount} fields need your attention — check the highlighted fields below.`}
@@ -274,15 +274,15 @@ export default function CheckoutPage() {
                 </div>
               )}
 
-              <section className="space-y-4">
-                <SectionHeading icon={<CircleUser className="h-4 w-4" strokeWidth={1.5} />}>
+              <section className="space-y-3">
+                <SectionHeading icon={<CircleUser className="h-3.5 w-3.5" strokeWidth={1.5} />}>
                   Contact information
                 </SectionHeading>
 
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-3 sm:grid-cols-2">
                   <Input
                     variant="boxed"
-                    icon={<CircleUser className="h-4 w-4" strokeWidth={1.5} />}
+                    icon={<CircleUser className="h-3.5 w-3.5" strokeWidth={1.5} />}
                     label="Full name"
                     placeholder="Enter your full name"
                     required
@@ -292,7 +292,7 @@ export default function CheckoutPage() {
                   />
                   <Input
                     variant="boxed"
-                    icon={<Phone className="h-4 w-4" strokeWidth={1.5} />}
+                    icon={<Phone className="h-3.5 w-3.5" strokeWidth={1.5} />}
                     label="Phone"
                     type="tel"
                     placeholder="Enter your phone number"
@@ -304,7 +304,7 @@ export default function CheckoutPage() {
                   <div className="sm:col-span-2">
                     <Input
                       variant="boxed"
-                      icon={<Mail className="h-4 w-4" strokeWidth={1.5} />}
+                      icon={<Mail className="h-3.5 w-3.5" strokeWidth={1.5} />}
                       label="Email"
                       type="email"
                       placeholder="Enter your email address"
@@ -317,16 +317,16 @@ export default function CheckoutPage() {
                 </div>
               </section>
 
-              <section className="space-y-4">
-                <SectionHeading icon={<MapPin className="h-4 w-4" strokeWidth={1.5} />}>
+              <section className="space-y-3">
+                <SectionHeading icon={<MapPin className="h-3.5 w-3.5" strokeWidth={1.5} />}>
                   Shipping address
                 </SectionHeading>
 
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-3 sm:grid-cols-2">
                   <div className="sm:col-span-2">
                     <Input
                       variant="boxed"
-                      icon={<Home className="h-4 w-4" strokeWidth={1.5} />}
+                      icon={<Home className="h-3.5 w-3.5" strokeWidth={1.5} />}
                       label="Address line 1"
                       placeholder="House number and street name"
                       required
@@ -338,7 +338,7 @@ export default function CheckoutPage() {
                   <div className="sm:col-span-2">
                     <Input
                       variant="boxed"
-                      icon={<Building2 className="h-4 w-4" strokeWidth={1.5} />}
+                      icon={<Building2 className="h-3.5 w-3.5" strokeWidth={1.5} />}
                       label="Address line 2 (optional)"
                       placeholder="Apartment, suite, unit, etc."
                       autoComplete="address-line2"
@@ -348,7 +348,7 @@ export default function CheckoutPage() {
                   </div>
                   <Input
                     variant="boxed"
-                    icon={<Building2 className="h-4 w-4" strokeWidth={1.5} />}
+                    icon={<Building2 className="h-3.5 w-3.5" strokeWidth={1.5} />}
                     label="City"
                     placeholder="Enter your city"
                     required
@@ -358,7 +358,7 @@ export default function CheckoutPage() {
                   />
                   <Input
                     variant="boxed"
-                    icon={<MapPin className="h-4 w-4" strokeWidth={1.5} />}
+                    icon={<MapPin className="h-3.5 w-3.5" strokeWidth={1.5} />}
                     label="State"
                     placeholder="Enter your state"
                     required
@@ -368,7 +368,7 @@ export default function CheckoutPage() {
                   />
                   <Input
                     variant="boxed"
-                    icon={<MapPin className="h-4 w-4" strokeWidth={1.5} />}
+                    icon={<MapPin className="h-3.5 w-3.5" strokeWidth={1.5} />}
                     label="Postal code"
                     placeholder="Enter postal code"
                     required
@@ -379,7 +379,7 @@ export default function CheckoutPage() {
                   />
                   <Input
                     variant="boxed"
-                    icon={<Globe className="h-4 w-4" strokeWidth={1.5} />}
+                    icon={<Globe className="h-3.5 w-3.5" strokeWidth={1.5} />}
                     label="Country"
                     required
                     autoComplete="country-name"
@@ -389,7 +389,7 @@ export default function CheckoutPage() {
                   <div className="sm:col-span-2">
                     <Textarea
                       variant="boxed"
-                      icon={<PencilLine className="h-4 w-4" strokeWidth={1.5} />}
+                      icon={<PencilLine className="h-3.5 w-3.5" strokeWidth={1.5} />}
                       label="Order notes (optional)"
                       placeholder="Notes about your order, e.g. special delivery instructions"
                       error={errors.notes?.message}
@@ -399,12 +399,12 @@ export default function CheckoutPage() {
                 </div>
               </section>
 
-              <section className="space-y-4">
-                <SectionHeading icon={<Truck className="h-4 w-4" strokeWidth={1.5} />}>
+              <section className="space-y-3">
+                <SectionHeading icon={<Truck className="h-3.5 w-3.5" strokeWidth={1.5} />}>
                   Shipping method
                 </SectionHeading>
 
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-3 sm:grid-cols-2">
                   {SHIPPING_OPTIONS.map((opt) => {
                     const Icon = SHIPPING_ICONS[opt.id]
                     const selected = shippingMethod === opt.id
@@ -412,7 +412,7 @@ export default function CheckoutPage() {
                       <label
                         key={opt.id}
                         className={cn(
-                          'flex cursor-pointer items-center gap-4 rounded-[var(--radius-lg)] border p-4 transition-colors duration-300',
+                          'flex cursor-pointer items-center gap-3 rounded-[var(--radius-md)] border px-3 py-3 transition-colors duration-300',
                           selected
                             ? 'border-forest bg-warm-white'
                             : 'border-charcoal/10 bg-warm-white/50 hover:border-soft-gold/45',
@@ -426,24 +426,24 @@ export default function CheckoutPage() {
                         />
                         <span
                           className={cn(
-                            'flex h-11 w-11 shrink-0 items-center justify-center rounded-full',
+                            'flex h-9 w-9 shrink-0 items-center justify-center rounded-full',
                             selected
                               ? 'bg-forest/8 text-forest'
                               : 'bg-cream text-soft-gold',
                           )}
                         >
-                          <Icon className="h-5 w-5" strokeWidth={1.5} />
+                          <Icon className="h-4 w-4" strokeWidth={1.5} />
                         </span>
 
                         <span className="min-w-0 flex-1">
-                          <span className="block font-display text-lg text-forest">
+                          <span className="block font-display text-base text-forest">
                             {opt.label}
                           </span>
-                          <span className="mt-0.5 block text-body-sm text-charcoal-muted">
+                          <span className="mt-0.5 block text-[0.75rem] text-charcoal-muted">
                             3–5 business days · Free over ₹
                             {freeShippingThreshold}
                           </span>
-                          <span className="mt-1 block text-micro text-soft-gold">
+                          <span className="mt-0.5 block text-[0.65rem] tracking-[0.12em] text-soft-gold uppercase">
                             {opt.price === 0 ? 'Free' : `₹${opt.price}`}
                           </span>
                         </span>

@@ -195,13 +195,13 @@ export function ProductCard({
       </div>
 
       {/* ── Info + actions ── */}
-      <div className="flex flex-col bg-[#ebe4d6] px-4 pt-2 pb-3">
+      <div className="flex flex-col bg-[#ebe4d6] px-2.5 pt-2 pb-2.5 sm:px-4 sm:pb-3">
         <span className="inline-flex w-fit rounded-full bg-[#f7f3eb] px-2 py-0.5 text-[0.52rem] font-medium tracking-[0.14em] text-[#3a3a38] uppercase">
           {product.category.replace(/-/g, ' ')}
         </span>
 
         <Link to={`/product/${product.slug}`} className="mt-1 block">
-          <h3 className="font-display text-[1.1rem] leading-[1.2] text-[#1a1a18]">
+          <h3 className="font-display text-[0.95rem] leading-[1.2] text-[#1a1a18] sm:text-[1.1rem]">
             {product.title}
           </h3>
         </Link>
@@ -226,12 +226,12 @@ export function ProductCard({
           </span>
         </div>
 
-        <div className="mt-2 flex items-center justify-between gap-3">
-          <span className="shrink-0 font-display text-[1.25rem] leading-none text-[#1a1a18] tabular-nums">
+        <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+          <span className="shrink-0 font-display text-[1.1rem] leading-none text-[#1a1a18] tabular-nums sm:text-[1.25rem]">
             {formatCurrency(price)}
           </span>
 
-          <div className={cn('min-w-0 flex-1', !onRemove && 'max-w-[10.5rem]')}>
+          <div className={cn('min-w-0 w-full sm:flex-1', !onRemove && 'sm:max-w-[10.5rem]')}>
             <AddToCartButton
               size="sm"
               fullWidth

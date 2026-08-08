@@ -63,7 +63,7 @@ export function Logo({
       {!compact && editorial && (
         <span className="text-center leading-none">
           <span
-            className="block text-[1.1rem] font-medium tracking-[0.16em] sm:text-[1.3rem] sm:tracking-[0.2em] md:text-[1.5rem]"
+            className="block text-[0.95rem] font-medium tracking-[0.14em] sm:text-[1.1rem] sm:tracking-[0.16em] md:text-[1.3rem] md:tracking-[0.2em] lg:text-[1.5rem]"
             style={{
               fontFamily: "'Bodoni Moda', 'Cormorant Garamond', serif",
               color: wordColor,
@@ -72,7 +72,7 @@ export function Logo({
             AURA
           </span>
           <span
-            className="mt-1 block text-[0.48rem] font-medium tracking-[0.4em] uppercase sm:text-[0.55rem] sm:tracking-[0.48em] md:text-[0.6rem]"
+            className="mt-0.5 block text-[0.42rem] font-medium tracking-[0.32em] uppercase sm:mt-1 sm:text-[0.48rem] sm:tracking-[0.4em] md:text-[0.55rem] md:tracking-[0.48em] lg:text-[0.6rem]"
             style={{ color: wordColor }}
           >
             Of Nature

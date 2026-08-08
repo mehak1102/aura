@@ -247,7 +247,7 @@ export function HomeStory() {
       {/* Bottom trust strip */}
       <div className="relative z-10 border-t border-[#1b261e]/10">
         <div className="mx-auto w-full max-w-[86rem] px-[var(--spacing-gutter)]">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
             {storyTrust.map((item, i) => {
               const Icon = item.icon
               return (

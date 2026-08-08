@@ -336,11 +336,11 @@ export function SiteInstagram({
         </div>
       </div>
 
-      {/* 2) Dense post strip — max 12, lazy per tile */}
+      {/* 2) Dense post strip — temporarily hidden; profile header stays
       <div className="relative border-t border-black/10">
         {!ready || loading ? (
           <div
-            className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6"
+            className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 xl:grid-cols-6"
             aria-busy="true"
             aria-label="Loading Instagram posts"
           >
@@ -362,7 +362,7 @@ export function SiteInstagram({
                 <li
                   key={post.id}
                   data-ig-tile
-                  className="relative aspect-square w-[33.333%] shrink-0 snap-start border-r border-black/10 sm:w-1/4 md:w-1/5 lg:w-1/6"
+                  className="relative aspect-square w-[33.333%] shrink-0 snap-start border-r border-black/10 sm:w-1/4 md:w-1/4 xl:w-1/6"
                   style={{ contentVisibility: 'auto', containIntrinsicSize: '1px 220px' }}
                 >
                   <a
@@ -424,6 +424,7 @@ export function SiteInstagram({
           </>
         )}
       </div>
+      */}
     </section>
   )
 }

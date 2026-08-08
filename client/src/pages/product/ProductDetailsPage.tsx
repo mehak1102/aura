@@ -114,7 +114,7 @@ export default function ProductDetailsPage() {
           />
           <ProductBreadcrumb product={resolved} />
 
-          <div className="mt-8 grid gap-12 lg:grid-cols-2 lg:gap-16 lg:items-start">
+          <div className="mt-8 grid gap-10 lg:grid-cols-2 lg:items-start lg:gap-10 xl:gap-16">
             <div className="lg:sticky lg:top-28">
               <ProductGallery
                 images={[...resolved.images, ...resolved.gallery]}

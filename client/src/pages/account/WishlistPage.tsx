@@ -181,7 +181,7 @@ export default function WishlistPage() {
           {/* ── Saved products ── */}
           <div
             data-block-reveal=""
-            className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            className="mt-12 grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4"
           >
             {products.map((product) => (
               <ProductCard
@@ -195,15 +195,15 @@ export default function WishlistPage() {
           {/* ── Assurance bar ── */}
           <ul
             data-block-reveal=""
-            className="mt-16 grid gap-8 rounded-3xl border border-forest/10 bg-white/55 px-7 py-8 backdrop-blur-sm sm:grid-cols-2 lg:grid-cols-4 lg:gap-0"
+            className="mt-16 grid gap-8 rounded-3xl border border-forest/10 bg-white/55 px-7 py-8 backdrop-blur-sm sm:grid-cols-2 xl:grid-cols-4 xl:gap-0"
           >
             {assurances.map(({ icon: Icon, title, body }, i) => (
               <li
                 key={title}
                 className={
                   i > 0
-                    ? 'flex gap-4 lg:border-l lg:border-forest/10 lg:pl-7'
-                    : 'flex gap-4 lg:pr-7'
+                    ? 'flex gap-4 xl:border-l xl:border-forest/10 xl:pl-7'
+                    : 'flex gap-4 xl:pr-7'
                 }
               >
                 <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-soft-gold/45 bg-[#f2ece1] text-forest">

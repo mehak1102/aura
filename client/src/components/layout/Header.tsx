@@ -119,7 +119,7 @@ export function Header({ transparent = false }: HeaderProps) {
         )}
       >
         <div className="relative z-50 mx-auto flex h-[4.25rem] max-w-[86rem] items-center justify-between px-[var(--spacing-gutter)] font-nav md:h-[4.75rem]">
-          <div className="relative z-50 flex min-w-[5.5rem] items-center gap-6 md:min-w-[7rem] md:gap-7">
+          <div className="relative z-50 flex min-w-0 shrink-0 items-center gap-4 md:gap-6 xl:min-w-[7rem] xl:gap-7">
             <button
               type="button"
               onClick={() => setMenuOpen((v) => !v)}
@@ -141,7 +141,7 @@ export function Header({ transparent = false }: HeaderProps) {
 
             <nav
               className={cn(
-                'relative z-50 hidden items-center gap-4 lg:flex xl:gap-6',
+                'relative z-50 hidden items-center gap-4 xl:flex xl:gap-6',
                 chrome,
                 chromeLift,
               )}
@@ -162,10 +162,10 @@ export function Header({ transparent = false }: HeaderProps) {
           <Logo
             tone={isLightChrome ? 'gold' : 'dark'}
             editorial
-            className="absolute left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2"
+            className="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2"
           />
 
-          <div className="relative z-50 flex min-w-[5.5rem] items-center justify-end gap-0.5 md:min-w-[7rem]">
+          <div className="relative z-50 flex min-w-0 shrink-0 items-center justify-end gap-0 md:gap-0.5">
             <button
               type="button"
               aria-label="Search"
@@ -191,7 +191,7 @@ export function Header({ transparent = false }: HeaderProps) {
               <span className="relative" style={{ color: iconColor }}>
                 <Heart className="h-[1.1rem] w-[1.1rem]" stroke="currentColor" strokeWidth={1.85} />
                 {wishCount > 0 && (
-                  <span className="absolute -right-2 -top-1.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[#b8975c] px-1 text-[0.5rem] text-[#1b261e]">
+                  <span className="absolute -top-1.5 -right-2 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[#b8975c] px-1 text-[0.5rem] text-[#1b261e]">
                     {wishCount > 99 ? '99+' : wishCount}
                   </span>
                 )}
@@ -201,7 +201,7 @@ export function Header({ transparent = false }: HeaderProps) {
               <span className="relative" style={{ color: iconColor }}>
                 <ShoppingBag className="h-[1.1rem] w-[1.1rem]" stroke="currentColor" strokeWidth={1.85} />
                 {count > 0 && (
-                  <span className="absolute -right-2 -top-1.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[#b8975c] px-1 text-[0.5rem] text-[#1b261e]">
+                  <span className="absolute -top-1.5 -right-2 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[#b8975c] px-1 text-[0.5rem] text-[#1b261e]">
                     {count > 99 ? '99+' : count}
                   </span>
                 )}
@@ -209,6 +209,33 @@ export function Header({ transparent = false }: HeaderProps) {
             </NavIcon>
           </div>
         </div>
+
+        {/* Mobile / tablet primary links — same labels as desktop */}
+        <nav
+          aria-label="Primary mobile"
+          className={cn(
+            'relative z-50 border-t xl:hidden',
+            isLightChrome ? 'border-warm-white/10' : 'border-[#1b261e]/8',
+          )}
+        >
+          <div
+            className={cn(
+              'mx-auto flex max-w-[86rem] items-center justify-start gap-5 overflow-x-auto px-[var(--spacing-gutter)] py-2.5 font-nav [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-6 sm:justify-center [&::-webkit-scrollbar]:hidden',
+              chrome,
+              chromeLift,
+            )}
+          >
+            {headerNav.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className="shrink-0 text-[0.62rem] font-semibold tracking-[0.18em] uppercase text-current transition-opacity hover:opacity-65 sm:text-[0.68rem]"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </nav>
       </header>
 
       <SiteMenu open={menuOpen} onClose={() => setMenuOpen(false)} />

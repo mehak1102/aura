@@ -196,7 +196,7 @@ export default function FaqPage() {
             {/* Mobile category chips */}
             <div
               data-page-reveal=""
-              className="mb-8 flex gap-2 overflow-x-auto pb-1 lg:hidden"
+              className="mb-8 flex gap-2 overflow-x-auto pb-1 xl:hidden"
               style={{ scrollbarWidth: 'none' }}
             >
               {faqCategories.map((category) => {
@@ -227,11 +227,11 @@ export default function FaqPage() {
               })}
             </div>
 
-            <div className="grid items-start gap-10 lg:grid-cols-[15.5rem_minmax(0,1fr)] lg:gap-14">
+            <div className="grid items-start gap-8 lg:gap-10 xl:grid-cols-[15.5rem_minmax(0,1fr)] xl:gap-14">
               {/* Desktop sticky rail */}
               <aside
                 data-page-reveal=""
-                className="hidden lg:sticky lg:top-28 lg:block"
+                className="hidden xl:sticky xl:top-28 xl:block"
               >
                 <p className="text-[0.68rem] font-medium tracking-[0.18em] text-[#b8975c] uppercase">
                   Browse

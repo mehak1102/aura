@@ -202,8 +202,10 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
         data-lenis-prevent
         data-lenis-prevent-wheel
         className={cn(
-          'product-gallery-stage relative isolate overflow-hidden rounded-2xl',
-          'aspect-[4/5] md:aspect-[5/6]',
+          'product-gallery-stage relative isolate mx-auto overflow-hidden rounded-2xl',
+          'aspect-square w-full max-w-[17.5rem]',
+          'sm:aspect-[4/5] sm:max-w-none',
+          'md:aspect-[5/6]',
         )}
       >
         <div className="product-gallery-glow" aria-hidden />
@@ -254,28 +256,28 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
           </div>
         </div>
 
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between p-3 md:p-4">
-          <span className="rounded-full bg-[#faf8f4]/80 px-3 py-1 text-[0.62rem] tracking-[0.14em] text-forest/80 uppercase backdrop-blur-sm">
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between p-2 md:p-3">
+          <span className="rounded-full bg-[#faf8f4]/80 px-2 py-0.5 text-[0.55rem] tracking-[0.12em] text-forest/80 uppercase backdrop-blur-sm">
             {mode === 'spin'
               ? '360°'
               : isZoomed
                 ? `${zoom.toFixed(1)}×`
                 : 'Studio'}
           </span>
-          <div className="pointer-events-auto flex items-center gap-1.5">
+          <div className="pointer-events-auto flex items-center gap-1">
             <ToolbarButton
               label="Zoom out"
               onClick={() => applyZoom(zoom - ZOOM_STEP)}
               disabled={zoom <= MIN_ZOOM}
             >
-              <Minus className="h-3.5 w-3.5" strokeWidth={1.75} />
+              <Minus className="h-3 w-3" strokeWidth={1.75} />
             </ToolbarButton>
             <ToolbarButton
               label="Zoom in"
               onClick={() => applyZoom(zoom + ZOOM_STEP)}
               disabled={zoom >= MAX_ZOOM}
             >
-              <Plus className="h-3.5 w-3.5" strokeWidth={1.75} />
+              <Plus className="h-3 w-3" strokeWidth={1.75} />
             </ToolbarButton>
             {canSpin && (
               <ToolbarButton
@@ -285,7 +287,7 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
                   setModeSafe(mode === 'spin' ? 'gallery' : 'spin')
                 }
               >
-                <RotateCcw className="h-3.5 w-3.5" strokeWidth={1.75} />
+                <RotateCcw className="h-3 w-3" strokeWidth={1.75} />
               </ToolbarButton>
             )}
             <ToolbarButton
@@ -295,13 +297,13 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
                 setMode('gallery')
               }}
             >
-              <ZoomIn className="h-3.5 w-3.5" strokeWidth={1.75} />
+              <ZoomIn className="h-3 w-3" strokeWidth={1.75} />
             </ToolbarButton>
             <ToolbarButton
               label="Open fullscreen"
               onClick={() => setLightbox(true)}
             >
-              <Maximize2 className="h-3.5 w-3.5" strokeWidth={1.75} />
+              <Maximize2 className="h-3 w-3" strokeWidth={1.75} />
             </ToolbarButton>
           </div>
         </div>
@@ -338,7 +340,7 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
                 setModeSafe('gallery')
               }}
               className={cn(
-                'relative aspect-square h-16 w-16 shrink-0 overflow-hidden rounded-xl border transition-all duration-300 sm:h-auto sm:w-auto sm:shrink',
+                'relative aspect-square h-12 w-12 shrink-0 overflow-hidden rounded-lg border transition-all duration-300 sm:h-auto sm:w-auto sm:shrink sm:rounded-xl',
                 i === active
                   ? 'border-soft-gold shadow-[0_10px_28px_rgba(184,151,92,0.22)]'
                   : 'border-transparent opacity-70 hover:opacity-100',
@@ -491,7 +493,7 @@ function ToolbarButton({
       }}
       onPointerDown={(e) => e.stopPropagation()}
       className={cn(
-        'inline-flex h-9 w-9 items-center justify-center rounded-full border backdrop-blur-md transition-all duration-300',
+        'inline-flex h-7 w-7 items-center justify-center rounded-full border backdrop-blur-md transition-all duration-300',
         active
           ? 'border-soft-gold bg-forest text-warm-white'
           : 'border-charcoal/10 bg-[#faf8f4]/85 text-forest hover:border-forest/30',

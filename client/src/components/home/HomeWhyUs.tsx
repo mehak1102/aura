@@ -19,7 +19,7 @@ export function HomeWhyUs() {
           </Display>
         </div>
 
-        <div className="grid grid-cols-2 gap-6 sm:gap-8 md:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-6 sm:gap-8 md:grid-cols-3 xl:grid-cols-5">
           {whyUs.map((stat) => {
             const content = (
               <>

@@ -26,7 +26,7 @@ export function ShopToolbar({
         <button
           type="button"
           onClick={onOpenFilters}
-          className="inline-flex items-center gap-2 rounded-full bg-forest px-4 py-2 text-[0.68rem] tracking-[0.14em] text-warm-white uppercase lg:hidden"
+          className="inline-flex items-center gap-2 rounded-full bg-forest px-4 py-2 text-[0.68rem] tracking-[0.14em] text-warm-white uppercase xl:hidden"
         >
           <SlidersHorizontal className="h-3.5 w-3.5" strokeWidth={1.75} />
           Filters
@@ -70,7 +70,7 @@ function SortSelect({
 
   return (
     <div ref={rootRef} className="relative inline-flex items-center gap-2.5">
-      <span className="text-[0.72rem] tracking-[0.14em] text-charcoal/50 uppercase">
+      <span className="hidden text-[0.72rem] tracking-[0.14em] text-charcoal/50 uppercase sm:inline">
         Sort by
       </span>
 
@@ -81,7 +81,7 @@ function SortSelect({
         aria-controls={listId}
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          'inline-flex min-w-[9.5rem] items-center justify-between gap-2.5 rounded-full',
+          'inline-flex min-w-[8.5rem] items-center justify-between gap-2.5 rounded-full sm:min-w-[9.5rem]',
           'border border-[#c4a35a]/75 bg-[#faf8f4] px-3.5 py-2',
           'text-[0.8rem] text-forest transition-colors duration-200',
           'hover:border-[#b8975c] hover:bg-white',
@@ -106,7 +106,7 @@ function SortSelect({
           role="listbox"
           aria-label="Sort products"
           className={cn(
-            'absolute top-[calc(100%+0.4rem)] right-0 z-30 min-w-[13.5rem] overflow-hidden',
+            'absolute top-[calc(100%+0.4rem)] right-0 z-30 min-w-[min(13.5rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] overflow-hidden',
             'rounded-2xl border border-[#c4a35a]/55 bg-[#faf8f4]',
             'py-1.5 shadow-[0_12px_32px_rgba(36,53,40,0.1)]',
             'animate-[fadeIn_180ms_ease-out]',

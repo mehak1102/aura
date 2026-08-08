@@ -23,7 +23,7 @@ export function AccountNav() {
   const navigate = useNavigate()
 
   return (
-    <aside className="lg:w-[17.5rem] lg:shrink-0">
+    <aside className="min-w-0 lg:w-[min(17.5rem,32%)] lg:shrink-0">
       <div className="rounded-[1.75rem] border border-[#e7e0d1] bg-white/85 p-6 shadow-[0_18px_50px_rgba(35,69,44,0.06)] backdrop-blur-sm lg:sticky lg:top-28">
         <div className="flex items-center gap-3.5">
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#f1ece0] text-forest">
