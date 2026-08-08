@@ -1,32 +1,19 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { BadgeCheck, ChevronLeft, ChevronRight, Instagram } from 'lucide-react'
-import {
-  INSTAGRAM_URL,
-  instagramPosts,
-  instagramProfile,
-  type InstagramPost,
-} from '@/data/home'
+import { useEffect, useRef, useState } from 'react'
+import { BadgeCheck, Instagram } from 'lucide-react'
+import { instagramProfile, type InstagramPost } from '@/data/home'
 import { instagramApi } from '@/services/api/instagram'
 import { useInView } from '@hooks/useInView'
 import { cn } from '@utils/index'
 
-const MAX_POSTS = 12
-/** First N tiles can start loading sooner; the rest wait for scroll into view */
-const EAGER_TILES = 4
-
 type SiteInstagramProps = {
   profile?: typeof instagramProfile
   posts?: InstagramPost[]
-  /** Skip API and use static posts only */
+  /** Skip API and use static profile only */
   staticOnly?: boolean
 }
 
 function formatStat(n: number) {
   return new Intl.NumberFormat('en-IN').format(n)
-}
-
-function takePosts(list: InstagramPost[]) {
-  return list.slice(0, MAX_POSTS)
 }
 
 function BrandAvatarFallback({ className }: { className?: string }) {
@@ -74,101 +61,19 @@ function ProfileAvatar({ src, name }: { src?: string; name: string }) {
   )
 }
 
-/** Loads image only when the tile is near the viewport (or marked eager). */
-function PostImage({
-  src,
-  alt,
-  fallbackSrc,
-  eager = false,
-}: {
-  src: string
-  alt: string
-  fallbackSrc: string
-  eager?: boolean
-}) {
-  const wrapRef = useRef<HTMLDivElement | null>(null)
-  const [active, setActive] = useState(eager)
-  const [current, setCurrent] = useState(eager ? src : '')
-  const [failed, setFailed] = useState(false)
-
-  useEffect(() => {
-    if (eager || active) return
-    const el = wrapRef.current
-    if (!el || typeof IntersectionObserver === 'undefined') {
-      setActive(true)
-      return
-    }
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setActive(true)
-          io.disconnect()
-        }
-      },
-      { rootMargin: '120px 80px', threshold: 0.01 },
-    )
-    io.observe(el)
-    return () => io.disconnect()
-  }, [eager, active])
-
-  useEffect(() => {
-    if (!active) return
-    setCurrent(src)
-    setFailed(false)
-  }, [active, src])
-
-  if (failed) {
-    return (
-      <div ref={wrapRef} className="h-full w-full">
-        <BrandAvatarFallback />
-      </div>
-    )
-  }
-
-  return (
-    <div ref={wrapRef} className="h-full w-full bg-neutral-100">
-      {active && current ? (
-        <img
-          src={current}
-          alt={alt}
-          loading={eager ? 'eager' : 'lazy'}
-          decoding="async"
-          fetchPriority="low"
-          width={280}
-          height={280}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-          onError={() => {
-            if (current !== fallbackSrc) setCurrent(fallbackSrc)
-            else setFailed(true)
-          }}
-        />
-      ) : null}
-    </div>
-  )
-}
-
 /**
- * Instagram-style brand strip (ACG layout) — profile header + dense media carousel.
- * Mounted above the footer on every page via RootLayout.
+ * Instagram-style brand strip — profile header above the footer via RootLayout.
+ * Post carousel temporarily removed.
  */
 export function SiteInstagram({
   profile: profileProp,
-  posts: postsProp,
   staticOnly = false,
 }: SiteInstagramProps = {}) {
   const sectionRef = useRef<HTMLElement | null>(null)
-  const trackRef = useRef<HTMLUListElement | null>(null)
-  // Defer network until section is close — keep margin modest to avoid early load storms
   const nearView = useInView(sectionRef, { threshold: 0.01, rootMargin: '160px 0px' })
 
   const [ready, setReady] = useState(false)
-  const [loading, setLoading] = useState(true)
   const [profile, setProfile] = useState(profileProp ?? instagramProfile)
-  const [posts, setPosts] = useState<InstagramPost[]>(
-    postsProp ? takePosts(postsProp) : [],
-  )
-  const [canPrev, setCanPrev] = useState(false)
-  const [canNext, setCanNext] = useState(false)
 
   useEffect(() => {
     if (nearView) setReady(true)
@@ -179,35 +84,16 @@ export function SiteInstagram({
     let cancelled = false
 
     async function run() {
-      setLoading(true)
+      if (staticOnly || profileProp) {
+        if (!cancelled) setProfile(profileProp ?? instagramProfile)
+        return
+      }
+
       try {
-        if (postsProp) {
-          if (!cancelled) {
-            setPosts(takePosts(postsProp))
-            if (profileProp) setProfile(profileProp)
-          }
-          return
-        }
-
-        if (staticOnly) {
-          if (!cancelled) {
-            setPosts(takePosts(instagramPosts))
-            setProfile(profileProp ?? instagramProfile)
-          }
-          return
-        }
-
         const feed = await instagramApi.getProfile()
-        if (cancelled) return
-        setPosts(takePosts(feed.posts))
-        setProfile(profileProp ?? feed.profile)
+        if (!cancelled) setProfile(feed.profile)
       } catch {
-        if (!cancelled) {
-          setPosts(takePosts(instagramPosts))
-          setProfile(profileProp ?? instagramProfile)
-        }
-      } finally {
-        if (!cancelled) setLoading(false)
+        if (!cancelled) setProfile(instagramProfile)
       }
     }
 
@@ -215,44 +101,7 @@ export function SiteInstagram({
     return () => {
       cancelled = true
     }
-  }, [ready, postsProp, profileProp, staticOnly])
-
-  const updateScrollState = useCallback(() => {
-    const el = trackRef.current
-    if (!el) return
-    const max = el.scrollWidth - el.clientWidth
-    setCanPrev(el.scrollLeft > 4)
-    setCanNext(el.scrollLeft < max - 4)
-  }, [])
-
-  useEffect(() => {
-    if (loading || !ready) return
-    const el = trackRef.current
-    if (!el) return
-
-    let raf = 0
-    const onScroll = () => {
-      cancelAnimationFrame(raf)
-      raf = requestAnimationFrame(updateScrollState)
-    }
-
-    updateScrollState()
-    el.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll, { passive: true })
-    return () => {
-      cancelAnimationFrame(raf)
-      el.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
-    }
-  }, [loading, ready, posts.length, updateScrollState])
-
-  const scrollByTiles = (dir: -1 | 1) => {
-    const el = trackRef.current
-    if (!el) return
-    const tile = el.querySelector<HTMLElement>('[data-ig-tile]')
-    const tileW = tile?.getBoundingClientRect().width ?? el.clientWidth / 3
-    el.scrollBy({ left: dir * tileW * 2, behavior: 'smooth' })
-  }
+  }, [ready, profileProp, staticOnly])
 
   const stats = [
     { value: profile.stats.posts, label: 'Posts' },
@@ -267,7 +116,6 @@ export function SiteInstagram({
       className="w-full border-t border-black/10 bg-[#f4efe6]"
       style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 520px' }}
     >
-      {/* 1) Profile header */}
       <div className="mx-auto w-full max-w-[1400px] px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
         <div className="flex flex-col items-center gap-6 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
           <div className="flex w-full flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-6 lg:w-auto lg:flex-1">
@@ -335,96 +183,6 @@ export function SiteInstagram({
           </a>
         </div>
       </div>
-
-      {/* 2) Dense post strip — temporarily hidden; profile header stays
-      <div className="relative border-t border-black/10">
-        {!ready || loading ? (
-          <div
-            className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 xl:grid-cols-6"
-            aria-busy="true"
-            aria-label="Loading Instagram posts"
-          >
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="aspect-square animate-pulse border-r border-black/10 bg-neutral-100 last:border-r-0"
-              />
-            ))}
-          </div>
-        ) : (
-          <>
-            <ul
-              ref={trackRef}
-              className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-              role="list"
-            >
-              {posts.map((post, index) => (
-                <li
-                  key={post.id}
-                  data-ig-tile
-                  className="relative aspect-square w-[33.333%] shrink-0 snap-start border-r border-black/10 sm:w-1/4 md:w-1/4 xl:w-1/6"
-                  style={{ contentVisibility: 'auto', containIntrinsicSize: '1px 220px' }}
-                >
-                  <a
-                    href={post.url || INSTAGRAM_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group relative block h-full w-full overflow-hidden bg-neutral-100"
-                    aria-label={post.alt || 'Instagram post'}
-                  >
-                    <PostImage
-                      src={post.image}
-                      alt={post.alt}
-                      fallbackSrc={
-                        instagramPosts[index % instagramPosts.length]?.image ||
-                        '/products/fresh-coffee-face-wash/04-hero-card.png'
-                      }
-                      eager={index < EAGER_TILES}
-                    />
-
-                    <span className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/0 transition duration-200 group-hover:bg-black/40">
-                      <Instagram
-                        className="h-7 w-7 text-white opacity-0 transition duration-200 group-hover:opacity-100"
-                        strokeWidth={1.75}
-                        aria-hidden
-                      />
-                    </span>
-
-                    {post.isVideo ? (
-                      <span className="absolute right-2 top-2 rounded bg-black/55 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
-                        Reel
-                      </span>
-                    ) : null}
-                  </a>
-                </li>
-              ))}
-            </ul>
-
-            {canPrev ? (
-              <button
-                type="button"
-                aria-label="Previous Instagram posts"
-                onClick={() => scrollByTiles(-1)}
-                className="absolute left-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur-sm transition hover:bg-black/70 sm:left-3 sm:h-11 sm:w-11"
-              >
-                <ChevronLeft className="h-5 w-5" strokeWidth={2} />
-              </button>
-            ) : null}
-
-            {canNext ? (
-              <button
-                type="button"
-                aria-label="Next Instagram posts"
-                onClick={() => scrollByTiles(1)}
-                className="absolute right-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur-sm transition hover:bg-black/70 sm:right-3 sm:h-11 sm:w-11"
-              >
-                <ChevronRight className="h-5 w-5" strokeWidth={2} />
-              </button>
-            ) : null}
-          </>
-        )}
-      </div>
-      */}
     </section>
   )
 }
