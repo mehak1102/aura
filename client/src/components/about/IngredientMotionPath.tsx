@@ -16,7 +16,7 @@ const STOPS = [
   { key: 'second', className: 'left-[4%] top-[28%] sm:left-[8%] sm:top-[26%]' },
   { key: 'third', className: 'right-[4%] top-[40%] left-auto sm:right-[8%] sm:top-[38%]' },
   { key: 'fourth', className: 'left-[12%] top-[52%] sm:left-[18%] sm:top-[50%]' },
-  { key: 'fifth', className: 'left-[55%] top-[64%] sm:left-[60%] sm:top-[62%]' },
+  { key: 'fifth', className: 'left-[72%] top-[64%] sm:left-[78%] sm:top-[62%]' },
   { key: 'sixth', className: 'left-[8%] top-[76%] sm:left-[14%] sm:top-[74%]' },
   {
     key: 'seventh',
@@ -24,17 +24,30 @@ const STOPS = [
   },
 ] as const
 
-const TRAVELER = botanicals[0]?.image ?? '/ingredients-showcase/jojoba.png'
-const MARKERS = botanicals.slice(0, 6)
+/** One image per stop — traveler swaps to the stop it is heading toward */
+const PATH_IMAGES = botanicals.slice(0, STOPS.length).map(
+  (b) => b.image || '/ingredients-showcase/jojoba.png',
+)
 
 /**
  * Decorative MotionPath layer behind Ingredients page content.
- * Traveler moves between soft waypoint markers as the page scrolls.
+ * Traveler moves between soft waypoint markers as the page scrolls,
+ * swapping its image to match each upcoming stop.
  */
 export function IngredientMotionPath() {
   const rootRef = useRef<HTMLDivElement | null>(null)
   const boxRef = useRef<HTMLDivElement | null>(null)
+  const travelerImgRef = useRef<HTMLImageElement | null>(null)
+  const imageIndexRef = useRef(0)
   const ctxRef = useRef<gsap.Context | null>(null)
+
+  const setTravelerImage = useCallback((index: number) => {
+    const img = travelerImgRef.current
+    const src = PATH_IMAGES[index]
+    if (!img || !src || imageIndexRef.current === index) return
+    imageIndexRef.current = index
+    img.src = src
+  }, [])
 
   const createTimeline = useCallback(() => {
     const root = rootRef.current
@@ -44,6 +57,8 @@ export function IngredientMotionPath() {
     ctxRef.current?.revert()
     ctxRef.current = null
     gsap.set(box, { clearProps: 'transform' })
+    imageIndexRef.current = -1
+    setTravelerImage(0)
 
     ctxRef.current = gsap.context(() => {
       const boxStartRect = box.getBoundingClientRect()
@@ -65,6 +80,8 @@ export function IngredientMotionPath() {
 
       if (points.length < 2) return
 
+      const lastIndex = PATH_IMAGES.length - 1
+
       gsap
         .timeline({
           scrollTrigger: {
@@ -74,6 +91,14 @@ export function IngredientMotionPath() {
             end: 'clamp(top 35%)',
             scrub: 0.25,
             invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              // Switch to the upcoming stop's image as soon as we head toward it
+              const idx = Math.min(
+                lastIndex,
+                Math.ceil(self.progress * lastIndex - 0.001),
+              )
+              setTravelerImage(Math.max(0, idx))
+            },
           },
         })
         .to(box, {
@@ -88,7 +113,7 @@ export function IngredientMotionPath() {
     }, root)
 
     requestAnimationFrame(() => ScrollTrigger.refresh())
-  }, [])
+  }, [setTravelerImage])
 
   useEffect(() => {
     void MotionPathPlugin
@@ -125,7 +150,7 @@ export function IngredientMotionPath() {
 
       {STOPS.map((stop, index) => {
         const isStart = index === 0
-        const marker = MARKERS[index - 1]
+        const markerSrc = PATH_IMAGES[index]
 
         return (
           <div
@@ -143,7 +168,8 @@ export function IngredientMotionPath() {
                 className="relative z-10 h-[4.75rem] w-[4.75rem] overflow-hidden rounded-xl bg-[#faf6ef]/80 opacity-70 shadow-[0_12px_28px_rgba(36,53,40,0.1)] sm:h-[5.5rem] sm:w-[5.5rem]"
               >
                 <img
-                  src={TRAVELER}
+                  ref={travelerImgRef}
+                  src={PATH_IMAGES[0]}
                   alt=""
                   className="h-full w-full object-cover object-center"
                   draggable={false}
@@ -154,9 +180,9 @@ export function IngredientMotionPath() {
                 data-motion-marker=""
                 className="h-[4.25rem] w-[4.25rem] overflow-hidden rounded-xl bg-[#ebe3d6]/55 opacity-45 sm:h-[5rem] sm:w-[5rem]"
               >
-                {marker ? (
+                {markerSrc ? (
                   <img
-                    src={marker.image}
+                    src={markerSrc}
                     alt=""
                     className="h-full w-full object-cover object-[70%_45%]"
                     loading="lazy"
