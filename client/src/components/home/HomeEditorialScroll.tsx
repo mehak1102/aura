@@ -11,6 +11,7 @@ import {
 } from '@animations/gsap'
 import { useInView } from '@hooks/useInView'
 import { scrollToY } from '@/lib/lenisControl'
+import { cn } from '@utils/index'
 
 function GhostPill({
   to,
@@ -264,6 +265,7 @@ function Frame({
   className,
   float,
   to,
+  imgClassName,
 }: {
   src: string
   alt: string
@@ -272,13 +274,17 @@ function Frame({
   float?: number
   /** Product detail path — makes the frame clickable */
   to?: string
+  imgClassName?: string
 }) {
   const inner = (
     <>
       <img
         src={src}
         alt={alt}
-        className="h-full w-full object-contain p-[5%] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/frame:scale-110"
+        className={cn(
+          'h-full w-full object-contain p-[2%] scale-[1.1] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/frame:scale-[1.16]',
+          imgClassName,
+        )}
         loading="lazy"
         draggable={false}
       />
