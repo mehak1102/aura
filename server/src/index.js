@@ -104,6 +104,15 @@ async function start() {
   app.listen(env.port, () => {
     console.log(`API listening on http://localhost:${env.port}`)
     console.log(`Database mode: ${getDatabaseMode()}`)
+    console.log(`Storefront URL (emails): ${env.clientUrl}`)
+    if (
+      env.smtp.host &&
+      /localhost|127\.0\.0\.1/i.test(env.clientUrl)
+    ) {
+      console.warn(
+        'CLIENT_URL is localhost but SMTP is configured — password-reset emails will contain localhost links. Set CLIENT_URL to your live storefront.',
+      )
+    }
     warmInstagramCache()
   })
 }

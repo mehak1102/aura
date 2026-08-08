@@ -24,6 +24,12 @@ export function assertProductionSecrets() {
   ) {
     missing.push('CLOUDINARY_CLOUD_NAME / CLOUDINARY_API_KEY / CLOUDINARY_API_SECRET')
   }
+  if (
+    !process.env.CLIENT_URL ||
+    /localhost|127\.0\.0\.1/i.test(env.clientUrl)
+  ) {
+    missing.push('CLIENT_URL (public storefront URL, not localhost)')
+  }
 
   if (missing.length) {
     throw new Error(
