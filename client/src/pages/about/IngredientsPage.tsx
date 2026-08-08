@@ -11,6 +11,15 @@ import { useCatalog } from '@contexts/CatalogContext'
 import { productPath } from '@/lib/seo'
 import { ROUTES } from '@/routes/paths'
 import type { CatalogProduct } from '@/types/shop'
+import blackCuminHoverImg from '@/assets/ingredients/black-cumin-hover.png'
+import coffeeHoverImg from '@/assets/ingredients/coffee-hover.png'
+import cucumberSeedHoverImg from '@/assets/ingredients/cucumber-seed-hover.png'
+import eucalyptusHoverImg from '@/assets/ingredients/eucalyptus-hover.png'
+import jojobaHoverImg from '@/assets/ingredients/jojoba-hover.png'
+import peachHoverImg from '@/assets/ingredients/peach-hover.png'
+import lavenderHoverImg from '@/assets/ingredients/lavender-hover.png'
+import watermelonHoverImg from '@/assets/ingredients/watermelon-hover.png'
+import wildApricotHoverImg from '@/assets/ingredients/wild-apricot-hover.png'
 import {
   useGsap,
   gsap,
@@ -18,6 +27,52 @@ import {
   prefersReducedMotion,
   revealCommerceBlocks,
 } from '@animations/gsap'
+
+/** Custom Ingredients-grid hover stills (slug → image). */
+const INGREDIENT_HOVER_IMAGES: Partial<
+  Record<string, { url: string; alt: string }>
+> = {
+  'black-cumin': {
+    url: blackCuminHoverImg,
+    alt: 'Aura of Nature Black Cumin cold-pressed oil box and bottle',
+  },
+  coffee: {
+    url: coffeeHoverImg,
+    alt: 'Aura of Nature Fresh Coffee Face Wash box and bottle',
+  },
+  'cucumber-seed': {
+    url: cucumberSeedHoverImg,
+    alt: 'Aura of Nature Cucumber Seed cold-pressed oil box and bottle',
+  },
+  eucalyptus: {
+    url: eucalyptusHoverImg,
+    alt: 'Aura of Nature Eucalyptus essential oil box',
+  },
+  jojoba: {
+    url: jojobaHoverImg,
+    alt: 'Aura of Nature Jojoba cold-pressed oil bottle',
+  },
+  peach: {
+    url: peachHoverImg,
+    alt: 'Aura of Nature Nourishing Peach Lotion box and bottle',
+  },
+  lavender: {
+    url: lavenderHoverImg,
+    alt: 'Aura of Nature Lavender essential oil box and bottle',
+  },
+  watermelon: {
+    url: watermelonHoverImg,
+    alt: 'Aura of Nature Watermelon cold-pressed oil box and bottle',
+  },
+  'watermelon-seed-oil': {
+    url: watermelonHoverImg,
+    alt: 'Aura of Nature Watermelon cold-pressed oil box and bottle',
+  },
+  'wild-apricot': {
+    url: wildApricotHoverImg,
+    alt: 'Aura of Nature Wild Apricot cold-pressed oil box and bottle',
+  },
+}
 
 function BotanicalMark({ slug }: { slug: string }) {
   const common = {
@@ -154,6 +209,22 @@ function IngredientCard({
   product?: CatalogProduct
 }) {
   const productImage = product?.images[0]
+  const customHover = INGREDIENT_HOVER_IMAGES[ing.slug]
+  const hoverImage = customHover
+    ? customHover
+    : productImage
+      ? {
+          url: productImage.url,
+          alt: productImage.alt || product?.title || ing.name,
+        }
+      : null
+
+  const shopTo =
+    product?.slug != null
+      ? productPath(product.slug)
+      : ing.productSlugs[0]
+        ? productPath(ing.productSlugs[0])
+        : botanicalPath(ing.slug)
 
   return (
     <article
@@ -175,17 +246,18 @@ function IngredientCard({
             />
           </Link>
 
-          {product && productImage && (
+          {hoverImage && (
             <Link
-              to={productPath(product.slug)}
-              className="absolute inset-0 z-20 translate-y-[105%] overflow-hidden will-change-transform transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-y-0 focus-visible:translate-y-0"
-              aria-label={`Shop ${product.title}`}
+              to={shopTo}
+              className="absolute inset-0 z-20 translate-y-[105%] overflow-hidden opacity-0 will-change-transform transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-y-0 group-hover:opacity-100 focus-visible:translate-y-0 focus-visible:opacity-100"
+              aria-label={`Shop ${product?.title || ing.name}`}
             >
               <img
-                src={productImage.url}
-                alt={productImage.alt || product.title}
+                src={hoverImage.url}
+                alt=""
                 className="h-full w-full object-cover object-center"
-                loading="lazy"
+                loading="eager"
+                decoding="async"
               />
             </Link>
           )}
