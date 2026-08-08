@@ -85,7 +85,10 @@ export default function ForgotPasswordPage() {
     setFormError(null)
     try {
       await resetPassword(values)
-      navigate(ROUTES.account, { replace: true })
+      navigate(ROUTES.login, {
+        replace: true,
+        state: { resetSuccess: true },
+      })
     } catch (err) {
       const msg =
         (err as { response?: { data?: { message?: string } } })?.response?.data

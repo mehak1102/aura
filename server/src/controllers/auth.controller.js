@@ -261,7 +261,11 @@ export const resetPassword = asyncHandler(async (req, res) => {
   if (useMemory()) {
     const user = await memoryAuth.resetPassword(hashed, password)
     if (!user) throw new AppError('Reset token is invalid or has expired', 400)
-    res.json(issueAuth(res, user, user.id, user.role))
+    clearAuthCookie(res)
+    res.json({
+      success: true,
+      message: 'Password updated. You can sign in with your new password.',
+    })
     return
   }
 
@@ -280,5 +284,9 @@ export const resetPassword = asyncHandler(async (req, res) => {
   user.mustChangePassword = false
   await user.save()
 
-  res.json(issueAuth(res, user, user._id.toString(), user.role))
+  clearAuthCookie(res)
+  res.json({
+    success: true,
+    message: 'Password updated. You can sign in with your new password.',
+  })
 })

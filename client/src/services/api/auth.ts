@@ -91,13 +91,13 @@ export const authApi = {
 
   async resetPassword(input: ResetPasswordInput) {
     setStoredToken(null)
-    const { data } = await api.post<ApiResponse<AuthPayload>>(
+    const { data } = await api.post<{ success: boolean; message?: string }>(
       API_ENDPOINTS.auth.resetPassword,
       {
         token: input.token,
         password: input.password,
       },
     )
-    return data.data
+    return data
   },
 }

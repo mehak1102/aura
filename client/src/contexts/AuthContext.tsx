@@ -25,7 +25,7 @@ type AuthContextValue = {
   register: (input: RegisterInput) => Promise<User>
   logout: () => Promise<void>
   updateProfile: (input: ProfileInput) => Promise<User>
-  resetPassword: (input: ResetPasswordInput) => Promise<User>
+  resetPassword: (input: ResetPasswordInput) => Promise<void>
   refreshUser: () => Promise<void>
 }
 
@@ -82,9 +82,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const resetPassword = useCallback(async (input: ResetPasswordInput) => {
-    const { user: nextUser } = await authApi.resetPassword(input)
-    setUser(nextUser)
-    return nextUser
+    await authApi.resetPassword(input)
+    setStoredToken(null)
+    setUser(null)
   }, [])
 
   const value = useMemo<AuthContextValue>(

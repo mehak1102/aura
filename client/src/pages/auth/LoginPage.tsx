@@ -17,7 +17,10 @@ export default function LoginPage() {
   const [formError, setFormError] = useState<string | null>(null)
 
   const from =
-    (location.state as { from?: string } | null)?.from || ROUTES.account
+    (location.state as { from?: string } | null)?.from || ROUTES.home
+  const resetSuccess = Boolean(
+    (location.state as { resetSuccess?: boolean } | null)?.resetSuccess,
+  )
 
   const {
     register,
@@ -50,6 +53,11 @@ export default function LoginPage() {
         description="Access your orders, wishlist, and saved rituals."
       >
         <form onSubmit={onSubmit} className="space-y-5" noValidate>
+          {resetSuccess && (
+            <p className="rounded-lg border border-[#c4a35a]/40 bg-white/50 px-3.5 py-2.5 text-[0.8rem] font-light text-forest">
+              Password updated. Sign in with your new password.
+            </p>
+          )}
           <AuthField
             label="Email"
             icon={Mail}
