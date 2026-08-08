@@ -8,6 +8,7 @@ export {
   splitHeroTitle,
   prefersReducedMotion,
 } from './core'
+export { pathEase } from './pathEase'
 export { useGsap } from './useGsap'
 export {
   animateHero,

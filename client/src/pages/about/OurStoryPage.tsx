@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Seo } from '@components/seo/Seo'
 import { BentoHero } from '@components/content'
+import { StoryBeeScroll } from '@components/about/StoryBeeScroll'
 import { Body, Display, Eyebrow, LeafShadows } from '@components/ui'
 import {
   storyBento,
@@ -177,7 +178,9 @@ export default function OurStoryPage() {
       />
       <main ref={scope} className="relative isolate overflow-hidden bg-cream pb-24">
         <LeafShadows className="pointer-events-none absolute inset-0 -z-10 overflow-hidden" />
+        <StoryBeeScroll />
 
+        <div className="relative z-[1]">
         <BentoHero
           eyebrow={storyBento.eyebrow}
           title={storyBento.title}
@@ -277,7 +280,7 @@ export default function OurStoryPage() {
 
         <section className="section-aura-sm">
           <div className="container-aura">
-            <div className="rounded-[var(--radius-lg)] border border-soft-gold/20 bg-warm-white p-7 sm:p-10 lg:p-14">
+            <div className="rounded-[var(--radius-lg)] border border-soft-gold/20 bg-warm-white/80 p-7 sm:p-10 lg:p-14">
               <div className="max-w-3xl">
                 <Eyebrow tone="gold" data-line-reveal="">
                   {storyMission.eyebrow}
@@ -337,7 +340,7 @@ export default function OurStoryPage() {
 
         <section className="section-aura-sm">
           <div className="container-aura">
-            <div className="rounded-[var(--radius-lg)] border border-charcoal/10 bg-warm-white/60 p-5 sm:p-7 lg:p-8">
+            <div className="rounded-[var(--radius-lg)] border border-charcoal/10 bg-warm-white/55 p-5 sm:p-7 lg:p-8">
               <Eyebrow tone="gold" data-timeline-head="">
                 Timeline
               </Eyebrow>
@@ -377,7 +380,7 @@ export default function OurStoryPage() {
                       <MilestoneIcon icon={item.icon} />
                     </span>
 
-                    <article className="flex items-stretch gap-4 overflow-hidden rounded-[var(--radius-lg)] border border-charcoal/8 bg-warm-white p-3.5 sm:py-3.5 sm:pl-5 lg:h-[6.25rem]">
+                    <article className="flex items-stretch gap-4 overflow-hidden rounded-[var(--radius-lg)] border border-charcoal/8 bg-warm-white/85 p-3.5 sm:py-3.5 sm:pl-5 lg:h-[6.25rem]">
                       <div className="min-w-0 flex-1 self-center">
                         <Eyebrow tone="gold" className="sm:hidden">
                           {item.year}
@@ -434,7 +437,7 @@ export default function OurStoryPage() {
                 <li
                   key={promise.title}
                   data-promise-card=""
-                  className="rounded-[var(--radius-lg)] border border-charcoal/10 bg-warm-white p-6 transition-colors duration-500 hover:border-soft-gold/40"
+                  className="rounded-[var(--radius-lg)] border border-charcoal/10 bg-warm-white/80 p-6 transition-colors duration-500 hover:border-soft-gold/40"
                 >
                   <span className="flex h-11 w-11 items-center justify-center rounded-full border border-soft-gold/35 bg-cream text-soft-gold">
                     <PromiseIcon icon={promise.icon} />
@@ -448,6 +451,7 @@ export default function OurStoryPage() {
             </ul>
           </div>
         </section>
+        </div>
       </main>
     </>
   )
