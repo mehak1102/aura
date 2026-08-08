@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Seo } from '@components/seo/Seo'
 import { EditorialHero } from '@components/content'
+import { IngredientMotionPath } from '@components/about/IngredientMotionPath'
 import { Body, Display, Eyebrow, LeafShadows } from '@components/ui'
 import {
   ingredientsHero,
@@ -346,6 +347,7 @@ export default function IngredientsPage() {
       />
       <main ref={scope} className="relative overflow-hidden bg-[#faf6ef] pb-24">
         <LeafShadows />
+        <IngredientMotionPath />
 
         <div className="relative z-[1]">
         <EditorialHero

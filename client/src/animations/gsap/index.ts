@@ -2,6 +2,7 @@ export {
   gsap,
   ScrollTrigger,
   Observer,
+  MotionPathPlugin,
   registerGsap,
   splitText,
   splitHeroTitle,
